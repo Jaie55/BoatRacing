@@ -125,6 +125,7 @@ racing:
   pit-penalty-seconds: 5.0
   registration-seconds: 300
   min-players-to-start: 1  # Minimum online registered players required to start; can be overridden per-track
+  broadcast-mode: "global" # Accepted values: "global" (every online player), "racers" (only participants, except for registration)
   # Optional lobby while registration is open.
   # When enabled, players are teleported to this location when they join registration.
   # If they leave registration or the registration is cancelled, they are teleported back.

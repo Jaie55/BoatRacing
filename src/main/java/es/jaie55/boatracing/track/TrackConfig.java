@@ -502,6 +502,18 @@ public class TrackConfig {
         return globalDefault;
     }
 
+    public String getRacingString(String key, String globalDefault) {
+        Object v = racingOverrides.get(key);
+        if (v instanceof String s) return s;
+        return globalDefault;
+    }
+
+    public ConfigurationSection getRacingConfigurationSection(String key, ConfigurationSection globalDefault) {
+        Object c = racingOverrides.get(key);
+        if (c instanceof ConfigurationSection s) return s;
+        return globalDefault;
+    }
+
     public void setRacingOverride(String key, Object value) {
         racingOverrides.put(key, value);
         save();

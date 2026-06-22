@@ -1,26 +1,38 @@
 package es.jaie55.boatracing.reward;
 
-import es.jaie55.boatracing.BoatRacingPlugin;
-import es.jaie55.boatracing.util.Text;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import es.jaie55.boatracing.BoatRacingPlugin;
+import es.jaie55.boatracing.track.TrackConfig;
+import es.jaie55.boatracing.util.Text;
 
 /**
  * Manages race rewards configured in config.yml under racing.rewards.
  * Supports per-position commands, messages, and broadcasts with placeholders.
  */
 public class RewardManager {
-    private final BoatRacingPlugin plugin;
+    private final ConfigurationSection rewardSection;
 
     public RewardManager(BoatRacingPlugin plugin) {
-        this.plugin = plugin;
+        this.rewardSection = plugin.getConfig().getConfigurationSection("racing.rewards");
     }
 
     public boolean isEnabled() {
-        return plugin.getConfig().getBoolean("racing.rewards.enabled", false);
+        return this.rewardSection != null && this.rewardSection.getBoolean("enabled", false);
+    }
+
+    public boolean isEnabled(TrackConfig track) {
+        if (track == null) return isEnabled();
+        // Try to get the reward section from the track, else fall back to the default.
+        ConfigurationSection trackSection = track.getRacingConfigurationSection("rewards", this.rewardSection);
+        return trackSection != null && trackSection.getBoolean("enabled", false);
     }
 
     /**
@@ -30,9 +42,10 @@ public class RewardManager {
      * @param trackName name of the track
      * @param totalLaps total laps in the race
      */
-    public void giveRewards(List<Map.Entry<UUID, Long>> results, String trackName, int totalLaps) {
-        if (!isEnabled()) return;
-        ConfigurationSection posSection = plugin.getConfig().getConfigurationSection("racing.rewards.positions");
+    public void giveRewards(List<Map.Entry<UUID, Long>> results, String trackName, int totalLaps, TrackConfig track) {
+        ConfigurationSection targetSection = (track == null) ? this.rewardSection : track.getRacingConfigurationSection("rewards", this.rewardSection);
+        if (targetSection == null || !targetSection.getBoolean("enabled", false)) return;
+        ConfigurationSection posSection = targetSection.getConfigurationSection("positions");
         if (posSection == null) return;
         ConfigurationSection defaultReward = posSection.getConfigurationSection("default");
 

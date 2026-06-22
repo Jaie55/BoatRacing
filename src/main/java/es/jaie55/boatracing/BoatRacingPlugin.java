@@ -865,11 +865,32 @@ public class BoatRacingPlugin extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        // Check for a targeted player (last argument).
+        Player other = null;
+        if (sender.hasPermission("boatracing.admin") && args.length != 0) {
+            String a = args[args.length - 1];
+            if (a.startsWith("-p:")) {
+                String target = a.substring(3);
+                other = org.bukkit.Bukkit.getPlayerExact(target);
+                // If the player was not found (or is offline)
+                if (other==null) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("stats.player-not-found", "player", target)));
+                    return true;
+                }
+                // Remove the last argument from the array.
+                args = java.util.Arrays.copyOf(args, args.length - 1);
+            }
+        }
+
+        // Allow other senders if there's a targeted player.
+        if (other==null && !(sender instanceof Player)) {
             sender.sendMessage(Text.colorize(prefix + msg().get("general.players-only")));
             return true;
         }
-        Player p = (Player) sender;
+
+        // Set the player to either the sender or target.
+        Player p = (other==null) ? (Player) sender : other;
+
         if (command.getName().equalsIgnoreCase("boatracing")) {
             if (args.length == 0) {
                 p.sendMessage(Text.colorize(prefix + msg().get("race.usage.main", "label", label)));
@@ -877,9 +898,9 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
             // /boatracing version
             if (args[0].equalsIgnoreCase("version")) {
-                if (!p.hasPermission("boatracing.version")) {
-                    p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                    p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                if (!sender.hasPermission("boatracing.version")) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                    if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                     return true;
                 }
                 String current = getDescription().getVersion();
@@ -913,9 +934,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                 return true;
             }
             if (args[0].equalsIgnoreCase("reload")) {
-                if (!p.hasPermission("boatracing.reload")) {
-                    p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                    p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                if (!sender.hasPermission("boatracing.reload")) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                    if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                     return true;
                 }
                 // Persist current state, reload config and data
@@ -941,9 +962,9 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
             // /boatracing stats [player]
             if (args[0].equalsIgnoreCase("stats")) {
-                if (!p.hasPermission("boatracing.stats")) {
-                    p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                    p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                if (!sender.hasPermission("boatracing.stats")) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                    if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                     return true;
                 }
                 if (args.length > 2) {
@@ -951,22 +972,22 @@ public class BoatRacingPlugin extends JavaPlugin {
                     return true;
                 }
 
-                if (args.length == 2 && !p.hasPermission("boatracing.stats.others")) {
+                if (args.length == 2 && !sender.hasPermission("boatracing.stats.others")) {
                     boolean selfAlias = (p.getName() != null && args[1].equalsIgnoreCase(p.getName()))
                             || args[1].equalsIgnoreCase(p.getUniqueId().toString());
                     if (!selfAlias) {
-                        p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                        p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                        sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                        if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                         return true;
                     }
                 }
 
                 org.bukkit.OfflinePlayer target = p;
-                if (args.length == 2 && p.hasPermission("boatracing.stats.others")) {
+                if (args.length == 2 && sender.hasPermission("boatracing.stats.others")) {
                     target = resolveOffline(args[1]);
                     if (target == null || target.getUniqueId() == null) {
-                        p.sendMessage(Text.colorize(prefix + msg().get("stats.player-not-found", "player", args[1])));
-                        p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                        sender.sendMessage(Text.colorize(prefix + msg().get("stats.player-not-found", "player", args[1])));
+                        if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                         return true;
                     }
                 }
@@ -985,21 +1006,21 @@ public class BoatRacingPlugin extends JavaPlugin {
                     p.sendMessage(Text.colorize(msg().get("race.help.vote", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("race.help.voteui", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("race.help.votestatus", "label", label)));
-                    if (p.hasPermission("boatracing.race.back")) {
-                        p.sendMessage(Text.colorize(msg().get("race.help.back", "label", label)));
+                    if (sender.hasPermission("boatracing.race.back")) {
+                        sender.sendMessage(Text.colorize(msg().get("race.help.back", "label", label)));
                     }
-                    if (p.hasPermission("boatracing.race.practice")) {
-                        p.sendMessage(Text.colorize(msg().get("race.help.practice", "label", label)));
+                    if (sender.hasPermission("boatracing.race.practice")) {
+                        sender.sendMessage(Text.colorize(msg().get("race.help.practice", "label", label)));
                     }
-                    if (p.hasPermission("boatracing.race.admin") || p.hasPermission("boatracing.setup")
+                    if (sender.hasPermission("boatracing.race.admin") || sender.hasPermission("boatracing.setup")
                             || getConfig().getBoolean("player-actions.allow-player-race-start", false)) {
-                        p.sendMessage(Text.colorize(msg().get("race.help.admin", "label", label)));
+                        sender.sendMessage(Text.colorize(msg().get("race.help.admin", "label", label)));
                     }
                     if (canOpenMapVote(p)) {
-                        p.sendMessage(Text.colorize(msg().get("race.help.voteopen", "label", label)));
+                        sender.sendMessage(Text.colorize(msg().get("race.help.voteopen", "label", label)));
                     }
-                    if (p.hasPermission("boatracing.race.admin") || p.hasPermission("boatracing.setup")) {
-                        p.sendMessage(Text.colorize(msg().get("race.help.voteclose", "label", label)));
+                    if (sender.hasPermission("boatracing.race.admin") || sender.hasPermission("boatracing.setup")) {
+                        sender.sendMessage(Text.colorize(msg().get("race.help.voteclose", "label", label)));
                     }
                     return true;
                 }
@@ -1069,17 +1090,15 @@ public class BoatRacingPlugin extends JavaPlugin {
                         return true;
                     }
                     case "forfeit" -> {
-                        if (!p.hasPermission("boatracing.race.forfeit")) {
-                            p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                            p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                        if (!sender.hasPermission("boatracing.race.forfeit")) {
+                            sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                            if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                             return true;
                         }
-
-                        Player player = (Player) sender;
-                        RaceManager rm = getRaceManagerForPlayer(player.getUniqueId());
+                        RaceManager rm = getRaceManagerForPlayer(p.getUniqueId());
                         
                         if (rm != null && rm.isRunning()) {
-                            rm.forfeit(player);
+                            rm.forfeit(p);
                         } else {
                             p.sendMessage(Text.colorize(prefix + msg().get("race.registration.not-registered")));
                             p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
@@ -1087,9 +1106,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                         return true;
                     }
                     case "back" -> {
-                        if (!p.hasPermission("boatracing.race.back")) {
-                            p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                            p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                        if (!sender.hasPermission("boatracing.race.back")) {
+                            sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                            if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                             return true;
                         }
                         for (RaceManager rm : getAllRaceManagers()) {
@@ -1377,8 +1396,8 @@ public class BoatRacingPlugin extends JavaPlugin {
                         return true;
                     }
                     case "voteclose" -> {
-                        if (!(p.hasPermission("boatracing.race.admin") || p.hasPermission("boatracing.setup"))) {
-                            p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                        if (!(sender.hasPermission("boatracing.race.admin") || sender.hasPermission("boatracing.setup"))) {
+                            sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
                             return true;
                         }
                         closeMapVoteFromAdmin(p);
@@ -1397,9 +1416,9 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
             // /boatracing setup
             if (args[0].equalsIgnoreCase("setup")) {
-                if (!p.hasPermission("boatracing.setup")) {
-                    p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                    p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                if (!sender.hasPermission("boatracing.setup")) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                    if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                     return true;
                 }
                 if (args.length == 1 || args[1].equalsIgnoreCase("help")) {
@@ -1750,15 +1769,15 @@ public class BoatRacingPlugin extends JavaPlugin {
             // /boatracing admin
             if (args[0].equalsIgnoreCase("admin")) {
                 boolean isLanguageSubcommand = args.length >= 2 && args[1].equalsIgnoreCase("language");
-                boolean canUseAdmin = p.hasPermission("boatracing.admin");
-                boolean canManageLanguage = p.hasPermission("boatracing.admin.language");
+                boolean canUseAdmin = sender.hasPermission("boatracing.admin");
+                boolean canManageLanguage = sender.hasPermission("boatracing.admin.language");
                 if (!canUseAdmin && !(isLanguageSubcommand && canManageLanguage)) {
-                    p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                    sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
                     return true;
                 }
                 if (args.length == 1) {
                     if (!canUseAdmin) {
-                        p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                        sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
                         return true;
                     }
                     // Open Admin GUI by default
@@ -1767,7 +1786,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 }
                 if (args[1].equalsIgnoreCase("language")) {
                     if (!(canUseAdmin || canManageLanguage)) {
-                        p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                        sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
                         return true;
                     }
 
@@ -1831,7 +1850,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                         p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
                         return true;
                     }
-                    if (!p.hasPermission("boatracing.setup")) { p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission"))); return true; }
+                    if (!sender.hasPermission("boatracing.setup")) { sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission"))); return true; }
                     tracksGUI.open(p);
                     return true;
                 }
@@ -2055,18 +2074,18 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
             // /boatracing teams
             if (args.length == 1) {
-                if (!p.hasPermission("boatracing.teams")) {
-                    p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                    p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                if (!sender.hasPermission("boatracing.teams")) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                    if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                     return true;
                 }
                 teamGUI.openMain(p);
                 return true;
             }
             // /boatracing teams create <name>
-            if (!p.hasPermission("boatracing.teams")) {
-                p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
-                p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+            if (!sender.hasPermission("boatracing.teams")) {
+                sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                 return true;
             }
             if (args.length >= 2 && args[1].equalsIgnoreCase("create")) {
@@ -2100,7 +2119,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 if (ot.isEmpty()) { p.sendMessage(Text.colorize(prefix + msg().get("team.not-in-team"))); return true; }
                 es.jaie55.boatracing.team.Team t = ot.get();
                 boolean allowRename = getConfig().getBoolean("player-actions.allow-team-rename", false);
-                if (!allowRename && !p.hasPermission("boatracing.admin")) { p.sendMessage(Text.colorize(prefix + msg().get("team.rename-restricted"))); return true; }
+                if (!allowRename && !sender.hasPermission("boatracing.admin")) { sender.sendMessage(Text.colorize(prefix + msg().get("team.rename-restricted"))); return true; }
                 if (args.length < 3) { p.sendMessage(Text.colorize(prefix + msg().get("team.rename-usage"))); return true; }
                 String name = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length));
                 String err = es.jaie55.boatracing.ui.TeamGUI.validateNameMessage(name);
@@ -2117,7 +2136,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 if (ot.isEmpty()) { p.sendMessage(Text.colorize(prefix + msg().get("team.not-in-team"))); return true; }
                 es.jaie55.boatracing.team.Team t = ot.get();
                 boolean allowColor = getConfig().getBoolean("player-actions.allow-team-color", false);
-                if (!allowColor && !p.hasPermission("boatracing.admin")) { p.sendMessage(Text.colorize(prefix + msg().get("team.color-restricted"))); return true; }
+                if (!allowColor && !sender.hasPermission("boatracing.admin")) { sender.sendMessage(Text.colorize(prefix + msg().get("team.color-restricted"))); return true; }
                 if (args.length < 3) { p.sendMessage(Text.colorize(prefix + msg().get("team.color-usage"))); return true; }
                 try {
                     org.bukkit.DyeColor dc = org.bukkit.DyeColor.valueOf(args[2].toUpperCase());

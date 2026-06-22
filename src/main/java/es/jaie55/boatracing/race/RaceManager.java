@@ -11,6 +11,7 @@ import es.jaie55.boatracing.util.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -54,6 +55,7 @@ public class RaceManager {
     private final BoatRacingPlugin plugin;
     private final TrackConfig track;
     private final String trackName;
+    private String broadcastMode;
     private boolean running = false;
     private boolean registering = false;
     private boolean practiceMode = false;
@@ -173,6 +175,7 @@ public class RaceManager {
         // made through another TrackConfig instance are visible immediately.
         track.load();
         org.bukkit.configuration.file.FileConfiguration cfg = plugin.getConfig();
+        this.broadcastMode = track.getRacingString("broadcast-mode", cfg.getString("racing.broadcast-mode", "global")).toLowerCase();
         this.totalLaps = track.getRacingInt("laps", cfg.getInt("racing.laps", 3));
         this.pitPenaltySeconds = track.getRacingDouble("pit-penalty-seconds", cfg.getDouble("racing.pit-penalty-seconds", 5.0));
         this.falseStartPenaltySeconds = track.getRacingDouble("false-start-penalty-seconds", cfg.getDouble("racing.false-start-penalty-seconds", 3.0));
@@ -193,16 +196,19 @@ public class RaceManager {
         this.abShowCP = cfg.getBoolean("racing.ui.actionbar.show-checkpoints", true);
         this.abShowTime = cfg.getBoolean("racing.ui.actionbar.show-time", true);
         this.abShowPit = cfg.getBoolean("racing.ui.actionbar.show-pitstops", true);
-        this.lobbyEnabled = cfg.getBoolean("racing.lobby.enabled", false);
-        this.lobbyReturnOnLeave = cfg.getBoolean("racing.lobby.return-on-leave", true);
-        long configuredBackWindowSeconds = Math.max(1L, cfg.getLong("racing.lobby.back-window-seconds", 180L));
+        // Lobby configuration
+        ConfigurationSection trackLobby = track.getRacingConfigurationSection("lobby", cfg.getConfigurationSection("racing.lobby"));
+        if (trackLobby == null) trackLobby = new org.bukkit.configuration.MemoryConfiguration();
+        this.lobbyEnabled = trackLobby.getBoolean("enabled", false);
+        this.lobbyReturnOnLeave = trackLobby.getBoolean("return-on-leave", true);
+        long configuredBackWindowSeconds = Math.max(1L, trackLobby.getLong("back-window-seconds", 180L));
         this.backWindowMillis = configuredBackWindowSeconds * 1000L;
-        this.lobbyWorld = cfg.getString("racing.lobby.world", "world");
-        this.lobbyX = cfg.getDouble("racing.lobby.x", 0.0);
-        this.lobbyY = cfg.getDouble("racing.lobby.y", 80.0);
-        this.lobbyZ = cfg.getDouble("racing.lobby.z", 0.0);
-        this.lobbyYaw = (float) cfg.getDouble("racing.lobby.yaw", 0.0);
-        this.lobbyPitch = (float) cfg.getDouble("racing.lobby.pitch", 0.0);
+        this.lobbyWorld = trackLobby.getString("world", "world");
+        this.lobbyX = trackLobby.getDouble("x", 0.0);
+        this.lobbyY = trackLobby.getDouble("y", 80.0);
+        this.lobbyZ = trackLobby.getDouble("z", 0.0);
+        this.lobbyYaw = (float) trackLobby.getDouble("yaw", 0.0);
+        this.lobbyPitch = (float) trackLobby.getDouble("pitch", 0.0);
     }
 
     // Allow updating mandatory pitstops at runtime from Setup
@@ -609,13 +615,13 @@ public class RaceManager {
         if (!practiceMode) {
             try {
                 es.jaie55.boatracing.reward.RewardManager rm = plugin.getRewardManager();
-                if (rm != null && rm.isEnabled()) {
+                if (rm != null && rm.isEnabled(track)) {
                     String trackName = getTrackName();
                     List<Map.Entry<UUID, Long>> results = new ArrayList<>();
                     for (Map.Entry<UUID, RaceState> e : finishers) {
                         results.add(new AbstractMap.SimpleEntry<>(e.getKey(), timeFor(e.getValue())));
                     }
-                    rm.giveRewards(results, trackName, totalLaps);
+                    rm.giveRewards(results, trackName, totalLaps, track);
                 }
             } catch (Exception ex) {
                 plugin.getLogger().warning("Failed to distribute rewards: " + ex.getMessage());
@@ -1384,6 +1390,7 @@ public class RaceManager {
                     restorePreviousScoreboard(p, prev);
                 }
             }
+            p.sendActionBar(net.kyori.adventure.text.Component.empty());
         } catch (Exception ignored) {
             plugin.getLogger().finer("Failed to restore previous scoreboard for " + p.getName() + ": " + ignored.getMessage());
         }
@@ -2565,7 +2572,17 @@ public class RaceManager {
     // Number hiding helpers removed by request
 
     private void broadcast(String msg) {
-        for (Player p : Bukkit.getOnlinePlayers()) p.sendMessage(msg);
+        boolean globalMode = this.registering || "global".equalsIgnoreCase(this.broadcastMode);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            // When broadcast is set to racers and the player is not a racer skip.
+            UUID playerId = p.getUniqueId();
+            if (!globalMode
+                    && !states.containsKey(playerId)
+                    && !countdownLockedParticipants.contains(playerId)) {
+                continue;
+            }
+            p.sendMessage(msg);
+        }
     }
 
     // removed unused sendTo helper
