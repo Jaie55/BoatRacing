@@ -104,27 +104,27 @@ public class UpdateChecker {
 
     private String normalizeVersion(String v) {
         if (v == null || v.isEmpty()) return null;
-        // strip starting 'v' if present
         if (v.startsWith("v") || v.startsWith("V")) v = v.substring(1);
-        // only semver-like x.y.z
-        if (!v.matches("\\d+\\.\\d+\\.\\d+")) return v; // allow non-strict tags as-is
         return v;
     }
 
     private boolean isNewer(String a, String b) {
-        // returns true if a > b in semver; fallback to string compare
         if (a == null || b == null) return false;
-        if (a.matches("\\d+\\.\\d+\\.\\d+") && b.matches("\\d+\\.\\d+\\.\\d+")) {
-            String[] as = a.split("\\.");
-            String[] bs = b.split("\\.");
-            for (int i = 0; i < 3; i++) {
-                int ai = Integer.parseInt(as[i]);
-                int bi = Integer.parseInt(bs[i]);
-                if (ai != bi) return ai > bi;
-            }
-            return false;
+        int[] na = parseVersion(a);
+        int[] nb = parseVersion(b);
+        for (int i = 0; i < 3; i++) {
+            if (na[i] != nb[i]) return na[i] > nb[i];
         }
-        return a.compareTo(b) > 0;
+        return false;
+    }
+
+    private int[] parseVersion(String v) {
+        int[] parts = new int[3];
+        String[] seg = v.split("\\.");
+        for (int i = 0; i < seg.length && i < 3; i++) {
+            try { parts[i] = Integer.parseInt(seg[i]); } catch (NumberFormatException ignored) { parts[i] = 0; }
+        }
+        return parts;
     }
 
     public boolean isChecked() { return checked; }

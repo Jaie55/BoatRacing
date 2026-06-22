@@ -1,5 +1,25 @@
 ﻿# Changelog
 
+## 26.2 — 22/06/2026
+### Added
+- **MC-MrBirdy added as co-author** for ongoing contributions across multiple releases.
+- **New version numbering**: aligned with Minecraft's new `YY.D.H` system (Year.Drop.Hotfix).
+- **Per-track broadcast mode**: `racing.broadcast-mode` accepts `global` or `racers`, overridable per track. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Per-track lobby configuration**: lobby settings can now be set per track for dedicated lobbies. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Per-track rewards configuration**: rewards can now be overridden per track. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+
+### Fixed
+- Action bar now properly cleared after forfeiting a race. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- Forfeit command correctly uses resolved player reference instead of raw sender. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- Lobby section null-safety when configuration is missing.
+- Reward section null-safety when configuration is missing.
+- Cross-track reward leakage prevented (stable global fallback).
+- Broadcast mode string comparison now uses `.equals()` instead of `==`.
+- `-p:` flag no longer interferes with downstream argument length checks.
+
+Core features contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+
 ## 1.1.6 — 17/06/2026
 ### Added
 - **Admin Race checkpoint editor UI**: added checkpoint management directly in the race admin inventory with paginated listing and in-place actions (add from selection, replace, remove, move up/down).

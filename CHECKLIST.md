@@ -1,5 +1,12 @@
 README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 
+## What to verify for 26.2
+- Broadcast mode (`racers`): verify broadcasts only reach participants, except during registration.
+- Per-track lobby: set a track-level lobby and confirm it overrides the global lobby.
+- Per-track rewards: set track-level rewards and confirm they apply instead of global rewards.
+- Admin `-p:` flag: verify `/boatracing stats -p:<player>` from console or admin works correctly.
+- Forfeit command: verify action bar is cleared after forfeiting.
+
 ## What to verify for 1.1.6
 - Forfeit command:
 	- Join a race and run `/boatracing race forfeit` while racing; verify you receive the forfeited confirmation and are teleported to lobby.

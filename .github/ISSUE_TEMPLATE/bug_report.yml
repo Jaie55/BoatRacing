@@ -14,8 +14,8 @@ body:
     id: plugin_version
     attributes:
       label: BoatRacing version
-      description: Example: 1.1.4
-      placeholder: 1.1.4
+      description: Example: 26.2
+      placeholder: 26.2
     validations:
       required: true
 

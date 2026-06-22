@@ -18,7 +18,8 @@
 
 An F1‒style ice boat racing plugin for Bukkit/Spigot (compatible with Paper/Purpur) with a clean, vanilla‒like GUI. Manage teams, configure tracks with the built‒in BoatRacing selection tool, run timed races with checkpoints, pit area penalties, and a guided setup wizard.
 
-> Status: Public release (1.1.6)
+> Status: Public release (26.2)
+> Authors: [Jaie55](https://github.com/Jaie55) & [MC-MrBirdy](https://github.com/MC-MrBirdy)
 
 <a id="snapshot-261-warning"></a>
 > [!WARNING]
@@ -30,6 +31,31 @@ An F1‒style ice boat racing plugin for Bukkit/Spigot (compatible with Paper/Pu
 See the changelog in [CHANGELOG.md](https://github.com/Jaie55/BoatRacing/blob/main/CHANGELOG.md).
 
 This is how we test the plugin to validate its behavior after each update: see the QA checklist in [CHECKLIST.md](CHECKLIST.md)
+
+<details>
+<summary><strong>What's New (26.2)</strong></summary>
+
+Version numbering aligned with Minecraft's YY.D.H system. Per-track configuration, broadcast mode, and admin targeting release:
+
+Added:
+- **New version numbering**: aligned with Minecraft's new `YY.D.H` system (Year.Drop.Hotfix).
+- **Per-track broadcast mode**: `racing.broadcast-mode` accepts `global` or `racers`, overridable per track.
+- **Per-track lobby configuration**: lobby settings can now be set per track for dedicated lobbies.
+- **Per-track rewards configuration**: rewards can now be overridden per track.
+- **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`.
+
+Fixed:
+- Action bar now properly cleared after forfeiting a race.
+- Forfeit command correctly uses resolved player reference instead of raw sender.
+- Lobby section null-safety when configuration is missing.
+- Reward section null-safety when configuration is missing.
+- Cross-track reward leakage prevented (stable global fallback).
+- Broadcast mode string comparison now uses `.equals()` instead of `==`.
+- `-p:` flag no longer interferes with downstream argument length checks.
+
+Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+
+</details>
 
 <details>
 <summary><strong>What's New (1.1.6)</strong></summary>

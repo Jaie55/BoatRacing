@@ -5,6 +5,7 @@ description: An F1‑style ice boat racing plugin for Paper with a clean, vanill
 api-version: '1.21'
 authors:
   - Jaie55
+  - MC-MrBirdy
 website: https://modrinth.com/plugin/boatracing
 # Optional flags for Paper/Folia
 folia-supported: true
