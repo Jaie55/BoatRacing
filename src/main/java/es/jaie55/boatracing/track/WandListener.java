@@ -85,7 +85,7 @@ public class WandListener implements Listener {
             BlockData lit = Bukkit.createBlockData("minecraft:redstone_lamp[lit=true]");
             lamp.setBlockData(lit);
         } catch (Exception ignored) {}
-        Particle particle = added ? Particle.HAPPY_VILLAGER : Particle.ELECTRIC_SPARK;
+        Particle particle = added ? Particle.VILLAGER_HAPPY : Particle.SMOKE_NORMAL;
         lamp.getWorld().spawnParticle(particle, lamp.getLocation().add(0.5, 0.5, 0.5), 12, 0.4, 0.4, 0.4, 0);
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             try { lamp.setBlockData(original); } catch (Exception ignored) {}
