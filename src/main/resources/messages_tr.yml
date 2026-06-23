@@ -265,7 +265,7 @@ setup:
   light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
   light-fail: "&cIşık eklenemedi. Redstone Lambası kullan, yinelenenlerden kaçın ve en fazla 5."
   light-added: "&aBaşlangıç ışığı eklendi &7({x}, {y}, {z})"
-  light-removed: "&aRemoved start light &7({x}, {y}, {z})"
+  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
   light-not-found: "&cNo start light found at that position."
   light-removed: "&aBaşlangıç ışığı &f#{slot} kaldırıldı &7({x}, {y}, {z} - {world})"
   removelight-invalid: "&cGeçersiz başlangıç ışığı indeksi. Aralık: 1-{max}"

@@ -265,7 +265,7 @@ setup:
   light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
   light-fail: "&cImpossibile aggiungere il semaforo. Usa una Redstone Lamp, evita duplicati e max 5."
   light-added: "&aAggiunto semaforo di partenza &7({x}, {y}, {z})"
-  light-removed: "&aRemoved start light &7({x}, {y}, {z})"
+  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
   light-not-found: "&cNo start light found at that position."
   light-removed: "&aSemaforo di partenza &f#{slot} rimosso &7({x}, {y}, {z} in {world})"
   removelight-invalid: "&cIndice semaforo non valido. Intervallo: 1-{max}"

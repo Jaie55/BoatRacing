@@ -54,7 +54,7 @@ Fixed:
 - `-p:` flag no longer interferes with downstream argument length checks.
 - **Setup wizard**: `setlaps` correctly shows and persists custom lap values. Start lights added/removed via Shift+Click with wand. Lap count shown in setup summary.
 
-Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+Per-track config, broadcast mode, admin targeting, forfeit and action bar fixes contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 
 </details>
 

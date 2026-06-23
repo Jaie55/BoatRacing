@@ -27,7 +27,6 @@ public class UpdateChecker {
     private volatile int behindCount = 0;
     private volatile boolean checked = false;
     private volatile boolean error = false;
-    private volatile boolean errorLoggedOnce = false;
 
     // Modrinth JSON: array of versions, each with "version_number"
     private static final Pattern VERSION_NUMBER_PATTERN = Pattern.compile("\"version_number\"\\s*:\\s*\"([^\"]+)\"");
@@ -55,10 +54,7 @@ public class UpdateChecker {
                 checkNow();
             } catch (Exception ex) {
                 error = true;
-                if (!errorLoggedOnce) {
-                    plugin.getLogger().warning("Update check failed: " + ex.getMessage());
-                    errorLoggedOnce = true;
-                }
+                plugin.getLogger().warning("Update check failed: " + ex.getMessage());
             }
         });
     }

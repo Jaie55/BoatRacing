@@ -264,7 +264,7 @@ setup:
   light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
   light-fail: "&c조명을 추가할 수 없습니다. 레드스톤 랜프를 사용하고, 중복을 피하고, 최대 5개입니다."
   light-added: "&a스타트 조명 추가됨 &7({x}, {y}, {z})"
-  light-removed: "&aRemoved start light &7({x}, {y}, {z})"
+  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
   light-not-found: "&cNo start light found at that position."
   light-removed: "&a스타트 조명 &f#{slot}&a 제거됨 &7({x}, {y}, {z} in {world})"
   removelight-invalid: "&c잘못된 조명 번호입니다. 범위: 1-{max}"

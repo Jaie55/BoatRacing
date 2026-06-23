@@ -265,7 +265,7 @@ setup:
   light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
   light-fail: "&cKunde inte lägga till ljus. Använd en Redstone Lamp, undvik dubbletter och max 5."
   light-added: "&aLade till startljus &7({x}, {y}, {z})"
-  light-removed: "&aRemoved start light &7({x}, {y}, {z})"
+  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
   light-not-found: "&cNo start light found at that position."
   light-removed: "&aTog bort startljus &f#{slot} &7({x}, {y}, {z} i {world})"
   removelight-invalid: "&cOgiltigt startljusindex. Intervall: 1-{max}"

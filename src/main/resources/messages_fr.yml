@@ -264,7 +264,7 @@ setup:
   light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
   light-fail: "&cImpossible d'ajouter le feu. Utilisez une lampe Redstone, évitez les doublons, max 5."
   light-added: "&aFeu de départ ajouté &7({x}, {y}, {z})"
-  light-removed: "&aRemoved start light &7({x}, {y}, {z})"
+  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
   light-not-found: "&cNo start light found at that position."
   light-removed: "&aFeu de départ &f#{slot} supprimé &7({x}, {y}, {z} dans {world})"
   removelight-invalid: "&cIndex de feu de départ invalide. Plage : 1-{max}"

@@ -21,7 +21,7 @@
 - **Start lights UX**: Shift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove. No more `/addlight` command needed.
 - **Setup summary**: laps count now included in the final setup wizard summary.
 
-Core features contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+Per-track config, broadcast mode, admin targeting, forfeit and action bar fixes contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 
 ## 1.1.6 — 17/06/2026
 ### Added

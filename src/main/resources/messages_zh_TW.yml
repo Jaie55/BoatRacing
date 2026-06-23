@@ -264,7 +264,7 @@ setup:
   light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
   light-fail: "&c無法新增起跑燈。請使用紅石燈，避免重複，且最多 5 個。"
   light-added: "&a已新增起跑燈 &7（{x}, {y}, {z}）"
-  light-removed: "&aRemoved start light &7({x}, {y}, {z})"
+  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
   light-not-found: "&cNo start light found at that position."
   light-removed: "&a已刪除起跑燈 &f#{slot} &7（{x}, {y}, {z}，{world}）"
   removelight-invalid: "&c起跑燈編號無效。範圍：1-{max}"

@@ -182,7 +182,7 @@ public class SetupWizard {
                 p.sendMessage(Text.c(" "));
                 p.sendMessage(Text.colorize(plugin.msg().get("setup.wizard.step.lights")));
                 p.sendMessage(Text.c(plugin.msg().get("setup.wizard.lights.added", "count", t.getLights().size()) + " &8• ")
-                    .append(Text.colorize(plugin.msg().get("setup.wizard.lights.hint")))
+                    .append(Text.c(Text.colorize(plugin.msg().get("setup.wizard.lights.hint"))))
                     .append(Text.c(" &8• "))
                     .append(Text.suggest(plugin.msg().get("setup.wizard.lights.clear-button"),"/boatracing setup clearlights")));
                 nav(p, s);

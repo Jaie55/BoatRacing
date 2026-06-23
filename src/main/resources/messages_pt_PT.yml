@@ -264,7 +264,7 @@ setup:
   light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
   light-fail: "&cNao foi possivel adicionar a luz. Use uma Redstone Lamp, evite duplicatas e maximo 5."
   light-added: "&aLuz de partida adicionada &7({x}, {y}, {z})"
-  light-removed: "&aRemoved start light &7({x}, {y}, {z})"
+  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
   light-not-found: "&cNo start light found at that position."
   light-removed: "&aLuz de partida &f#{slot} removida &7({x}, {y}, {z} em {world})"
   removelight-invalid: "&cIndice de luz invalido. Intervalo: 1-{max}"

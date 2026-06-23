@@ -39,7 +39,7 @@ public class WandListener implements Listener {
             } else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 boolean ok = t.removeLightAt(e.getClickedBlock());
                 if (ok) {
-                    e.getPlayer().sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.light-removed",
+                    e.getPlayer().sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.light-removed-pos",
                         "x", e.getClickedBlock().getX(),
                         "y", e.getClickedBlock().getY(),
                         "z", e.getClickedBlock().getZ())));
