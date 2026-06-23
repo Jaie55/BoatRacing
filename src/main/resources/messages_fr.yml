@@ -239,6 +239,7 @@ setup:
     wand-name: "&6Outil de sélection BoatRacing"
     wand-lore-left: "&eClic gauche : &fmarquer le Coin A"
     wand-lore-right: "&eClic droit : &fmarquer le Coin B"
+    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
   error:
     setlaps: "&cUtilisation : /{label} setup setlaps <nombre>"
     setpitstops: "&cUtilisation : /{label} setup setpitstops <nombre>"

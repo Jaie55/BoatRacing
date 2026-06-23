@@ -240,6 +240,7 @@ setup:
     wand-name: "&6BoatRacing Seçim Aracı"
     wand-lore-left: "&eSol tık: &fKöşe A'yı işaretle"
     wand-lore-right: "&eSağ tık: &fKöşe B'yi işaretle"
+    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
   error:
     setlaps: "&cKullanım: /{label} setup setlaps <number>"
     setpitstops: "&cKullanım: /{label} setup setpitstops <number>"

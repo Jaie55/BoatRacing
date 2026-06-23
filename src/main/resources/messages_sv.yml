@@ -240,6 +240,7 @@ setup:
     wand-name: "&6BoatRacing Markeringsverktyg"
     wand-lore-left: "&eVänsterklick: &fmarkera Hörn A"
     wand-lore-right: "&eHögerklick: &fmarkera Hörn B"
+    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
   error:
     setlaps: "&cAnvändning: /{label} setup setlaps <number>"
     setpitstops: "&cAnvändning: /{label} setup setpitstops <number>"

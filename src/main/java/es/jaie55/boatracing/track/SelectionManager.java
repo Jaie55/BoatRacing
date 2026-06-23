@@ -47,10 +47,12 @@ public class SelectionManager {
             String wandName = resolveWandMessage(plugin, "setup.wand-name", "setup.usage.wand-name", "&6BoatRacing Selection Tool");
             String loreLeft = resolveWandMessage(plugin, "setup.wand-lore-left", "setup.usage.wand-lore-left", "&eLeft-click: &fmark Corner A");
             String loreRight = resolveWandMessage(plugin, "setup.wand-lore-right", "setup.usage.wand-lore-right", "&eRight-click: &fmark Corner B");
+            String loreLights = resolveWandMessage(plugin, "setup.wand-lore-lights", "setup.usage.wand-lore-lights", "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light");
             Component name = Text.item(wandName);
         java.util.List<String> loreLines = java.util.Arrays.asList(
             loreLeft,
-            loreRight
+            loreRight,
+            loreLights
         );
             meta.displayName(name);
             meta.lore(Text.lore(loreLines));

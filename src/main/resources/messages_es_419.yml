@@ -239,6 +239,7 @@ setup:
     wand-name: "&6Herramienta de selección de BoatRacing"
     wand-lore-left: "&eClick izquierdo: &fmarca Esquina A"
     wand-lore-right: "&eClick derecho: &fmarca Esquina B"
+    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
   error:
     setlaps: "&cUso: /{label} setup setlaps <número>"
     setpitstops: "&cUso: /{label} setup setpitstops <número>"

@@ -236,6 +236,7 @@ setup:
     wand-name: "&6BoatRacing Selection Tool"
     wand-lore-left: "&eLeft-click: &fmark Corner A"
     wand-lore-right: "&eRight-click: &fmark Corner B"
+    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
   error:
     setlaps: "&cUsage: /{label} setup setlaps <number>"
     setpitstops: "&cUsage: /{label} setup setpitstops <number>"

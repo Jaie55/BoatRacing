@@ -7,7 +7,7 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 - Admin `-p:` flag: verify `/boatracing stats -p:<player>` from console or admin works correctly.
 - Forfeit command: verify action bar is cleared after forfeiting.
 - Setup wizard `setlaps`: set laps to a custom value (e.g. 2), verify the wizard prompt shows the correct value and the summary includes it.
-- Start lights Shift+Click: Shift+Left Click a Redstone Lamp with wand to add it, Shift+Right Click to remove it. Verify feedback messages and wizard integration.
+- Start lights Shift+Click: Shift+Left Click a Redstone Lamp with wand to add (lamp lights up + green particles), Shift+Right Click to remove (red sparks). Verify wand lore shows instructions. Verify feedback messages and wizard integration.
 - Setup summary: verify the final wizard summary shows the correct lap count.
 
 ## What to verify for 1.1.6
