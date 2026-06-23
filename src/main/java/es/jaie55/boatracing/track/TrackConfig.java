@@ -473,6 +473,19 @@ public class TrackConfig {
         for (LightPos lp : lights) if (lp.world.equals(w) && lp.x==x && lp.y==y && lp.z==z) return false;
         lights.add(new LightPos(w, x, y, z)); save(); return true;
     }
+    public boolean removeLightAt(org.bukkit.block.Block b) {
+        if (b == null) return false;
+        String w = b.getWorld().getName(); int x = b.getX(), y = b.getY(), z = b.getZ();
+        for (int i = 0; i < lights.size(); i++) {
+            LightPos lp = lights.get(i);
+            if (lp.world.equals(w) && lp.x==x && lp.y==y && lp.z==z) {
+                lights.remove(i);
+                save();
+                return true;
+            }
+        }
+        return false;
+    }
     public boolean hasFiveLights() { return lights.size() == 5; }
 
     // --- Per-track racing overrides ---

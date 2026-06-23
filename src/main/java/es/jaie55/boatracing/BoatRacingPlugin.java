@@ -84,6 +84,7 @@ public class BoatRacingPlugin extends JavaPlugin {
     public RewardManager getRewardManager() { return rewardManager; }
     public TrackConfig getTrackConfig() { return trackConfig; }
     public TrackLibrary getTrackLibrary() { return trackLibrary; }
+    public SetupWizard getSetupWizard() { return setupWizard; }
     public es.jaie55.boatracing.ui.AdminTracksGUI getTracksGUI() { return tracksGUI; }
     public es.jaie55.boatracing.ui.VoteGUI getVoteGUI() { return voteGUI; }
     public MessageManager msg() { return messageManager; }
@@ -1587,7 +1588,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                     case "addlight" -> {
                         org.bukkit.block.Block target = p.getTargetBlockExact(6);
                         if (target == null) {
-                            p.sendMessage(Text.colorize(prefix + msg().get("setup.light-look")));
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.light-look-cmd")));
                             p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                             return true;
                         }
@@ -1642,11 +1643,10 @@ public class BoatRacingPlugin extends JavaPlugin {
                         }
                         int laps = Math.max(1, Integer.parseInt(args[2]));
                         String tlName = trackLibrary != null ? trackLibrary.getCurrent() : null;
-                        if (tlName == null || tlName.isBlank()) {
-                            raceManager.setTotalLaps(laps);
-                        } else {
+                        raceManager.setTotalLaps(laps);
+                        if (tlName != null && !tlName.isBlank()) {
                             RaceManager activeSession = findRaceSessionByKey(normalizeTrackKey(tlName));
-                            if (activeSession != null) activeSession.setTotalLaps(laps);
+                            if (activeSession != null) activeSession.loadSettings();
                         }
                         trackConfig.setRacingOverride("laps", laps);
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.laps-set", "laps", laps, "track_info", (tlName != null ? msg().get("setup.track-info", "track", tlName) : ""))));

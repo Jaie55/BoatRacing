@@ -182,7 +182,7 @@ public class SetupWizard {
                 p.sendMessage(Text.c(" "));
                 p.sendMessage(Text.colorize(plugin.msg().get("setup.wizard.step.lights")));
                 p.sendMessage(Text.c(plugin.msg().get("setup.wizard.lights.added", "count", t.getLights().size()) + " &8• ")
-                    .append(Text.suggest(plugin.msg().get("setup.wizard.lights.btn-add-light"),"/boatracing setup addlight"))
+                    .append(Text.colorize(plugin.msg().get("setup.wizard.lights.hint")))
                     .append(Text.c(" &8• "))
                     .append(Text.suggest(plugin.msg().get("setup.wizard.lights.clear-button"),"/boatracing setup clearlights")));
                 nav(p, s);
@@ -287,12 +287,14 @@ public class SetupWizard {
             return;
         }
         p.sendMessage(Text.colorize(plugin.msg().get("setup.wizard.complete")));
+        int laps = plugin.getRaceManager().getTotalLaps();
         p.sendMessage(Text.colorize(plugin.msg().get("setup.summary",
             "starts", t.getStarts().size(),
             "finish", t.getFinish()!=null ? plugin.msg().get("setup.status-yes") : plugin.msg().get("setup.status-no"),
             "pit", t.getPitlane()!=null ? plugin.msg().get("setup.status-yes") : plugin.msg().get("setup.status-no"),
             "checkpoints", t.getCheckpoints().size(),
-            "custom_slots", t.getCustomStartSlots().size())));
+            "custom_slots", t.getCustomStartSlots().size(),
+            "laps", laps)));
         String cur = (plugin.getTrackLibrary() != null && plugin.getTrackLibrary().getCurrent() != null) ? plugin.getTrackLibrary().getCurrent() : null;
         // If no named track is selected yet, use the in-memory unsaved track instead of a placeholder token.
         String openCmd = (cur != null && !cur.isBlank()) ? "/boatracing race open " + cur : "/boatracing race open unsaved";

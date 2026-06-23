@@ -52,6 +52,7 @@ Fixed:
 - Cross-track reward leakage prevented (stable global fallback).
 - Broadcast mode string comparison now uses `.equals()` instead of `==`.
 - `-p:` flag no longer interferes with downstream argument length checks.
+- **Setup wizard**: `setlaps` correctly shows and persists custom lap values. Start lights added/removed via Shift+Click with wand. Lap count shown in setup summary.
 
 Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 
