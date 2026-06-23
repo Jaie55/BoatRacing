@@ -239,7 +239,7 @@ setup:
     wand-name: "&6BoatRacing 선택 도구"
     wand-lore-left: "&e왼쪽 클릭: &f모서리 A 표시"
     wand-lore-right: "&e오른쪽 클릭: &f모서리 B 표시"
-    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
+    wand-lore-lights: "&eShift+좌클릭: &f조명 추가 &8| &eShift+우클릭: &f조명 제거"
   error:
     setlaps: "&c사용법: /{label} setup setlaps <number>"
     setpitstops: "&c사용법: /{label} setup setpitstops <number>"

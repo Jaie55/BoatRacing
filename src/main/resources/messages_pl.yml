@@ -239,7 +239,7 @@ setup:
     wand-name: "&6Narzędzie Wyboru BoatRacing"
     wand-lore-left: "&eLewy klik: &fzaznach Narożnik A"
     wand-lore-right: "&ePrawy klik: &fzaznach Narożnik B"
-    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
+    wand-lore-lights: "&eShift+Lewy: &fdodaj światło &8| &eShift+Prawy: &fusuń światło"
   error:
     setlaps: "&cUżycie: /{label} setup setlaps <number>"
     setpitstops: "&cUżycie: /{label} setup setpitstops <number>"

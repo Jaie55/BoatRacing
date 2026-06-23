@@ -239,7 +239,7 @@ setup:
     wand-name: "&6BoatRacing 選區工具"
     wand-lore-left: "&e左鍵點擊：&f標記角落 A"
     wand-lore-right: "&e右鍵點擊：&f標記角落 B"
-    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
+    wand-lore-lights: "&eShift+左鍵: &f新增燈 &8| &eShift+右鍵: &f移除燈"
   error:
     setlaps: "&c用法：/{label} setup setlaps <數字>"
     setpitstops: "&c用法：/{label} setup setpitstops <數字>"

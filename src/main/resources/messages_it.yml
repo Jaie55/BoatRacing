@@ -240,7 +240,7 @@ setup:
     wand-name: "&6Strumento di selezione BoatRacing"
     wand-lore-left: "&eClick sinistro: &fsegna Angolo A"
     wand-lore-right: "&eClick destro: &fsegna Angolo B"
-    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
+    wand-lore-lights: "&eShift+Sinistro: &faggiungi luce &8| &eShift+Destro: &frimuovi luce"
   error:
     setlaps: "&cUso: /{label} setup setlaps <number>"
     setpitstops: "&cUso: /{label} setup setpitstops <number>"

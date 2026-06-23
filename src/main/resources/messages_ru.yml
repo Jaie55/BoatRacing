@@ -239,7 +239,7 @@ setup:
     wand-name: "&6Инструмент выделения BoatRacing"
     wand-lore-left: "&eЛКМ: &fПометить угол A"
     wand-lore-right: "&eПКМ: &fПометить угол B"
-    wand-lore-lights: "&eShift+Left: &fadd light &8| &eShift+Right: &fremove light"
+    wand-lore-lights: "&eShift+ЛКМ: &fдобавить лампу &8| &eShift+ПКМ: &fубрать лампу"
   error:
     setlaps: "&cИспользование: /{label} setup setlaps <число>"
     setpitstops: "&cИспользование: /{label} setup setpitstops <число>"
