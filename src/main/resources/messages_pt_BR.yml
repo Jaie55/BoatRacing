@@ -312,6 +312,7 @@ setup:
     custom-starts: "&7 - &fPosicoes de largada personalizadas: &e{info}"
     checkpoints: "&7 - &fPontos de controle: &e{count}"
     pitstops: "&7 - &fPit stops obrigatorios: &e{count}"
+    laps: "&7 - &fVoltas: &e{count}"
     overrides-header: "&7 - &fSobrescritas da pista:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} configurado(s)"
@@ -349,9 +350,9 @@ setup:
       wand-prompt: "&7Precisa da varinha? "
       btn-set-finish: "&a[Definir chegada]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+Clique esquerdo na lâmpada para adicionar, direito para remover."
       added: "&7Adicionadas: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Varinha: Shift+Clique nas lâmpadas"
       clear-button: "&b[Limpar luzes]"
     pit:
       description: "&fDefina pits padrao/por equipe se necessario. &7(Opcional)"

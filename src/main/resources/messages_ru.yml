@@ -312,6 +312,7 @@ setup:
     custom-starts: "&7 - &fПользовательские старты: &e{info}"
     checkpoints: "&7 - &fКонтрольные точки: &e{count}"
     pitstops: "&7 - &fОбязательные пит-стопы: &e{count}"
+    laps: "&7 - &fКруги: &e{count}"
     overrides-header: "&7 - &fПереопределения трассы:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} настроено"
@@ -349,9 +350,9 @@ setup:
       wand-prompt: "&7Нужен инструмент? "
       btn-set-finish: "&a[Установить финиш]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+ЛКМ на лампу — добавить, Shift+ПКМ — убрать."
       added: "&7Добавлено: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Жезл: Shift+Клик на лампы"
       clear-button: "&b[Очистить огни]"
     pit:
       description: "&fПри необходимости настройте пит по умолчанию/для команд. &7(Необязательно)"

@@ -309,6 +309,7 @@ setup:
     custom-starts: "&7 - &fCustom start positions: &e{info}"
     checkpoints: "&7 - &fCheckpoints: &e{count}"
     pitstops: "&7 - &fMandatory pit stops: &e{count}"
+    laps: "&7 - &fLaps: &e{count}"
     overrides-header: "&7 - &fTrack overrides:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} configured"

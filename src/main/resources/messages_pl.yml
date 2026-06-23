@@ -312,6 +312,7 @@ setup:
     custom-starts: "&7 - &fNiestandardowe pozycje startowe: &e{info}"
     checkpoints: "&7 - &fPunkty kontrolne: &e{count}"
     pitstops: "&7 - &fObowiązkowe postoje w boksach: &e{count}"
+    laps: "&7 - &fOkrążenia: &e{count}"
     overrides-header: "&7 - &fPrzesłonięcia toru:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} skonfigurowane"
@@ -349,9 +350,9 @@ setup:
       wand-prompt: "&7Potrzebujesz narzędzia? "
       btn-set-finish: "&a[Ustaw metę]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+Lewy klik na lampę, aby dodać, prawy, aby usunąć."
       added: "&7Dodano: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Różdżka: Shift+Klik na lampy"
       clear-button: "&b[Wyczyść światła]"
     pit:
       description: "&fUstaw domyślne/zespołowe boksy, jeśli potrzeba. &7(Opcjonalnie)"

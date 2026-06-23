@@ -313,6 +313,7 @@ setup:
     custom-starts: "&7 - &fÖzel başlangıç konumları: &e{info}"
     checkpoints: "&7 - &fKontrol noktaları: &e{count}"
     pitstops: "&7 - &fZorunlu pit stop: &e{count}"
+    laps: "&7 - &fTurlar: &e{count}"
     overrides-header: "&7 - &fParkur geçersiz kılmaları:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} yapılandırıldı"
@@ -350,9 +351,9 @@ setup:
       wand-prompt: "&7Asaya mı ihtiyacın var? "
       btn-set-finish: "&a[Bitişi ayarla]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+Sol tık lamba ekle, Sağ tık kaldır."
       added: "&7Eklendi: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Asa: Shift+Tık ile lamba ekle/çıkar"
       clear-button: "&b[Işıkları temizle]"
     pit:
       description: "&fGerekirse varsayılan/takıma özel pitleri ayarla. &7(İsteğe bağlı)"

@@ -1742,12 +1742,13 @@ public class BoatRacingPlugin extends JavaPlugin {
                         p.sendMessage(Text.colorize(msg().get("setup.show.track", "track", tname)));
                         p.sendMessage(Text.colorize(msg().get("setup.show.starts", "count", starts)));
                         p.sendMessage(Text.colorize(msg().get("setup.show.lights", "count", lights)));
-                        p.sendMessage(Text.colorize(msg().get("setup.show.finish", "status", msg().get(hasFinish ? "general.yes" : "general.no"))));
-                        p.sendMessage(Text.colorize(msg().get("setup.show.pit-default", "status", msg().get(hasPit ? "general.yes" : "general.no"))));
+                        p.sendMessage(Text.colorize(msg().get("setup.show.finish", "status", msg().get(hasFinish ? "setup.status-yes" : "setup.status-no"))));
+                        p.sendMessage(Text.colorize(msg().get("setup.show.pit-default", "status", msg().get(hasPit ? "setup.status-yes" : "setup.status-no"))));
                         p.sendMessage(Text.colorize(msg().get("setup.show.pit-teams", "info", (teamPitCount > 0 ? msg().get("setup.show.info-configured", "count", teamPitCount) : msg().get("general.none")))));
                         p.sendMessage(Text.colorize(msg().get("setup.show.custom-starts", "info", (customStarts > 0 ? msg().get("setup.show.info-players", "count", customStarts) : msg().get("general.none")))));
                         p.sendMessage(Text.colorize(msg().get("setup.show.checkpoints", "count", cps)));
                         p.sendMessage(Text.colorize(msg().get("setup.show.pitstops", "count", raceManager.getMandatoryPitstops())));
+                        p.sendMessage(Text.colorize(msg().get("setup.show.laps", "count", raceManager.getTotalLaps())));
                         // Show per-track racing overrides if any
                         java.util.Map<String, Object> overrides = trackConfig.getRacingOverrides();
                         if (!overrides.isEmpty()) {

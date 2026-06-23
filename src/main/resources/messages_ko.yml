@@ -312,6 +312,7 @@ setup:
     custom-starts: "&7 - &f커스텀 스타트 위치: &e{info}"
     checkpoints: "&7 - &f체크포인트: &e{count}"
     pitstops: "&7 - &f필수 피트 정차: &e{count}"
+    laps: "&7 - &f랩: &e{count}"
     overrides-header: "&7 - &f트랙 재정의:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count}개 설정됨"
@@ -349,9 +350,9 @@ setup:
       wand-prompt: "&7지팡이가 필요하신가요? "
       btn-set-finish: "&a[피니시 설정]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+좌클릭으로 조명 추가, 우클릭으로 제거."
       added: "&7추가됨: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7완드: Shift+클릭으로 조명 조작"
       clear-button: "&b[조명 제거]"
     pit:
       description: "&f필요하면 기본/팀 피트를 설정합니다. &7(선택)"

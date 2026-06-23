@@ -313,6 +313,7 @@ setup:
     custom-starts: "&7 - &fBenutzerdefinierte Startpositionen: &e{info}"
     checkpoints: "&7 - &fCheckpoints: &e{count}"
     pitstops: "&7 - &fPflicht-Boxenstopps: &e{count}"
+    laps: "&7 - &fRunden: &e{count}"
     overrides-header: "&7 - &fStrecken-Overrides:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} konfiguriert"
@@ -350,9 +351,9 @@ setup:
       wand-prompt: "&7Brauchst du den Stab? "
       btn-set-finish: "&a[Ziel setzen]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+Klick links auf Lampen zum Hinzufügen, rechts zum Entfernen."
       added: "&7Hinzugefügt: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Varita: Shift+Klick auf Lampen"
       clear-button: "&b[Lichter löschen]"
     pit:
       description: "&fSetze bei Bedarf Standard-/Team-Boxen. &7(Optional)"

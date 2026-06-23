@@ -313,6 +313,7 @@ setup:
     custom-starts: "&7 - &fPosizioni di partenza personalizzate: &e{info}"
     checkpoints: "&7 - &fCheckpoint: &e{count}"
     pitstops: "&7 - &fPit stop obbligatori: &e{count}"
+    laps: "&7 - &fGiri: &e{count}"
     overrides-header: "&7 - &fOverride pista:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} configurati"
@@ -350,9 +351,9 @@ setup:
       wand-prompt: "&7Ti serve la wand? "
       btn-set-finish: "&a[Imposta arrivo]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+Clic sinistro su lampada per aggiungere, destro per rimuovere."
       added: "&7Aggiunti: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Bacchetta: Shift+Clic su lampade"
       clear-button: "&b[Pulisci semafori]"
     pit:
       description: "&fImposta pit predefiniti/team se necessario. &7(Opzionale)"

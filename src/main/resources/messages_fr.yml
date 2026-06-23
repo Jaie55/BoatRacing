@@ -312,6 +312,7 @@ setup:
     custom-starts: "&7 - &fPositions de départ personnalisées : &e{info}"
     checkpoints: "&7 - &fCheckpoints : &e{count}"
     pitstops: "&7 - &fArrêts au stand obligatoires : &e{count}"
+    laps: "&7 - &fTours: &e{count}"
     overrides-header: "&7 - &fSurcharges du circuit :"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} configuré(s)"
@@ -349,9 +350,9 @@ setup:
       wand-prompt: "&7Besoin de la baguette ? "
       btn-set-finish: "&a[Définir arrivée]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+Clic gauche sur lampe pour ajouter, droit pour retirer."
       added: "&7Ajouté(s) : &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Baguette: Shift+Clic sur lampes"
       clear-button: "&b[Effacer feux]"
     pit:
       description: "&fDéfinissez les stands par défaut/équipe si besoin. &7(Optionnel)"

@@ -312,6 +312,7 @@ setup:
     custom-starts: "&7 - &fPosiciones de salida personalizadas: &e{info}"
     checkpoints: "&7 - &fCheckpoints: &e{count}"
     pitstops: "&7 - &fParadas obligatorias en el pit: &e{count}"
+    laps: "&7 - &fVueltas: &e{count}"
     overrides-header: "&7 - &fAnulaciones de pista:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} configurado(s)"
@@ -349,9 +350,9 @@ setup:
       wand-prompt: "&7¿Necesitas la varita? "
       btn-set-finish: "&a[Establecer meta]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+Izq en lámparas para añadir, Shift+Der para quitar."
       added: "&7Añadido: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Varita: Shift+Click en lámparas"
       clear-button: "&b[Limpiar luces]"
     pit:
       description: "&fConfigura pit por defecto/equipo si lo necesitas. &7(Opcional)"

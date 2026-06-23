@@ -312,6 +312,7 @@ setup:
     custom-starts: "&7 - &f自订出发位置：&e{info}"
     checkpoints: "&7 - &f检查点：&e{count}"
     pitstops: "&7 - &f强制维修站停靠：&e{count}"
+    laps: "&7 - &f圈数: &e{count}"
     overrides-header: "&7 - &f赛道覆写设定："
     override-entry: "&7   &f{key}：&e{value}"
     info-configured: "{count} 已设定"
@@ -349,9 +350,9 @@ setup:
       wand-prompt: "&7需要选区工具？"
       btn-set-finish: "&a[设定终点]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+左键点击灯添加，右键移除。"
       added: "&7已新增：&f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7法杖: Shift+点击操作灯"
       clear-button: "&b[清除起跑灯]"
     pit:
       description: "&f可设定预设/队伍维修站。&7（选填）"

@@ -313,6 +313,7 @@ setup:
     custom-starts: "&7 - &fAnpassade startpositioner: &e{info}"
     checkpoints: "&7 - &fKontrollpunkter: &e{count}"
     pitstops: "&7 - &fObligatoriska pitstopp: &e{count}"
+    laps: "&7 - &fVarv: &e{count}"
     overrides-header: "&7 - &fBanåsidosättningar:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} konfigurerade"
@@ -350,9 +351,9 @@ setup:
       wand-prompt: "&7Behöver du verktyget? "
       btn-set-finish: "&a[Sätt mål]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+Vänsterklicka lampa för att lägga till, höger för att ta bort."
       added: "&7Tillagda: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7Stav: Shift+Klicka på lampor"
       clear-button: "&b[Rensa ljus]"
     pit:
       description: "&fSätt standard-/lag-pit vid behov. &7(Valfritt)"

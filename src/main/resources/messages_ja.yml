@@ -313,6 +313,7 @@ setup:
     custom-starts: "&7 - &fカスタムスタート枠: &e{info}"
     checkpoints: "&7 - &fチェックポイント: &e{count}"
     pitstops: "&7 - &f必須ピットストップ: &e{count}"
+    laps: "&7 - &f周回数: &e{count}"
     overrides-header: "&7 - &fトラック上書き設定:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} 件設定済み"
@@ -350,9 +351,9 @@ setup:
       wand-prompt: "&7選択ツールが必要ですか? "
       btn-set-finish: "&a[フィニッシュを設定]"
     lights:
-      description: "&fShift+Left Click lamps to add, Shift+Right Click to remove."
+      description: "&fShift+左クリックでランプ追加、右クリックで削除。"
       added: "&7追加済み: &f{count}/5"
-      hint: "&7Use wand: Shift+Click lamps"
+      hint: "&7杖: Shift+クリックでランプ操作"
       clear-button: "&b[ライトをクリア]"
     pit:
       description: "&f必要に応じてデフォルト/チームピットを設定します。&7(任意)"
