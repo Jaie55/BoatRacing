@@ -68,6 +68,7 @@ race:
     practice: "&cAnvändning: /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&cAnvändning: /{label} race stop <track>"
+    restart: "&cUsage: /{label} race restart <track>"
     voteopen: "&cAnvändning: /{label} race voteopen [all|<track1> <track2> ...] [sekunder]"
     vote: "&cAnvändning: /{label} race vote <track>"
 
@@ -92,7 +93,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [sekunder] &7(Öppna kartomröstning; utan banor öppnas alla)"
     voteclose: "&7 - &f/{label} race voteclose &7(Stäng och avgör omröstningen nu)"
     back: "&7 - &f/{label} race back &7(Återvänd till din sparade plats innan du gick med i tävlingslobbyn)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop <track>"
+    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cOkänt race-underkommando. Använd /{label} race help"
 
   registration:
@@ -168,6 +169,7 @@ race:
 
   cancelled-general: "&cLoppet avbröts."
   cancelled-no-participants: "&7Loppet avbröts: inga anmälda deltagare."
+    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7Loppet avbröts: inga lediga startplatser."
 
   results:

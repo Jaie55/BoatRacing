@@ -1313,6 +1313,49 @@ public class BoatRacingPlugin extends JavaPlugin {
                         }
                         return true;
                     }
+                    case "restart" -> {
+                        if (args.length < 3) { p.sendMessage(Text.colorize(prefix + msg().get("race.usage.restart", "label", label))); return true; }
+                        String tname = args[2];
+                        if (!trackExistsForRace(tname)) { p.sendMessage(Text.colorize(prefix + msg().get("race.track-not-found", "track", tname))); return true; }
+                        RaceManager rm = getOrCreateRaceSession(tname);
+                        if (rm == null) { p.sendMessage(Text.colorize(prefix + msg().get("race.track-load-failed", "track", tname))); return true; }
+                        if (!canManageRace(p, rm.getTrack())) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                            p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                            return true;
+                        }
+                        // Save current participants before stopping
+                        java.util.Set<java.util.UUID> previousRegs = new java.util.LinkedHashSet<>(rm.getRegistered());
+                        java.util.Set<java.util.UUID> previousParts = new java.util.LinkedHashSet<>(rm.getParticipants());
+                        java.util.Set<java.util.UUID> allPrevious = new java.util.LinkedHashSet<>();
+                        allPrevious.addAll(previousRegs);
+                        allPrevious.addAll(previousParts);
+                        // Stop everything
+                        if (rm.isRegistering()) rm.cancelRegistration(false);
+                        if (rm.isRunning()) rm.cancelRace();
+                        // Reload track config and re-open registration
+                        rm.loadSettings();
+                        int laps = rm.getTotalLaps();
+                        if (!rm.openRegistration(laps, null)) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("race.cannot-open-registration")));
+                            return true;
+                        }
+                        // Re-register all previous participants
+                        int rejoined = 0;
+                        for (java.util.UUID id : allPrevious) {
+                            org.bukkit.entity.Player rp = org.bukkit.Bukkit.getPlayer(id);
+                            if (rp != null && rp.isOnline()) {
+                                if (rm.join(rp)) rejoined++;
+                            }
+                        }
+                        // Force-start the race
+                        if (!rm.forceStart()) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("race.already-running")));
+                            return true;
+                        }
+                        p.sendMessage(Text.colorize(prefix + msg().get("race.restarted", "track", tname, "count", String.valueOf(rejoined))));
+                        return true;
+                    }
                     case "status" -> {
                         if (args.length < 3) { p.sendMessage(Text.colorize(prefix + msg().get("race.usage.status", "label", label))); return true; }
                         String tname = args[2];
@@ -2394,7 +2437,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                     if (sender.hasPermission("boatracing.race.practice")) subs.add("practice");
                     if (sender.hasPermission("boatracing.race.admin") || sender.hasPermission("boatracing.setup")
                             || getConfig().getBoolean("player-actions.allow-player-race-start", false)) {
-                        subs.add("open"); subs.add("start"); subs.add("force"); subs.add("stop");
+                        subs.add("open"); subs.add("start"); subs.add("force"); subs.add("stop"); subs.add("restart");
                     }
                     if (sender.hasPermission("boatracing.race.voteopen") || sender.hasPermission("boatracing.race.admin") || sender.hasPermission("boatracing.setup")) {
                         subs.add("voteopen");

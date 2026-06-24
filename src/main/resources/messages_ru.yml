@@ -67,6 +67,7 @@ race:
     practice: "&cИспользование: /{label} race practice <трасса>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&cИспользование: /{label} race stop <трасса>"
+    restart: "&cUsage: /{label} race restart <track>"
     voteopen: "&cИспользование: /{label} race voteopen [all|<track1> <track2> ...] [секунды]"
     vote: "&cИспользование: /{label} race vote <трасса>"
 
@@ -91,7 +92,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [секунды] &7(Открыть голосование за карту)"
     voteclose: "&7 - &f/{label} race voteclose &7(Закрыть и сразу завершить голосование)"
     back: "&7 - &f/{label} race back &7(Вернуться в сохранённую точку до входа в лобби гонки)"
-    admin: "&8Администратор:&7 /{label} race open|start|force|stop <трасса>"
+    admin: "&8Администратор:&7 /{label} race open|start|force|stop|restart <трасса>"
   unknown-subcommand: "&cНеизвестная подкоманда. Используйте /{label} race help"
 
   registration:
@@ -167,6 +168,7 @@ race:
 
   cancelled-general: "&cГонка отменена."
   cancelled-no-participants: "&7Гонка отменена: нет зарегистрированных участников."
+    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7Гонка отменена: нет свободных стартовых мест."
 
   results:

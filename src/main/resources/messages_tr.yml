@@ -68,6 +68,7 @@ race:
     practice: "&cKullanım: /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&cKullanım: /{label} race stop <track>"
+    restart: "&cUsage: /{label} race restart <track>"
     voteopen: "&cKullanım: /{label} race voteopen [all|<track1> <track2> ...] [saniye]"
     vote: "&cKullanım: /{label} race vote <track>"
 
@@ -92,7 +93,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [saniye] &7(Harita oylamasını aç)"
     voteclose: "&7 - &f/{label} race voteclose &7(Oylamayı şimdi kapat ve sonuçlandır)"
     back: "&7 - &f/{label} race back &7(Yarış lobisine katılmadan önceki kayıtlı konumuna dön)"
-    admin: "&8Yönetici:&7 /{label} race open|start|force|stop <track>"
+    admin: "&8Yönetici:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cBilinmeyen race alt komutu. /{label} race help kullan"
 
   registration:
@@ -168,6 +169,7 @@ race:
 
   cancelled-general: "&cYarış iptal edildi."
   cancelled-no-participants: "&7Yarış iptal edildi: kayıtlı katılımcı yok."
+    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7Yarış iptal edildi: boş başlangıç slotu yok."
 
   results:

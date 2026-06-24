@@ -67,6 +67,7 @@ race:
     practice: "&c사용법: /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&c사용법: /{label} race stop <track>"
+    restart: "&cUsage: /{label} race restart <track>"
     voteopen: "&c사용법: /{label} race voteopen [all|<track1> <track2> ...] [초]"
     vote: "&c사용법: /{label} race vote <track>"
 
@@ -91,7 +92,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [초] &7(맵 투표 열기)"
     voteclose: "&7 - &f/{label} race voteclose &7(투표를 즉시 종료하고 결과 확정)"
     back: "&7 - &f/{label} race back &7(레이스 로비 입장 전 저장된 위치로 복귀)"
-    admin: "&8관리자:&7 /{label} race open|start|force|stop <track>"
+    admin: "&8관리자:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&c알 수 없는 레이스 부명령. /{label} race help를 사용하세요."
 
   registration:
@@ -167,6 +168,7 @@ race:
 
   cancelled-general: "&c레이스가 취소되었습니다."
   cancelled-no-participants: "&7레이스 취소: 등록된 참가자가 없습니다."
+    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7레이스 취소: 사용 가능한 스타트 슬롯이 없습니다."
 
   results:

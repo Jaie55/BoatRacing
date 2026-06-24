@@ -68,6 +68,7 @@ race:
     practice: "&c使用法: /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&c使用法: /{label} race stop <track>"
+    restart: "&cUsage: /{label} race restart <track>"
     voteopen: "&c使用法: /{label} race voteopen [all|<track1> <track2> ...] [秒]"
     vote: "&c使用法: /{label} race vote <track>"
 
@@ -92,7 +93,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [秒] &7(マップ投票を開始します)"
     voteclose: "&7 - &f/{label} race voteclose &7(投票を今すぐ締め切って確定します)"
     back: "&7 - &f/{label} race back &7(レースロビーに入る前の保存位置へ戻ります)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop <track>"
+    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&c不明な race サブコマンドです。/{label} race help を使用してください。"
 
   registration:
@@ -168,6 +169,7 @@ race:
 
   cancelled-general: "&cレースがキャンセルされました。"
   cancelled-no-participants: "&7レース中止: 登録参加者がいません。"
+    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7レース中止: 空きスタート枠がありません。"
 
   results:

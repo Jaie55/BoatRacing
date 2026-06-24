@@ -64,6 +64,7 @@ race:
     practice: "&cUsage: /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&cUsage: /{label} race stop <track>"
+    restart: "&cUsage: /{label} race restart <track>"
     voteopen: "&cUsage: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cUsage: /{label} race vote <track>"
 
@@ -88,7 +89,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [seconds] &7(Open map vote; with no tracks it opens all)"
     voteclose: "&7 - &f/{label} race voteclose &7(Close and resolve vote now)"
     back: "&7 - &f/{label} race back &7(Return to your saved location before joining the race lobby)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop <track>"
+    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cUnknown race subcommand. Use /{label} race help"
 
   registration:
@@ -163,7 +164,8 @@ race:
   forfeit-other: "&7{player} forfeited the race!"
 
   cancelled-general: "&cRace cancelled."
-  cancelled-no-participants: "&7Race cancelled: no registered participants."
+    cancelled-no-participants: "&7Race cancelled: no registered participants."
+    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7Race cancelled: no free start slots."
 
   results:

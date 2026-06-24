@@ -67,6 +67,7 @@ race:
     practice: "&c用法：/{label} race practice <赛道>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&c用法：/{label} race stop <赛道>"
+    restart: "&cUsage: /{label} race restart <track>"
     voteopen: "&c用法：/{label} race voteopen [all|<track1> <track2> ...] [秒]"
     vote: "&c用法：/{label} race vote <track>"
 
@@ -91,7 +92,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [秒] &7（开启地图投票）"
     voteclose: "&7 - &f/{label} race voteclose &7（立即关闭并结算投票）"
     back: "&7 - &f/{label} race back &7（返回你加入赛事大厅前储存的位置）"
-    admin: "&8管理员：&7/{label} race open|start|force|stop <赛道>"
+    admin: "&8管理员：&7/{label} race open|start|force|stop|restart <赛道>"
   unknown-subcommand: "&c未知的赛车子指令。使用 /{label} race help"
 
   registration:
@@ -167,6 +168,7 @@ race:
 
   cancelled-general: "&c比赛已取消。"
   cancelled-no-participants: "&7比赛已取消：无已报名的参与者。"
+    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7比赛已取消：无空余的出发格位。"
 
   results:

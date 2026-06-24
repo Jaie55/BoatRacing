@@ -67,6 +67,7 @@ race:
     practice: "&cUtilisation : /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&cUtilisation : /{label} race stop <track>"
+    restart: "&cUsage: /{label} race restart <track>"
     voteopen: "&cUtilisation : /{label} race voteopen [all|<track1> <track2> ...] [secondes]"
     vote: "&cUtilisation : /{label} race vote <track>"
 
@@ -91,7 +92,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [secondes] &7(Ouvrir le vote de circuit)"
     voteclose: "&7 - &f/{label} race voteclose &7(Fermer et résoudre le vote maintenant)"
     back: "&7 - &f/{label} race back &7(Revenir à votre position sauvegardée avant le lobby de course)"
-    admin: "&8Admin :&7 /{label} race open|start|force|stop <track>"
+    admin: "&8Admin :&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cSous-commande race inconnue. Utilisez /{label} race help"
 
   registration:
@@ -167,6 +168,7 @@ race:
 
   cancelled-general: "&cCourse annulée."
   cancelled-no-participants: "&7Course annulée : aucun participant inscrit."
+    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7Course annulée : aucune place de départ libre."
 
   results:
