@@ -9,7 +9,9 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 - Setup wizard `setlaps`: set laps to a custom value (e.g. 2), verify the wizard prompt shows the correct value and the summary includes it.
 - Start lights Shift+Click: Shift+Left Click a Redstone Lamp with wand to add (lamp lights up + green particles), Shift+Right Click to remove (red sparks). Verify wand lore shows instructions. Verify feedback messages and wizard integration.
 - Setup summary: verify the final wizard summary shows the correct lap count.
-- Restart command: open a race, register, force-start, then `/boatracing race restart <track>`. Verify it stops the race, re-opens, re-joins players, and force-starts cleanly.
+- Restart command: open a race, register, force-start, then `/boatracing race restart` (auto-detect) and `/boatracing race restart <track>`. Verify it stops the race, re-opens, re-joins players, and force-starts cleanly.
+- Setup show: run `/boatracing setup show` and verify finish/pit show translated status (yes/no), laps count is displayed, and all text is in the correct language.
+- Update checker: run `/boatracing version` and verify update check error messages now appear in console.
 - Debug logging: set `debug: "finer"` in config.yml and verify detailed log messages appear in console. Set to `"off"` and verify they disappear. Test `/boatracing reload` also applies the setting.
 
 ## What to verify for 1.1.6
