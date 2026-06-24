@@ -67,7 +67,7 @@ race:
     practice: "&cUżycie: /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&cUżycie: /{label} race stop <track>"
-    restart: "&cUsage: /{label} race restart <track>"
+    restart: "&cUżycie: /{label} race restart <track>"
     voteopen: "&cUżycie: /{label} race voteopen [all|<track1> <track2> ...] [sekundy]"
     vote: "&cUżycie: /{label} race vote <track>"
 
@@ -168,7 +168,7 @@ race:
 
   cancelled-general: "&cWyścig anulowany."
   cancelled-no-participants: "&7Wyścig anulowany: brak zarejestrowanych uczestników."
-    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
+    restarted: "&aWyścig zrestartowany na &f{track}&a. &7{count} &7graczy ponownie dołączyło."
   cancelled-no-slots: "&7Wyścig anulowany: brak wolnych stanowisk startowych."
 
   results:

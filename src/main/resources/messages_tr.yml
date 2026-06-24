@@ -68,7 +68,7 @@ race:
     practice: "&cKullanım: /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&cKullanım: /{label} race stop <track>"
-    restart: "&cUsage: /{label} race restart <track>"
+    restart: "&cKullanım: /{label} race restart <track>"
     voteopen: "&cKullanım: /{label} race voteopen [all|<track1> <track2> ...] [saniye]"
     vote: "&cKullanım: /{label} race vote <track>"
 
@@ -169,7 +169,7 @@ race:
 
   cancelled-general: "&cYarış iptal edildi."
   cancelled-no-participants: "&7Yarış iptal edildi: kayıtlı katılımcı yok."
-    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
+    restarted: "&aYarış &f{track}&a pistinde yeniden başlatıldı. &7{count} &7oyuncu tekrar katıldı."
   cancelled-no-slots: "&7Yarış iptal edildi: boş başlangıç slotu yok."
 
   results:

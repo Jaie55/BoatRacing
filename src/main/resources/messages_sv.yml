@@ -68,7 +68,7 @@ race:
     practice: "&cAnvändning: /{label} race practice <track>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&cAnvändning: /{label} race stop <track>"
-    restart: "&cUsage: /{label} race restart <track>"
+    restart: "&cAnvändning: /{label} race restart <track>"
     voteopen: "&cAnvändning: /{label} race voteopen [all|<track1> <track2> ...] [sekunder]"
     vote: "&cAnvändning: /{label} race vote <track>"
 
@@ -169,7 +169,7 @@ race:
 
   cancelled-general: "&cLoppet avbröts."
   cancelled-no-participants: "&7Loppet avbröts: inga anmälda deltagare."
-    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
+    restarted: "&aLopp omstartat på &f{track}&a. &7{count} &7spelare återanslutna."
   cancelled-no-slots: "&7Loppet avbröts: inga lediga startplatser."
 
   results:

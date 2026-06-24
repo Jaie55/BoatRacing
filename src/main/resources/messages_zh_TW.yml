@@ -67,7 +67,7 @@ race:
     practice: "&c用法：/{label} race practice <賽道>"
     practice-leave: "&cUsage: /{label} race practice leave <track>"
     stop: "&c用法：/{label} race stop <賽道>"
-    restart: "&cUsage: /{label} race restart <track>"
+    restart: "&c用法: /{label} race restart <track>"
     voteopen: "&c用法：/{label} race voteopen [all|<track1> <track2> ...] [秒]"
     vote: "&c用法：/{label} race vote <track>"
 
@@ -168,7 +168,7 @@ race:
 
   cancelled-general: "&c比賽已取消。"
   cancelled-no-participants: "&7比賽已取消：無已報名的參與者。"
-    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
+    restarted: "&a比賽已在 &f{track}&a 重新開始。&7{count} &7名玩家重新加入。"
   cancelled-no-slots: "&7比賽已取消：無空餘的出發格位。"
 
   results:
