@@ -169,7 +169,7 @@ race:
 
   cancelled-general: "&cGara annullata."
   cancelled-no-participants: "&7Gara annullata: nessun partecipante iscritto."
-    restarted: "&aGara riavviata su &f{track}&a. &7{count} &7giocatore/i riuniti."
+  restarted: "&aGara riavviata su &f{track}&a. &7{count} &7giocatore/i riuniti."
   cancelled-no-slots: "&7Gara annullata: nessuno slot di partenza libero."
 
   results:

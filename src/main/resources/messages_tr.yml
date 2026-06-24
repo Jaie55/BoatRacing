@@ -169,7 +169,7 @@ race:
 
   cancelled-general: "&cYarış iptal edildi."
   cancelled-no-participants: "&7Yarış iptal edildi: kayıtlı katılımcı yok."
-    restarted: "&aYarış &f{track}&a pistinde yeniden başlatıldı. &7{count} &7oyuncu tekrar katıldı."
+  restarted: "&aYarış &f{track}&a pistinde yeniden başlatıldı. &7{count} &7oyuncu tekrar katıldı."
   cancelled-no-slots: "&7Yarış iptal edildi: boş başlangıç slotu yok."
 
   results:

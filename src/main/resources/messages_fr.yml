@@ -168,7 +168,7 @@ race:
 
   cancelled-general: "&cCourse annulée."
   cancelled-no-participants: "&7Course annulée : aucun participant inscrit."
-    restarted: "&aCourse redémarrée sur &f{track}&a. &7{count} &7joueur(s) réinscrit(s)."
+  restarted: "&aCourse redémarrée sur &f{track}&a. &7{count} &7joueur(s) réinscrit(s)."
   cancelled-no-slots: "&7Course annulée : aucune place de départ libre."
 
   results:

@@ -168,7 +168,7 @@ race:
 
   cancelled-general: "&c레이스가 취소되었습니다."
   cancelled-no-participants: "&7레이스 취소: 등록된 참가자가 없습니다."
-    restarted: "&a{track} &a에서 레이스가 다시 시작되었습니다. &7{count} &7명이 다시 참가했습니다."
+  restarted: "&a{track} &a에서 레이스가 다시 시작되었습니다. &7{count} &7명이 다시 참가했습니다."
   cancelled-no-slots: "&7레이스 취소: 사용 가능한 스타트 슬롯이 없습니다."
 
   results:

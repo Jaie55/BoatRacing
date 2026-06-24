@@ -168,7 +168,7 @@ race:
 
   cancelled-general: "&cГонка отменена."
   cancelled-no-participants: "&7Гонка отменена: нет зарегистрированных участников."
-    restarted: "&aГонка перезапущена на &f{track}&a. &7{count} &7игрок(ов) переподключено."
+  restarted: "&aГонка перезапущена на &f{track}&a. &7{count} &7игрок(ов) переподключено."
   cancelled-no-slots: "&7Гонка отменена: нет свободных стартовых мест."
 
   results:

@@ -169,7 +169,7 @@ race:
 
   cancelled-general: "&cLoppet avbröts."
   cancelled-no-participants: "&7Loppet avbröts: inga anmälda deltagare."
-    restarted: "&aLopp omstartat på &f{track}&a. &7{count} &7spelare återanslutna."
+  restarted: "&aLopp omstartat på &f{track}&a. &7{count} &7spelare återanslutna."
   cancelled-no-slots: "&7Loppet avbröts: inga lediga startplatser."
 
   results:

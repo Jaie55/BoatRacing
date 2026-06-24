@@ -168,7 +168,7 @@ race:
 
   cancelled-general: "&cWyścig anulowany."
   cancelled-no-participants: "&7Wyścig anulowany: brak zarejestrowanych uczestników."
-    restarted: "&aWyścig zrestartowany na &f{track}&a. &7{count} &7graczy ponownie dołączyło."
+  restarted: "&aWyścig zrestartowany na &f{track}&a. &7{count} &7graczy ponownie dołączyło."
   cancelled-no-slots: "&7Wyścig anulowany: brak wolnych stanowisk startowych."
 
   results:

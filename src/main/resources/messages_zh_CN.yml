@@ -168,7 +168,7 @@ race:
 
   cancelled-general: "&c比赛已取消。"
   cancelled-no-participants: "&7比赛已取消：无已报名的参与者。"
-    restarted: "&a比赛已在 &f{track}&a 重新开始。&7{count} &7名玩家重新加入。"
+  restarted: "&a比赛已在 &f{track}&a 重新开始。&7{count} &7名玩家重新加入。"
   cancelled-no-slots: "&7比赛已取消：无空余的出发格位。"
 
   results:

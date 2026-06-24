@@ -169,7 +169,7 @@ race:
 
   cancelled-general: "&cRennen abgebrochen."
   cancelled-no-participants: "&7Rennen abgebrochen: keine angemeldeten Teilnehmer."
-    restarted: "&aRennen auf &f{track}&a neu gestartet. &7{count} &7Spieler erneut beigetreten."
+  restarted: "&aRennen auf &f{track}&a neu gestartet. &7{count} &7Spieler erneut beigetreten."
   cancelled-no-slots: "&7Rennen abgebrochen: keine freien Startplätze."
 
   results:

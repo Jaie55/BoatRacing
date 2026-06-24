@@ -169,7 +169,7 @@ race:
 
   cancelled-general: "&cレースがキャンセルされました。"
   cancelled-no-participants: "&7レース中止: 登録参加者がいません。"
-    restarted: "&a{track} &aでレースを再開しました。&7{count} &7人が再参加しました。"
+  restarted: "&a{track} &aでレースを再開しました。&7{count} &7人が再参加しました。"
   cancelled-no-slots: "&7レース中止: 空きスタート枠がありません。"
 
   results:

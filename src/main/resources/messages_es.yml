@@ -165,7 +165,7 @@ race:
 
   cancelled-general: "&cCarrera cancelada."
   cancelled-no-participants: "&7Carrera cancelada: no hay participantes registrados."
-    restarted: "&aCarrera reiniciada en &f{track}&a. &7{count} &7jugador(es) re-unidos."
+  restarted: "&aCarrera reiniciada en &f{track}&a. &7{count} &7jugador(es) re-unidos."
   cancelled-no-slots: "&7Carrera cancelada: no hay slots de salida libres."
 
   results:

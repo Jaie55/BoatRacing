@@ -164,8 +164,8 @@ race:
   forfeit-other: "&7{player} forfeited the race!"
 
   cancelled-general: "&cRace cancelled."
-    cancelled-no-participants: "&7Race cancelled: no registered participants."
-    restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
+  cancelled-no-participants: "&7Race cancelled: no registered participants."
+  restarted: "&aRace restarted on &f{track}&a. &7{count} &7player(s) re-joined."
   cancelled-no-slots: "&7Race cancelled: no free start slots."
 
   results:
