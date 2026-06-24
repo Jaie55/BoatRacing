@@ -21,7 +21,7 @@
 - **Start lights UX**: Shift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove. Lamp lights up with green particles on add, red spark on remove. Wand lore now shows light instructions.
 - **Setup summary**: laps count now included in the final setup wizard summary.
 - **Restart command**: `/boatracing race restart <track>` stops any running race, re-opens registration, re-joins previous participants, and force-starts. Permission: `boatracing.race.admin` or `boatracing.setup`.
-- **Debug logging toggle**: set `debug: true` in `config.yml` to enable detailed console logging. Also applies on `/boatracing reload`.
+- **Debug logging toggle**: set `debug` in `config.yml` to `"off"` (default), `"severe"`, `"warning"`, `"info"`, `"fine"`, `"finer"`, or `"finest"`. Controls console log verbosity. Also applies on `/boatracing reload`.
 
 Per-track config, broadcast mode, admin targeting, forfeit and action bar fixes contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 

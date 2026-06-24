@@ -54,7 +54,7 @@ Fixed:
 - `-p:` flag no longer interferes with downstream argument length checks.
 - **Setup wizard**: `setlaps` correctly shows and persists custom lap values. Start lights added/removed via Shift+Click with wand (lamp lights up + green particles). Wand lore shows light instructions. Lap count shown in setup summary.
 - **Restart command**: `/boatracing race restart <track>` stops + re-opens + re-joins + force-starts in one command.
-- **Debug logging**: `debug: true` in config.yml enables detailed console output for troubleshooting.
+- **Debug logging**: `debug: "off"` in config.yml. Set to `"severe"`, `"warning"`, `"info"`, `"fine"`, `"finer"`, or `"finest"` to control console verbosity.
 
 Per-track config, broadcast mode, admin targeting, forfeit and action bar fixes contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 

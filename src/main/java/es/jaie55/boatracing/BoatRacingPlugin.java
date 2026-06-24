@@ -655,10 +655,7 @@ public class BoatRacingPlugin extends JavaPlugin {
         }
         this.prefix = Text.colorize(getConfig().getString("prefix", "&6[BoatRacing] "));
         // Configure debug logging
-        if (getConfig().getBoolean("debug", false)) {
-            getLogger().setLevel(java.util.logging.Level.FINER);
-            getLogger().info("Debug logging enabled.");
-        }
+        applyDebugLevel();
         this.messageManager = new MessageManager(this);
         this.documentStore = DocumentStoreFactory.create(this);
         this.teamManager = new TeamManager(this);
@@ -827,6 +824,23 @@ public class BoatRacingPlugin extends JavaPlugin {
     getLogger().info("BoatRacing enabled");
     }
 
+    private void applyDebugLevel() {
+        String val = getConfig().getString("debug", "off");
+        java.util.logging.Level lvl = switch (val.toLowerCase()) {
+            case "severe" -> java.util.logging.Level.SEVERE;
+            case "warning" -> java.util.logging.Level.WARNING;
+            case "info" -> java.util.logging.Level.INFO;
+            case "fine" -> java.util.logging.Level.FINE;
+            case "finer" -> java.util.logging.Level.FINER;
+            case "finest" -> java.util.logging.Level.FINEST;
+            default -> java.util.logging.Level.INFO;
+        };
+        getLogger().setLevel(lvl);
+        if (!"off".equalsIgnoreCase(val) && !"info".equalsIgnoreCase(val)) {
+            getLogger().info("Debug logging set to " + lvl.getName());
+        }
+    }
+
     // Merge default config.yml values into the existing config without overwriting user changes
     private void mergeConfigDefaults() {
         InputStream is = getResource("config.yml");
@@ -952,11 +966,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 try { mergeConfigDefaults(); } catch (Exception ignored) { getLogger().finer("mergeConfigDefaults() during reload failed: " + ignored.getMessage()); }
                 this.prefix = Text.colorize(getConfig().getString("prefix", "&6[BoatRacing] "));
                 // Reconfigure debug logging on reload
-                if (getConfig().getBoolean("debug", false)) {
-                    getLogger().setLevel(java.util.logging.Level.FINER);
-                } else {
-                    getLogger().setLevel(java.util.logging.Level.INFO);
-                }
+                applyDebugLevel();
                 this.messageManager.reload();
                 // Recreate team manager to re-read data and settings
                 this.teamManager = new TeamManager(this);
