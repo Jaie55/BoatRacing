@@ -10,6 +10,7 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 - Start lights Shift+Click: Shift+Left Click a Redstone Lamp with wand to add (lamp lights up + green particles), Shift+Right Click to remove (red sparks). Verify wand lore shows instructions. Verify feedback messages and wizard integration.
 - Setup summary: verify the final wizard summary shows the correct lap count.
 - Restart command: open a race, register, force-start, then `/boatracing race restart <track>`. Verify it stops the race, re-opens, re-joins players, and force-starts cleanly.
+- Debug logging: set `debug: true` in config.yml and verify finer-level log messages appear in console. Verify `/boatracing reload` also applies the setting.
 
 ## What to verify for 1.1.6
 - Forfeit command:
