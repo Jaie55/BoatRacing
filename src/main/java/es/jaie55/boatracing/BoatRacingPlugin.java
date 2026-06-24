@@ -1858,7 +1858,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                         if (!overrides.isEmpty()) {
                             p.sendMessage(Text.colorize(msg().get("setup.show.overrides-header")));
                             for (java.util.Map.Entry<String, Object> oe : overrides.entrySet()) {
-                                if ("laps".equals(oe.getKey())) continue;
+                                if ("laps".equals(oe.getKey()) || "registration-seconds".equals(oe.getKey())) continue;
                                 p.sendMessage(Text.colorize(msg().get("setup.show.override-entry", "key", oe.getKey(), "value", oe.getValue())));
                             }
                         }

@@ -187,7 +187,7 @@ race:
     registration-open: "&e報名開放中 &7（已報名：&f{count}&7）"
     registration-closed: "&7報名已截止。"
     laps: "&7圈數：&f{count}"
-    regtime: "&7 - &fRegistration time: &e{seconds}s"
+    regtime: "&7 - &f註冊時間: &e{seconds}s"
     starts-lights: "&7出發格：&f{starts} &8\u2022 &7起跑燈：&f{lights}/5 &8\u2022 &7終點：&f{finish} &8\u2022 &7維修站：&f{pit}"
     checkpoints: "&7檢查點：&f{count}"
     mandatory-pitstops: "&7強制維修站停靠：&f{count}"

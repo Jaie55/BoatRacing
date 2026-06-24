@@ -188,7 +188,7 @@ race:
     registration-open: "&eAnmälan öppen &7(Anmälda: &f{count}&7)"
     registration-closed: "&7Anmälan stängd."
     laps: "&7Varv: &f{count}"
-    regtime: "&7 - &fRegistration time: &e{seconds}s"
+    regtime: "&7 - &fRegistreringstid: &e{seconds}s"
     starts-lights: "&7Starter: &f{starts} &8\u2022 &7Startljus: &f{lights}/5 &8\u2022 &7Mål: &f{finish} &8\u2022 &7Pit-område: &f{pit}"
     checkpoints: "&7Kontrollpunkter: &f{count}"
     mandatory-pitstops: "&7Obligatoriska pitstopp: &f{count}"

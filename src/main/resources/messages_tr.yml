@@ -188,7 +188,7 @@ race:
     registration-open: "&eKayıt açık &7(Kayıtlı: &f{count}&7)"
     registration-closed: "&7Kayıt kapalı."
     laps: "&7Turlar: &f{count}"
-    regtime: "&7 - &fRegistration time: &e{seconds}s"
+    regtime: "&7 - &fKayıt süresi: &e{seconds}s"
     starts-lights: "&7Başlangıçlar: &f{starts} &8\u2022 &7Başlangıç ışıkları: &f{lights}/5 &8\u2022 &7Bitiş: &f{finish} &8\u2022 &7Pit alanı: &f{pit}"
     checkpoints: "&7Kontrol noktaları: &f{count}"
     mandatory-pitstops: "&7Zorunlu pit stop: &f{count}"

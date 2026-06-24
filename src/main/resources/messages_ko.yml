@@ -187,7 +187,7 @@ race:
     registration-open: "&e등록 열림 &7(등록됨: &f{count}&7)"
     registration-closed: "&7등록 종료."
     laps: "&7랩: &f{count}"
-    regtime: "&7 - &fRegistration time: &e{seconds}s"
+    regtime: "&7 - &f등록 시간: &e{seconds}s"
     starts-lights: "&7스타트: &f{starts} &8\u2022 &7스타트 조명: &f{lights}/5 &8\u2022 &7피니시: &f{finish} &8\u2022 &7피트: &f{pit}"
     checkpoints: "&7체크포인트: &f{count}"
     mandatory-pitstops: "&7필수 피트 정차: &f{count}"
