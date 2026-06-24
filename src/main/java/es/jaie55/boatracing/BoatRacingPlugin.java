@@ -1748,6 +1748,24 @@ public class BoatRacingPlugin extends JavaPlugin {
                         if (setupWizard != null) setupWizard.afterAction(p);
                         return true;
                     }
+                    case "setregtime" -> {
+                        if (args.length < 3 || !args[2].matches("\\d+")) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.error.setregtime", "label", label)));
+                            return true;
+                        }
+                        long secs = Math.max(1, Long.parseLong(args[2]));
+                        trackConfig.setRacingOverride("registration-seconds", secs);
+                        raceManager.loadSettings();
+                        String tlNameRt = trackLibrary != null ? trackLibrary.getCurrent() : null;
+                        if (tlNameRt != null && !tlNameRt.isBlank()) {
+                            RaceManager activeSession = findRaceSessionByKey(normalizeTrackKey(tlNameRt));
+                            if (activeSession != null) activeSession.loadSettings();
+                        }
+                        p.sendMessage(Text.colorize(prefix + msg().get("setup.regtime-set", "seconds", secs, "track_info", (tlNameRt != null ? msg().get("setup.track-info", "track", tlNameRt) : ""))));
+                        p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.2f);
+                        if (setupWizard != null) setupWizard.afterAction(p);
+                        return true;
+                    }
                     case "setlobby" -> {
                         org.bukkit.Location loc = p.getLocation();
                         String worldName = (loc.getWorld() != null ? loc.getWorld().getName() : "world");
@@ -1834,6 +1852,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                         p.sendMessage(Text.colorize(msg().get("setup.show.checkpoints", "count", cps)));
                         p.sendMessage(Text.colorize(msg().get("setup.show.pitstops", "count", raceManager.getMandatoryPitstops())));
                         p.sendMessage(Text.colorize(msg().get("setup.show.laps", "count", raceManager.getTotalLaps())));
+                        p.sendMessage(Text.colorize(msg().get("setup.show.regtime", "seconds", raceManager.getRegistrationSeconds())));
                         // Show per-track racing overrides if any
                         java.util.Map<String, Object> overrides = trackConfig.getRacingOverrides();
                         if (!overrides.isEmpty()) {
@@ -2535,7 +2554,7 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
             if (args.length >= 2 && args[0].equalsIgnoreCase("setup")) {
                 if (!sender.hasPermission("boatracing.setup")) return Collections.emptyList();
-                if (args.length == 2) return Arrays.asList("help","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","wizard");
+                if (args.length == 2) return Arrays.asList("help","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setregtime","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","wizard");
                 if (args.length >= 3 && args[1].equalsIgnoreCase("setpit")) {
                     // Build current partial input (join tokens from index 2)
                     String partial = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length)).toLowerCase();

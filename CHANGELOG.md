@@ -10,6 +10,8 @@
 - **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 - **Start lights wand UX**: Shift+Left Click a Redstone Lamp with the wand to add it as a start light, Shift+Right Click to remove. Lamp lights up with green particles on add, smoke on remove.
 - **Restart command**: `/boatracing race restart [track]` stops any running race, re-opens registration, re-joins previous participants, and force-starts. Auto-detects track if sender is in an active race. Permission: `boatracing.race.admin` or `boatracing.setup`.
+- **Per-track registration time**: `registration-seconds` can now be set per track via `/boatracing setup setregtime <seconds>`. Configurable in the setup wizard as step 8/8. Displayed in `setup show`.
+- **Clearlobby command**: `/boatracing setup clearlobby` disables the registration lobby for the current track.
 - **Debug logging levels**: set `debug` in `config.yml` to `"off"` (default), `"severe"`, `"warning"`, `"info"`, `"fine"`, `"finer"`, or `"finest"`. Controls console log verbosity. Also applies on `/boatracing reload`.
 
 ### Changed

@@ -45,6 +45,8 @@ Added:
 - **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`.
 - **Start lights wand UX**: Shift+Left Click lamps to add, Shift+Right Click to remove. Lamp glow + particles.
 - **Restart command**: `/boatracing race restart [track]` stops + re-opens + re-joins + force-starts. Auto-detects track.
+- **Per-track registration time**: `/boatracing setup setregtime <seconds>`. Configurable in setup wizard (step 8/8).
+- **Clearlobby command**: `/boatracing setup clearlobby` to disable the lobby for a track.
 - **Debug logging levels**: `debug: "off"/"severe"/"warning"/"info"/"fine"/"finer"/"finest"` in config.yml.
 
 Changed:

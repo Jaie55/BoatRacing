@@ -221,6 +221,7 @@ public class RaceManager {
     public boolean isPracticeActive() { return practiceMode && (running || isCountdownActive()); }
     public int getTotalLaps() { return totalLaps; }
     public void setTotalLaps(int laps) { this.totalLaps = Math.max(1, laps); }
+    public long getRegistrationSeconds() { return registrationSeconds; }
     public TrackConfig getTrack() { return track; }
     public Set<UUID> getRegistered() { return Collections.unmodifiableSet(registered); }
     public Collection<UUID> getParticipants() { return states.keySet(); }

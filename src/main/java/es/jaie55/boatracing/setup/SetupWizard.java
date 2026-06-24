@@ -15,7 +15,7 @@ import java.util.UUID;
  * Prompts are shown to operators in English.
  */
 public class SetupWizard {
-    public enum Step { STARTS, FINISH, LIGHTS, PIT, CHECKPOINTS, PITSTOPS, LAPS, DONE }
+    public enum Step { STARTS, FINISH, LIGHTS, PIT, CHECKPOINTS, PITSTOPS, LAPS, REGTIME, DONE }
 
     private final BoatRacingPlugin plugin;
     private final Map<UUID, Step> states = new HashMap<>();
@@ -63,7 +63,8 @@ public class SetupWizard {
             }
             case CHECKPOINTS -> { states.put(p.getUniqueId(), Step.PITSTOPS); }
             case PITSTOPS -> { states.put(p.getUniqueId(), Step.LAPS); }
-            case LAPS -> { /* wait for explicit finish */ }
+            case LAPS -> { states.put(p.getUniqueId(), Step.REGTIME); }
+            case REGTIME -> { states.put(p.getUniqueId(), Step.DONE); }
             case DONE -> { /* nothing */ }
         }
         prompt(p);
@@ -87,6 +88,12 @@ public class SetupWizard {
         }
         if (s == Step.PITSTOPS) {
             states.put(p.getUniqueId(), Step.LAPS);
+            p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 0.9f, 1.15f);
+            prompt(p);
+            return;
+        }
+        if (s == Step.REGTIME) {
+            states.put(p.getUniqueId(), Step.DONE);
             p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 0.9f, 1.15f);
             prompt(p);
             return;
@@ -139,7 +146,8 @@ public class SetupWizard {
             }
             case CHECKPOINTS -> { /* optional; don't auto-advance unless user clicks Next */ }
             case PITSTOPS -> { /* optional; don't auto-advance unless user clicks Next */ }
-            case LAPS, DONE -> { /* stay */ }
+            case LAPS -> { states.put(p.getUniqueId(), Step.REGTIME); }
+            case REGTIME, DONE -> { /* stay */ }
         }
     }
 
@@ -241,7 +249,22 @@ public class SetupWizard {
                     .append(Text.cmd("&b[5]","/boatracing setup setlaps 5"))
                 );
                 p.sendMessage(Text.c(plugin.msg().get("setup.when-ready"))
-                    .append(Text.cmd(plugin.msg().get("setup.wizard.laps.btn-finish"),"/boatracing setup wizard finish"))
+                    .append(Text.cmd(plugin.msg().get("setup.wizard.laps.btn-next"),"/boatracing setup wizard next"))
+                );
+                nav(p, s);
+            }
+            case REGTIME -> {
+                long secs = plugin.getRaceManager().getRegistrationSeconds();
+                p.sendMessage(Text.c(" "));
+                p.sendMessage(Text.colorize(plugin.msg().get("setup.wizard.step.regtime")));
+                p.sendMessage(Text.colorize(plugin.msg().get("setup.wizard.regtime.current", "seconds", secs)));
+                p.sendMessage(Text.c(plugin.msg().get("setup.wizard.regtime.prompt"))
+                    .append(Text.cmd("&b[60]","/boatracing setup setregtime 60")).append(Text.c(" "))
+                    .append(Text.cmd("&b[120]","/boatracing setup setregtime 120")).append(Text.c(" "))
+                    .append(Text.cmd("&b[300]","/boatracing setup setregtime 300"))
+                );
+                p.sendMessage(Text.c(plugin.msg().get("setup.when-ready"))
+                    .append(Text.cmd(plugin.msg().get("setup.wizard.regtime.btn-finish"),"/boatracing setup wizard finish"))
                 );
                 nav(p, s);
             }
