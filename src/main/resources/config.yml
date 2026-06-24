@@ -3,6 +3,8 @@
 # ------------------------------------------------------------
 # Prefix shown in chat, titles, and command feedback.
 prefix: "&6[BoatRacing] "
+# Enable detailed debug logging to console.
+debug: false
 # Default language bundle. Bundled: en/es/es_419/fr/pt_BR/pt_PT/de/it/pl/tr/ja/ko/sv/zh_TW/zh_CN/ru.
 # Custom: set e.g. "eo" and create messages_eo.yml in plugins/BoatRacing/.
 language: "en"

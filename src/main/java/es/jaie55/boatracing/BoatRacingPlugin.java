@@ -654,6 +654,11 @@ public class BoatRacingPlugin extends JavaPlugin {
             getLogger().warning("Failed to merge default config values: " + t.getMessage());
         }
         this.prefix = Text.colorize(getConfig().getString("prefix", "&6[BoatRacing] "));
+        // Configure debug logging
+        if (getConfig().getBoolean("debug", false)) {
+            getLogger().setLevel(java.util.logging.Level.FINER);
+            getLogger().info("Debug logging enabled.");
+        }
         this.messageManager = new MessageManager(this);
         this.documentStore = DocumentStoreFactory.create(this);
         this.teamManager = new TeamManager(this);
@@ -946,6 +951,12 @@ public class BoatRacingPlugin extends JavaPlugin {
                 // After reload, also merge any new defaults into config.yml
                 try { mergeConfigDefaults(); } catch (Exception ignored) { getLogger().finer("mergeConfigDefaults() during reload failed: " + ignored.getMessage()); }
                 this.prefix = Text.colorize(getConfig().getString("prefix", "&6[BoatRacing] "));
+                // Reconfigure debug logging on reload
+                if (getConfig().getBoolean("debug", false)) {
+                    getLogger().setLevel(java.util.logging.Level.FINER);
+                } else {
+                    getLogger().setLevel(java.util.logging.Level.INFO);
+                }
                 this.messageManager.reload();
                 // Recreate team manager to re-read data and settings
                 this.teamManager = new TeamManager(this);
