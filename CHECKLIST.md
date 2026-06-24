@@ -15,6 +15,7 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 - Clearlobby command: set a lobby via `/boatracing setup setlobby`, then `/boatracing setup clearlobby`. Verify lobby is disabled in setup show.
 - Update checker: run `/boatracing version` and verify update check error messages now appear in console.
 - Debug logging: set `debug: "finer"` in config.yml and verify detailed log messages appear in console. Set to `"off"` and verify they disappear. Test `/boatracing reload` also applies the setting.
+- Race finish vehicle: disable the lobby, have multiple players in a race. Verify the first finisher dismounts their boat properly.
 
 ## What to verify for 1.1.6
 - Forfeit command:

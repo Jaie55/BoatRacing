@@ -8,31 +8,30 @@
 - **Per-track lobby configuration**: lobby settings can now be set per track for dedicated lobbies. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 - **Per-track rewards configuration**: rewards can now be overridden per track. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 - **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
-- **Start lights wand UX**: Shift+Left Click a Redstone Lamp with the wand to add it as a start light, Shift+Right Click to remove. Lamp lights up with green particles on add, smoke on remove.
+- **Start lights wand UX**: Shift+Left Click a Redstone Lamp with the wand to add it as a start light, Shift+Right Click to remove. Lamp lights up with green particles on add, smoke on remove. Wand lore shows light instructions in all 15 languages.
 - **Restart command**: `/boatracing race restart [track]` stops any running race, re-opens registration, re-joins previous participants, and force-starts. Auto-detects track if sender is in an active race. Permission: `boatracing.race.admin` or `boatracing.setup`.
-- **Per-track registration time**: `registration-seconds` can now be set per track via `/boatracing setup setregtime <seconds>`. Configurable in the setup wizard as step 8/8. Displayed in `setup show`.
+- **Per-track registration time**: `registration-seconds` can now be set per track via `/boatracing setup setregtime <seconds>`. Configurable in the setup wizard as step 8/8. Displayed in `setup show`. Reported by [@supershootstudions-lgtm](https://github.com/supershootstudions-lgtm) in [#6](https://github.com/Jaie55/BoatRacing/issues/6).
 - **Clearlobby command**: `/boatracing setup clearlobby` disables the registration lobby for the current track.
 - **Debug logging levels**: set `debug` in `config.yml` to `"off"` (default), `"severe"`, `"warning"`, `"info"`, `"fine"`, `"finer"`, or `"finest"`. Controls console log verbosity. Also applies on `/boatracing reload`.
 
 ### Changed
 - **UpdateChecker**: version comparison now supports `YY.D.H` format natively. Errors always logged to console.
-- **Wand lore**: now shows Shift+Click light instructions. Translated to all 15 languages.
+- **Wizard LIGHTS step**: `description` and `hint` now translated to all 15 languages.
 - **Setup summary**: laps count now included in the final setup wizard summary.
+- **Wizard step numbering**: updated from 1/7–7/7 to 1/8–8/8 to include the new REGTIME step.
 
 ### Fixed
 - Action bar now properly cleared after forfeiting a race. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 - Forfeit command correctly uses resolved player reference instead of raw sender. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
-- Lobby section null-safety when configuration is missing.
-- Reward section null-safety when configuration is missing.
-- Cross-track reward leakage prevented (stable global fallback).
-- Broadcast mode string comparison now uses `.equals()` instead of `==`.
-- `-p:` flag no longer interferes with downstream argument length checks.
+- Lobby section null-safety when configuration is missing. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- Reward section null-safety when configuration is missing. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- Cross-track reward leakage prevented (stable global fallback). Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- Broadcast mode string comparison now uses `.equals()` instead of `==`. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- `-p:` flag no longer interferes with downstream argument length checks. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 - **Setup wizard `setlaps`**: now correctly displays and persists custom lap values in the wizard prompt.
-- **Setup show**: fixed untranslated status labels (`general.yes`/`general.no` → `setup.status-yes`/`setup.status-no`). Added lap count display.
-- **Wizard LIGHTS step**: `description` and `hint` now translated to all 15 languages.
+- **Setup show**: fixed untranslated status labels (`general.yes`/`general.no` → `setup.status-yes`/`setup.status-no`). Added lap count and registration time display. Excluded laps and registration-seconds from the raw overrides section.
 - **Messages YAML**: indentation corrected for `cancelled-no-participants` and `restarted` keys across all 16 locales.
-
-Per-track config, broadcast mode, admin targeting, forfeit and action bar fixes contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Race finish vehicle cleanup**: players now properly dismount their boat when finishing a race with the lobby disabled.
 
 ## 1.1.6 — 17/06/2026
 ### Added

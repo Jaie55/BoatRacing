@@ -39,33 +39,31 @@ Version numbering aligned with Minecraft's YY.D.H system. Per-track configuratio
 
 Added:
 - **New version numbering**: aligned with Minecraft's new `YY.D.H` system (Year.Drop.Hotfix).
-- **Per-track broadcast mode**: `racing.broadcast-mode` accepts `global` or `racers`, overridable per track.
-- **Per-track lobby configuration**: lobby settings can now be set per track for dedicated lobbies.
-- **Per-track rewards configuration**: rewards can now be overridden per track.
-- **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`.
-- **Start lights wand UX**: Shift+Left Click lamps to add, Shift+Right Click to remove. Lamp glow + particles.
+- **Per-track broadcast mode**: `racing.broadcast-mode` accepts `global` or `racers`, overridable per track. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Per-track lobby configuration**: lobby settings can now be set per track for dedicated lobbies. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Per-track rewards configuration**: rewards can now be overridden per track. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Start lights wand UX**: Shift+Left Click lamps to add, Shift+Right Click to remove. Lamp glow + green particles.
 - **Restart command**: `/boatracing race restart [track]` stops + re-opens + re-joins + force-starts. Auto-detects track.
-- **Per-track registration time**: `/boatracing setup setregtime <seconds>`. Configurable in setup wizard (step 8/8).
+- **Per-track registration time**: `/boatracing setup setregtime <seconds>`. Configurable in setup wizard (step 8/8). Reported by [@supershootstudions-lgtm](https://github.com/supershootstudions-lgtm) in [#6](https://github.com/Jaie55/BoatRacing/issues/6).
 - **Clearlobby command**: `/boatracing setup clearlobby` to disable the lobby for a track.
 - **Debug logging levels**: `debug: "off"/"severe"/"warning"/"info"/"fine"/"finer"/"finest"` in config.yml.
 
 Changed:
 - **UpdateChecker**: YY.D.H version comparison support, errors always logged.
-- **Wand lore**: now shows Shift+Click instructions in all 15 languages.
+- **Wizard LIGHTS step**: translated to all 15 languages.
 - **Setup summary**: laps count now shown on wizard completion.
 
 Fixed:
-- Action bar now properly cleared after forfeiting a race.
-- Forfeit command correctly uses resolved player reference instead of raw sender.
-- Lobby and reward section null-safety, cross-track reward leakage prevented.
-- Broadcast mode string comparison now uses `.equals()` instead of `==`.
-- `-p:` flag no longer interferes with downstream argument length checks.
+- Action bar now properly cleared after forfeiting a race. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- Forfeit command correctly uses resolved player reference instead of raw sender. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- Lobby and reward section null-safety, cross-track reward leakage prevented. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- Broadcast mode string comparison now uses `.equals()` instead of `==`. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- `-p:` flag no longer interferes with downstream argument length checks. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 - **Setup wizard `setlaps`**: correctly displays and persists custom lap values.
-- **Setup show**: untranslated status labels fixed, lap count displayed.
-- **Wizard LIGHTS step**: translated to all 15 languages.
+- **Setup show**: untranslated status labels fixed, lap count and registration time displayed.
 - **Messages YAML**: indentation fix for all 16 locales.
-
-Per-track config, broadcast mode, admin targeting, forfeit and action bar fixes contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Race finish**: players properly dismount boat when finishing with lobby disabled.
 
 </details>
 
