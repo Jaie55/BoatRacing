@@ -1324,8 +1324,19 @@ public class BoatRacingPlugin extends JavaPlugin {
                         return true;
                     }
                     case "restart" -> {
-                        if (args.length < 3) { p.sendMessage(Text.colorize(prefix + msg().get("race.usage.restart", "label", label))); return true; }
-                        String tname = args[2];
+                        // Auto-detect track if player is in an active race
+                        String tname;
+                        if (args.length < 3) {
+                            RaceManager activeRm = getRaceManagerForPlayer(p.getUniqueId());
+                            if (activeRm != null && (activeRm.isRunning() || activeRm.isRegistering())) {
+                                tname = activeRm.getTrackName();
+                            } else {
+                                p.sendMessage(Text.colorize(prefix + msg().get("race.usage.restart", "label", label)));
+                                return true;
+                            }
+                        } else {
+                            tname = args[2];
+                        }
                         if (!trackExistsForRace(tname)) { p.sendMessage(Text.colorize(prefix + msg().get("race.track-not-found", "track", tname))); return true; }
                         RaceManager rm = getOrCreateRaceSession(tname);
                         if (rm == null) { p.sendMessage(Text.colorize(prefix + msg().get("race.track-load-failed", "track", tname))); return true; }
