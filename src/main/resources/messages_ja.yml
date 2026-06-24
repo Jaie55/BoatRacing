@@ -188,6 +188,7 @@ race:
     registration-open: "&e参加受付中 &7(登録者: &f{count}&7)"
     registration-closed: "&7参加受付は終了しています。"
     laps: "&7周回: &f{count}"
+    regtime: "&7 - &fRegistration time: &e{seconds}s"
     starts-lights: "&7スタート枠: &f{starts} &8\u2022 &7スタートライト: &f{lights}/5 &8\u2022 &7フィニッシュ: &f{finish} &8\u2022 &7ピットエリア: &f{pit}"
     checkpoints: "&7チェックポイント: &f{count}"
     mandatory-pitstops: "&7必須ピットストップ: &f{count}"

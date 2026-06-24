@@ -187,6 +187,7 @@ race:
     registration-open: "&eRejestracja otwarta &7(Zarejestrowani: &f{count}&7)"
     registration-closed: "&7Rejestracja zamknięta."
     laps: "&7Okrążenia: &f{count}"
+    regtime: "&7 - &fRegistration time: &e{seconds}s"
     starts-lights: "&7Starty: &f{starts} &8\u2022 &7Światła startowe: &f{lights}/5 &8\u2022 &7Meta: &f{finish} &8\u2022 &7Boksy: &f{pit}"
     checkpoints: "&7Punkty kontrolne: &f{count}"
     mandatory-pitstops: "&7Obowiązkowe postoje w boksach: &f{count}"
