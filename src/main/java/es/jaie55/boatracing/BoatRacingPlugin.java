@@ -1772,6 +1772,16 @@ public class BoatRacingPlugin extends JavaPlugin {
                         if (setupWizard != null) setupWizard.afterAction(p);
                         return true;
                     }
+                    case "clearlobby" -> {
+                        FileConfiguration cfg = getConfig();
+                        cfg.set("racing.lobby.enabled", false);
+                        saveConfig();
+                        raceManager.loadSettings();
+                        p.sendMessage(Text.colorize(prefix + msg().get("setup.lobby-cleared")));
+                        p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.1f);
+                        if (setupWizard != null) setupWizard.afterAction(p);
+                        return true;
+                    }
                     case "setpos" -> {
                         if (args.length < 4) { p.sendMessage(Text.colorize(prefix + msg().get("setup.error.setpos", "label", label))); return true; }
                         org.bukkit.OfflinePlayer off = resolveOffline(args[2]);
@@ -2525,7 +2535,7 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
             if (args.length >= 2 && args[0].equalsIgnoreCase("setup")) {
                 if (!sender.hasPermission("boatracing.setup")) return Collections.emptyList();
-                if (args.length == 2) return Arrays.asList("help","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setlobby","setpos","clearpos","show","selinfo","wand","wizard");
+                if (args.length == 2) return Arrays.asList("help","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","wizard");
                 if (args.length >= 3 && args[1].equalsIgnoreCase("setpit")) {
                     // Build current partial input (join tokens from index 2)
                     String partial = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length)).toLowerCase();

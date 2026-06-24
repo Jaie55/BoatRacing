@@ -498,6 +498,7 @@ public class RaceManager {
                     }
 
                     // Move finished racers to waiting lobby immediately.
+                    cleanupRaceVehicleForPlayer(p.getUniqueId());
                     sendParticipantToLobbyAfterRace(p.getUniqueId(), p);
 
                     checkAllFinished();
