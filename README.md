@@ -43,18 +43,25 @@ Added:
 - **Per-track lobby configuration**: lobby settings can now be set per track for dedicated lobbies.
 - **Per-track rewards configuration**: rewards can now be overridden per track.
 - **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`.
+- **Start lights wand UX**: Shift+Left Click lamps to add, Shift+Right Click to remove. Lamp glow + particles.
+- **Restart command**: `/boatracing race restart [track]` stops + re-opens + re-joins + force-starts. Auto-detects track.
+- **Debug logging levels**: `debug: "off"/"severe"/"warning"/"info"/"fine"/"finer"/"finest"` in config.yml.
+
+Changed:
+- **UpdateChecker**: YY.D.H version comparison support, errors always logged.
+- **Wand lore**: now shows Shift+Click instructions in all 15 languages.
+- **Setup summary**: laps count now shown on wizard completion.
 
 Fixed:
 - Action bar now properly cleared after forfeiting a race.
 - Forfeit command correctly uses resolved player reference instead of raw sender.
-- Lobby section null-safety when configuration is missing.
-- Reward section null-safety when configuration is missing.
-- Cross-track reward leakage prevented (stable global fallback).
+- Lobby and reward section null-safety, cross-track reward leakage prevented.
 - Broadcast mode string comparison now uses `.equals()` instead of `==`.
 - `-p:` flag no longer interferes with downstream argument length checks.
-- **Setup wizard**: `setlaps` correctly shows and persists custom lap values. Start lights added/removed via Shift+Click with wand (lamp lights up + green particles). Wand lore shows light instructions. Lap count shown in setup summary.
-- **Restart command**: `/boatracing race restart [track]` stops + re-opens + re-joins + force-starts. Auto-detects track if you're in an active race.
-- **Debug logging**: `debug: "off"` in config.yml. Set to `"severe"`, `"warning"`, `"info"`, `"fine"`, `"finer"`, or `"finest"` to control console verbosity.
+- **Setup wizard `setlaps`**: correctly displays and persists custom lap values.
+- **Setup show**: untranslated status labels fixed, lap count displayed.
+- **Wizard LIGHTS step**: translated to all 15 languages.
+- **Messages YAML**: indentation fix for all 16 locales.
 
 Per-track config, broadcast mode, admin targeting, forfeit and action bar fixes contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 

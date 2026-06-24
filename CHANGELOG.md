@@ -8,6 +8,14 @@
 - **Per-track lobby configuration**: lobby settings can now be set per track for dedicated lobbies. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 - **Per-track rewards configuration**: rewards can now be overridden per track. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 - **Admin `-p:` target flag**: admins/console can target other players for commands by appending `-p:<player>`. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
+- **Start lights wand UX**: Shift+Left Click a Redstone Lamp with the wand to add it as a start light, Shift+Right Click to remove. Lamp lights up with green particles on add, smoke on remove.
+- **Restart command**: `/boatracing race restart [track]` stops any running race, re-opens registration, re-joins previous participants, and force-starts. Auto-detects track if sender is in an active race. Permission: `boatracing.race.admin` or `boatracing.setup`.
+- **Debug logging levels**: set `debug` in `config.yml` to `"off"` (default), `"severe"`, `"warning"`, `"info"`, `"fine"`, `"finer"`, or `"finest"`. Controls console log verbosity. Also applies on `/boatracing reload`.
+
+### Changed
+- **UpdateChecker**: version comparison now supports `YY.D.H` format natively. Errors always logged to console.
+- **Wand lore**: now shows Shift+Click light instructions. Translated to all 15 languages.
+- **Setup summary**: laps count now included in the final setup wizard summary.
 
 ### Fixed
 - Action bar now properly cleared after forfeiting a race. Contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
@@ -16,15 +24,11 @@
 - Reward section null-safety when configuration is missing.
 - Cross-track reward leakage prevented (stable global fallback).
 - Broadcast mode string comparison now uses `.equals()` instead of `==`.
-- **UpdateChecker**: errors now always logged to console (removed `errorLoggedOnce`). Version comparison supports `YY.D.H` format natively.
 - `-p:` flag no longer interferes with downstream argument length checks.
-- **Setup wizard**: `setlaps` now correctly displays and persists custom lap values in the wizard prompt and summary.
-- **Start lights UX**: Shift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove. Lamp lights up with green particles on add, red spark on remove. Wand lore now shows light instructions.
-- **Setup summary**: laps count now included in the final setup wizard summary.
-- **Restart command**: `/boatracing race restart [track]` stops any running race, re-opens registration, re-joins previous participants, and force-starts. Auto-detects track if sender is in an active race. Permission: `boatracing.race.admin` or `boatracing.setup`.
-- **Setup show**: fixed untranslated status labels (`general.yes`/`general.no` → `setup.status-yes`/`setup.status-no`) and added lap count display. Wizard LIGHTS step now translated in all 15 languages.
-- **Message fixes**: YAML indentation corrected for `cancelled-no-participants` and `restarted` keys across all 16 locales.
-- **Debug logging toggle**: set `debug` in `config.yml` to `"off"` (default), `"severe"`, `"warning"`, `"info"`, `"fine"`, `"finer"`, or `"finest"`. Controls console log verbosity. Also applies on `/boatracing reload`.
+- **Setup wizard `setlaps`**: now correctly displays and persists custom lap values in the wizard prompt.
+- **Setup show**: fixed untranslated status labels (`general.yes`/`general.no` → `setup.status-yes`/`setup.status-no`). Added lap count display.
+- **Wizard LIGHTS step**: `description` and `hint` now translated to all 15 languages.
+- **Messages YAML**: indentation corrected for `cancelled-no-participants` and `restarted` keys across all 16 locales.
 
 Per-track config, broadcast mode, admin targeting, forfeit and action bar fixes contributed by [@MC-MrBirdy](https://github.com/MC-MrBirdy) in [#5](https://github.com/Jaie55/BoatRacing/pull/5).
 
