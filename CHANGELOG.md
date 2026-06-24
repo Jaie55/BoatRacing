@@ -1,6 +1,6 @@
 ﻿# Changelog
 
-## 26.2 — 22/06/2026
+## 26.2 — 24/06/2026
 ### Added
 - **MC-MrBirdy added as co-author** for ongoing contributions across multiple releases.
 - **New version numbering**: aligned with Minecraft's new `YY.D.H` system (Year.Drop.Hotfix).
