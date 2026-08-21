@@ -1,3 +1,34 @@
+**Important note from the DEV**:
+
+Hey, it's me, Jon! The guy behind Jaie55. This message is for the end user, yeah, you, the one downloading the plugin.
+
+I'm going through a really **really** tough time right now. I got my heart broken back in early June, and because of that, I just don't have the mental energy to keep working on the plugin (or much of anything, honestly). I'm also out of a job and struggling financially. From the time I made this plugin up until today, August 21, 2026, it has only made 4.54 USD, and nobody has tipped me anything on Ko-Fi.
+<details>
+  
+![A picture from revenue panel from Modrinth](https://cdn.modrinth.com/data/cached_images/af8d1ccf9b7039a121fea9e54ccc0eecc22c2917.png)
+</details>
+
+As you can probably guess, that doesn't exactly give me the drive or motivation to keep developing it.
+
+I originally made this plugin because I joined a random Minecraft server (PCC Rebuilt) and became friends with the owners.
+
+<details>
+  
+- Server IP: mc.PocketCreative5.club:25567 (yes, the port included)
+- Java Port: 25567
+- Bedrock Port: 8027
+- Discord Server Invite Link: https://discord.gg/nyc3eqzQ4M
+</details>
+
+They needed something that did exactly what this does, so I built it and kept updating it as bugs popped up and they needed new features. It's a super niche plugin, and there's actually a paid one out there that ripped off some of my code, which I'm pretty pissed about.
+
+So, what does this mean for you as a user or server owner? Honestly, not much, since no one reports bugs on our Discord or GitHub anyway. The only real difference is that updating to future Minecraft versions might take longer and also you might have bugs that I haven't found yet. We used to have the plugin ready to go the second a new update dropped, so that might change.
+
+That's about it. 
+
+Thanks to all the server owners for using this plugin, I hope it gave you guys a few good laughs. And remember, if you're going through a rough patch and can't afford professional help, lean on your friends. Cry, vent, try to hang out with them, go grab dinner together, just let it all out. Don't worry about what they'll think, that's what friends are for... <3
+
+[![Built with love](https://forthebadge.com/badges/built-with-love.svg)](https://forthebadge.com)
 <!-- Language switcher with flags (hatscripts circle-flags) -->
 <p align="right">
 	<a href="#en" title="English">
