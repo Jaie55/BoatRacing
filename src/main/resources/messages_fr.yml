@@ -1,11 +1,8 @@
 # BoatRacing – Messages / i18n (Français)
-#
 # ⚠  Traduction communautaire non officielle, non relue par l'auteur du plugin.
 # ⚠  Elle peut contenir des erreurs. Corrections et contributions bienvenues.
-#
 # Vous pouvez personnaliser ici tous les messages visibles par les joueurs.
 # Utilisez & pour les codes couleur. Les placeholders s'écrivent {name}.
-# Après modification, exécutez /boatracing reload pour appliquer les changements.
 
 general:
   players-only: "&cJoueurs uniquement."
@@ -65,7 +62,7 @@ race:
     force: "&cUtilisation : /{label} race force <track>"
     start: "&cUtilisation : /{label} race start <track>"
     practice: "&cUtilisation : /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&cUtilisation : /{label} race practice leave <track>"
     stop: "&cUtilisation : /{label} race stop <track>"
     restart: "&cUtilisation : /{label} race restart <track>"
     voteopen: "&cUtilisation : /{label} race voteopen [all|<track1> <track2> ...] [secondes]"
@@ -155,7 +152,7 @@ race:
   lap-completed: "&eTour &f{lap}/{total}"
   lap-finished: "&eTour &f{num} &7terminé : &f{player}{gap}"
   player-finished: "&a{player} a terminé ! &7Temps : &f{time}{gap}"
-  checkpoint-reached: "&eCheckpoint &f{num}/{total}"
+  checkpoint-reached: "&ePoint de contrôle &f{num}/{total}"
   sector-gap: "&eSecteur &f{cp}&7 Tour &f{lap}&7 : &f{player} &7+{gap}s"
   pit-penalty: "&cPénalité de temps dans la zone des stands : &f+{time}s"
   pit-completed: "&eArrêt au stand terminé. &7Total : &f{count}"
@@ -211,7 +208,7 @@ race:
   actionbar:
     lap: "&eT &f{lap}/{total}"
     checkpoint: "&eCP &f{done}/{total}"
-    pitstop: "&ePit &f{done}/{total}"
+    pitstop: "&eStand &f{done}/{total}"
     time: "&eTemps &f{time}"
 
 setup:
@@ -266,12 +263,12 @@ setup:
   team-not-found: "&cÉquipe introuvable."
   checkpoint-added: "&aCheckpoint #&f{num} &7ajouté ({box})"
   checkpoint-added-tip: "&7Astuce : vous pouvez ajouter plusieurs checkpoints. L'ordre compte."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&cShift+Clic gauche sur une lampe de redstone avec la baguette pour ajouter, Shift+Clic droit pour retirer."
+  light-look-cmd: "&cVisez une lampe de redstone à moins de 6 blocs, ou utilisez la baguette avec Shift+Clic."
   light-fail: "&cImpossible d'ajouter le feu. Utilisez une lampe Redstone, évitez les doublons, max 5."
   light-added: "&aFeu de départ ajouté &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aFeu de départ supprimé &7({x}, {y}, {z})"
+  light-not-found: "&cAucun feu de départ trouvé à cette position."
   light-removed: "&aFeu de départ &f#{slot} supprimé &7({x}, {y}, {z} dans {world})"
   removelight-invalid: "&cIndex de feu de départ invalide. Plage : 1-{max}"
   lights-cleared: "&aTous les feux de départ ont été supprimés."
@@ -387,9 +384,9 @@ setup:
       current: "&7Actuel : &f{laps} tour(s)"
       btn-next: "&b[Terminer]"
     regtime:
-        current: "&7Actuel: &f{seconds}s"
-        prompt: "&fDéfinir le temps d'inscription (secondes): "
-        btn-finish: "&b[Terminer]"
+      current: "&7Actuel: &f{seconds}s"
+      prompt: "&fDéfinir le temps d'inscription (secondes): "
+      btn-finish: "&b[Terminer]"
     error:
       need-starts: "&cVous devez d'abord ajouter au moins 1 case de départ."
       need-finish: "&cVous devez d'abord définir la zone d'arrivée."
@@ -486,8 +483,6 @@ admin:
     player-setboat: "&7 - &f/{label} admin player setboat <player> <BoatType>"
     tracks: "&7 - &f/{label} admin tracks &7(Gérer les circuits nommés via GUI)"
 
-    language: "&cUtilisation : /{label} admin language <code>"
-
     language: "&7 - &f/{label} admin language <code> &7(Changer la langue du plugin et recharger les messages instantanément)"
   usage:
     admin-help: "&cUtilisation : /{label} admin help"
@@ -571,7 +566,7 @@ gui:
     unset: "(non défini)"
 
   admin:
-    title: "BoatRacing • Admin"
+    title: "BoatRacing • Administrateur"
     title-teams: "Admin • Équipes"
     title-team: "Admin • Équipe"
     title-team-color: "Admin • Couleur d'équipe"
@@ -616,6 +611,7 @@ gui:
   race:
     title: "Admin • Course"
     btn-status: "&e&lStatut de la course"
+    btn-checkpoints-editor: "&b&lEditeur de checkpoints"
     lore-track: "&7Circuit : &f{track}"
     lore-ready-yes: "&7Prêt : &aoui"
     lore-ready-no: "&7Prêt : &cnon"
@@ -635,6 +631,8 @@ gui:
     lore-vote-closed: "&7Vote : &cfermé"
     btn-set-laps: "&bTours : &f{n}"
     btn-custom-laps: "&eDéfinir tours personnalisés..."
+    btn-set-pitstops: "&bArrets aux stands : &f{n}"
+    btn-custom-pitstops: "&eDefinir des arrets aux stands personnalises..."
     btn-add-start-tip: "&fAjouter départ (astuce)"
     btn-clear-starts: "&cEffacer départs"
     btn-set-finish-tip: "&eDéfinir arrivée (astuce)"
@@ -646,12 +644,9 @@ gui:
     btn-open-wizard-tip: "&dOuvrir assistant setup (astuce)"
     lore-click-remove-reg: "&7Clic : &fRetirer des inscriptions"
     anvil-set-laps: "Définir tours"
-    btn-checkpoints-editor: "&b&lEditeur de checkpoints"
-    btn-set-pitstops: "&bArrets aux stands : &f{n}"
-    btn-custom-pitstops: "&eDefinir des arrets aux stands personnalises..."
     anvil-set-pitstops: "Definir arrets aux stands obligatoires"
     cp-invalid-region: "(region invalide)"
-    cp-item-title: "&fCheckpoint #{index}"
+    cp-item-title: "&fPoint de contrôle #{index}"
     cp-item-lore-region: "&7{region}"
     cp-item-lore-replace: "&eClic gauche : &fRemplacer depuis la selection"
     cp-item-lore-remove: "&eClic droit : &cSupprimer"
@@ -668,7 +663,6 @@ gui:
     cp-page: "&7Page : &f{current}&7/&f{total}"
     btn-prev-page: "&ePage precedente"
     btn-next-page: "&ePage suivante"
-
 
   vote:
     title-admin: "Admin • Vote de circuit"
@@ -691,6 +685,7 @@ gui:
     lore-current-seconds: "&7Durée : &f{seconds}s"
     status-open: "&7Statut du vote : &aouvert"
     status-closed: "&7Statut du vote : &cfermé"
+
   tracks:
     title: "Admin • Circuits"
     title-confirm: "Supprimer le circuit ?"
@@ -754,4 +749,10 @@ gui:
     btn-leave-now: "&c&lQuitter maintenant"
     anvil-team-name: "Nom d'équipe"
     anvil-racer-number: "Numéro de pilote"
+
+placeholder:
+  race-status:
+    running: "en course"
+    registering: "inscription"
+    idle: "inactive"
 

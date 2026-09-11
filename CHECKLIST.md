@@ -1,5 +1,36 @@
 README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 
+## What to verify for 26.2.1
+- Versioning and docs:
+	- Project version is 26.2.1 in `pom.xml`.
+	- `CHANGELOG.md` contains a 26.2.1 section with the global race placeholders, translatable status labels, and the 11 new language bundles.
+	- `CHECKLIST.md` includes this 26.2.1 validation block.
+	- `README.md` status shows 26.2.1, and its language badges/counts and available-language list include all 27 bundles (25 community).
+- New community language bundles (`uk`, `id`, `ar`, `nl`, `cs`, `vi`, `th`, `tl`, `da`, `no`, `fi`):
+	- Each `messages_<code>.yml` has the same 719 keys and 758 physical lines as `messages_en.yml` (no missing or extra keys).
+	- Set `language: "uk"` (repeat for each new code) and run `/boatracing reload`; all user-facing messages load without raw keys.
+	- `/boatracing admin language` tab-completion lists the new codes.
+	- `placeholder.race-status.*` resolves to the localized labels for each new bundle (for example `uk`: `в процесі` / `реєстрація` / `неактивна`).
+	- Removing a new bundle from the data folder falls back to English cleanly.
+- Locale validation tool:
+	- Run `python tools/check_locales.py` from the repository root and verify it reports `0 error(s)` and no `values identical to English` warnings (only colour/escape warnings are expected).
+	- Verify every `messages_*.yml` has the same 758 lines as `messages_en.yml` and the same key order/blank lines (no `line count differs` or `key order differs` warnings).
+	- Verify the only accepted identical value is `gui.admin.lore-color` in `es`/`es_419` (`Color` is also Spanish), listed in the checker's `ACCEPTED_IDENTICAL` map.
+	- Add a temporary broken copy in a scratch folder (missing key, changed `{placeholder}`, or `general: ""` with child keys) and verify the script reports the failure and exits with code 1.
+	- Run `python tools/check_locales.py --langs es,uk,fi` and verify only those bundles are checked.
+- Global race placeholders:
+	- With no race active on any track, `%boatracing_race_status%` shows the idle label and `%boatracing_race_running%`/`%boatracing_race_registering%` show `false`.
+	- Open registration on any track and verify `%boatracing_race_registering%` is `true` and `%boatracing_race_status%` shows the registering label.
+	- Start a race on any track and verify `%boatracing_race_running%` is `true` and `%boatracing_race_status%` shows the running label.
+	- With one track running and another registering, verify `%boatracing_race_status%` shows the running label (running takes precedence).
+	- Verify placeholders are viewer-independent (same value for every player, including when parsed without a player context).
+	- Use them in a scoreboard/hologram and verify the value updates when a race opens, starts, or ends without manual refresh.
+- Translatable status labels:
+	- Set `language: "es"` and run `/boatracing reload`; verify `%boatracing_race_status%` shows `en curso`, `registro`, or `inactiva` depending on the state.
+	- Spot-check other bundled languages (`fr`, `de`, `it`, `ja`, `ko`, `pl`, `pt_BR`, `pt_PT`, `ru`, `sv`, `tr`, `zh_CN`, `zh_TW`, `uk`, `id`, `ar`, `nl`, `cs`, `vi`, `th`, `tl`, `da`, `no`, `fi`).
+	- Verify a custom `messages_<lang>.yml` without `placeholder.race-status.*` falls back to the English labels.
+	- Verify labels are returned without colour codes.
+
 ## What to verify for 26.2
 - Broadcast mode (`racers`): verify broadcasts only reach participants, except during registration.
 - Per-track lobby: set a track-level lobby and confirm it overrides the global lobby.

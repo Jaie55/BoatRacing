@@ -1,11 +1,8 @@
 # BoatRacing – 消息 / 国际化（简体中文，中国大陆）
-#
 # ⚠  这是非官方社区翻译，尚未经插件作者审核。
 # ⚠  可能包含错误。欢迎提交修正与贡献。
-#
 # 你可以在这里自定义所有显示给玩家的消息。
 # 使用 & 作为颜色代码，占位符写作 {name}。
-# 编辑后执行 /boatracing reload 以应用变更。
 
 general:
   players-only: "&c仅限玩家使用。"
@@ -65,7 +62,7 @@ race:
     force: "&c用法：/{label} race force <赛道>"
     start: "&c用法：/{label} race start <赛道>"
     practice: "&c用法：/{label} race practice <赛道>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&c用法：/{label} race practice leave <track>"
     stop: "&c用法：/{label} race stop <赛道>"
     restart: "&c用法: /{label} race restart <track>"
     voteopen: "&c用法：/{label} race voteopen [all|<track1> <track2> ...] [秒]"
@@ -187,7 +184,6 @@ race:
     registration-open: "&e报名开放中 &7（已报名：&f{count}&7）"
     registration-closed: "&7报名已截止。"
     laps: "&7圈数：&f{count}"
-    regtime: "&7 - &f注册时间: &e{seconds}s"
     starts-lights: "&7出发格：&f{starts} &8\u2022 &7起跑灯：&f{lights}/5 &8\u2022 &7终点：&f{finish} &8\u2022 &7维修站：&f{pit}"
     checkpoints: "&7检查点：&f{count}"
     mandatory-pitstops: "&7强制维修站停靠：&f{count}"
@@ -231,7 +227,7 @@ setup:
     cmd-clearlights: "&7 - &f/{label} setup clearlights &7（清除所有已设定的起跑灯）"
     cmd-setlaps: "&7 - &f/{label} setup setlaps <n> &7（设定比赛圈数）"
     cmd-setpitstops: "&7 - &f/{label} setup setpitstops <n> &7（设定强制维修站停靠次数；0 为停用）"
-    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Set registration wait time in seconds)"
+    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(设置报名等待时间（秒）)"
     cmd-setlobby: "&7 - &f/{label} setup setlobby &7（将报名大厅设为你目前位置并启用）"
     cmd-clearlobby: "&7 - &f/{label} setup clearlobby &7(禁用此赛道的注册等候区)"
     cmd-setpos: "&7 - &f/{label} setup setpos <玩家> <格位|auto> &7（将玩家绑定至特定出发格位；auto 移除绑定）"
@@ -248,6 +244,7 @@ setup:
   error:
     setlaps: "&c用法：/{label} setup setlaps <数字>"
     setpitstops: "&c用法：/{label} setup setpitstops <数字>"
+    setregtime: "&c用法：/{label} setup setregtime <seconds>"
     removestart: "&c用法：/{label} setup removestart <slot>"
     removelight: "&c用法：/{label} setup removelight <index>"
     setpos: "&c用法：/{label} setup setpos <玩家> <格位|auto>"
@@ -266,12 +263,12 @@ setup:
   team-not-found: "&c找不到队伍。"
   checkpoint-added: "&a已新增检查点 #&f{num} &7（{box}）"
   checkpoint-added-tip: "&7提示：你可以新增多个检查点，顺序有意义。"
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&c手持魔杖按住Shift左键点击红石灯添加，按住Shift右键点击移除。"
+  light-look-cmd: "&c看向6格内的红石灯，或按住Shift点击使用魔杖。"
   light-fail: "&c无法新增起跑灯。请使用红石灯，避免重复，且最多 5 个。"
   light-added: "&a已新增起跑灯 &7（{x}, {y}, {z}）"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&a已移除起点灯 &7({x}, {y}, {z})"
+  light-not-found: "&c在该位置未找到起点灯。"
   light-removed: "&a已删除起跑灯 &f#{slot} &7（{x}, {y}, {z}，{world}）"
   removelight-invalid: "&c起跑灯编号无效。范围：1-{max}"
   lights-cleared: "&a已清除所有起跑灯。"
@@ -284,7 +281,7 @@ setup:
   language-updated: "&a语言已从 &f{old} &a切换为 &f{new}&a。"
   laps-set: "&a圈数已设定为 &f{laps}{track_info}"
   pitstops-set: "&a强制维修站停靠次数已设定为 &f{count}{track_info}"
-  regtime-set: "&aRegistration time set to &f{seconds}s{track_info}"
+  regtime-set: "&a报名时间已设置为 &f{seconds}s{track_info}"
   lobby-set: "&a报名大厅已设定为 &f{x}, {y}, {z} &7（{world}）&a 并已启用。"
   lobby-cleared: "&a此赛道的等候区已禁用。"
   track-info: " &7（赛道：{track}）"
@@ -320,6 +317,7 @@ setup:
     checkpoints: "&7 - &f检查点：&e{count}"
     pitstops: "&7 - &f强制维修站停靠：&e{count}"
     laps: "&7 - &f圈数: &e{count}"
+    regtime: "&7 - &f注册时间: &e{seconds}s"
     overrides-header: "&7 - &f赛道覆写设定："
     override-entry: "&7   &f{key}：&e{value}"
     info-configured: "{count} 已设定"
@@ -339,7 +337,7 @@ setup:
       checkpoints: "&e5/8 &f检查点（选填）"
       pitstops: "&e6/8 &f强制维修站停靠（选填）"
       laps: "&e7/8 &f圈数"
-      regtime: "&e8/8 &fRegistration time (optional)"
+      regtime: "&e8/8 &f报名时间（可选）"
     starts:
       description: "&f先新增至少 1 个出发格位；需要时可重复新增。"
       added: "&7已新增：&f{count}"
@@ -386,9 +384,9 @@ setup:
       current: "&7目前：&f{laps} 圈"
       btn-next: "&b[完成]"
     regtime:
-      current: "&7Current: &f{seconds}s"
-      prompt: "&fSet registration time (seconds): "
-      btn-finish: "&b[Finish]"
+      current: "&7当前：&f{seconds}s"
+      prompt: "&f设置报名时间（秒）："
+      btn-finish: "&b[完成]"
     error:
       need-starts: "&c你必须先新增至少 1 个出发格位。"
       need-finish: "&c你必须先设定终点区域。"
@@ -484,8 +482,6 @@ admin:
     player-setnumber: "&7 - &f/{label} admin player setnumber <玩家> <1-99>"
     player-setboat: "&7 - &f/{label} admin player setboat <玩家> <船只类型>"
     tracks: "&7 - &f/{label} admin tracks &7（通过 GUI 管理命名赛道）"
-
-    language: "&c用法：/{label} admin language <code>"
 
     language: "&7 - &f/{label} admin language <code> &7（更改插件语言并立即重载消息）"
   usage:
@@ -615,6 +611,7 @@ gui:
   race:
     title: "管理员 \u2022 比赛"
     btn-status: "&e&l比赛状态"
+    btn-checkpoints-editor: "&b&l检查点编辑器"
     lore-track: "&7赛道：&f{track}"
     lore-ready-yes: "&7就绪：&a是"
     lore-ready-no: "&7就绪：&c否"
@@ -634,6 +631,8 @@ gui:
     lore-vote-closed: "&7投票：&c关闭"
     btn-set-laps: "&b设定圈数：&f{n}"
     btn-custom-laps: "&e设定自订圈数…"
+    btn-set-pitstops: "&b必须进站次数：&f{n}"
+    btn-custom-pitstops: "&e设定自定义必须进站次数..."
     btn-add-start-tip: "&f新增出发格位（提示）"
     btn-clear-starts: "&c清除出发格位"
     btn-set-finish-tip: "&e设定终点（提示）"
@@ -645,9 +644,6 @@ gui:
     btn-open-wizard-tip: "&d开启设定精灵（提示）"
     lore-click-remove-reg: "&7点击：&f从报名中移除"
     anvil-set-laps: "设定圈数"
-    btn-checkpoints-editor: "&b&l检查点编辑器"
-    btn-set-pitstops: "&b必须进站次数：&f{n}"
-    btn-custom-pitstops: "&e设定自定义必须进站次数..."
     anvil-set-pitstops: "设定必须进站次数"
     cp-invalid-region: "（无效区域）"
     cp-item-title: "&f检查点 #{index}"
@@ -667,7 +663,6 @@ gui:
     cp-page: "&7页码：&f{current}&7/&f{total}"
     btn-prev-page: "&e上一页"
     btn-next-page: "&e下一页"
-
 
   vote:
     title-admin: "管理员 • 地图投票"
@@ -690,6 +685,7 @@ gui:
     lore-current-seconds: "&7时长：&f{seconds}秒"
     status-open: "&7投票状态：&a开启"
     status-closed: "&7投票状态：&c关闭"
+
   tracks:
     title: "管理员 \u2022 赛道"
     title-confirm: "删除赛道？"
@@ -753,3 +749,10 @@ gui:
     btn-leave-now: "&c&l立即离开"
     anvil-team-name: "队伍名称"
     anvil-racer-number: "赛车编号"
+
+placeholder:
+  race-status:
+    running: "进行中"
+    registering: "报名中"
+    idle: "空闲"
+

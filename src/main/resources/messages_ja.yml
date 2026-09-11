@@ -1,12 +1,8 @@
 # BoatRacing – メッセージ / i18n (日本語)
-#
 # ⚠  これは非公式のコミュニティ翻訳であり、プラグイン作者による確認はされていません。
 # ⚠  誤りが含まれる可能性があります。修正や貢献を歓迎します。
-#
 # ここでプレイヤー向けメッセージを自由に調整できます。
 # 色コードには & を使用し、プレースホルダーは {name} 形式で記述します。
-# 変更後は /boatracing reload を実行して反映してください。
-#
 
 general:
   players-only: "&cプレイヤーのみ実行できます。"
@@ -66,7 +62,7 @@ race:
     force: "&c使用法: /{label} race force <track>"
     start: "&c使用法: /{label} race start <track>"
     practice: "&c使用法: /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&c使用法: /{label} race practice leave <track>"
     stop: "&c使用法: /{label} race stop <track>"
     restart: "&c使用方法: /{label} race restart <track>"
     voteopen: "&c使用法: /{label} race voteopen [all|<track1> <track2> ...] [秒]"
@@ -93,7 +89,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [秒] &7(マップ投票を開始します)"
     voteclose: "&7 - &f/{label} race voteclose &7(投票を今すぐ締め切って確定します)"
     back: "&7 - &f/{label} race back &7(レースロビーに入る前の保存位置へ戻ります)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
+    admin: "&8管理者:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&c不明な race サブコマンドです。/{label} race help を使用してください。"
 
   registration:
@@ -188,7 +184,6 @@ race:
     registration-open: "&e参加受付中 &7(登録者: &f{count}&7)"
     registration-closed: "&7参加受付は終了しています。"
     laps: "&7周回: &f{count}"
-    regtime: "&7 - &f登録時間: &e{seconds}s"
     starts-lights: "&7スタート枠: &f{starts} &8\u2022 &7スタートライト: &f{lights}/5 &8\u2022 &7フィニッシュ: &f{finish} &8\u2022 &7ピットエリア: &f{pit}"
     checkpoints: "&7チェックポイント: &f{count}"
     mandatory-pitstops: "&7必須ピットストップ: &f{count}"
@@ -213,7 +208,7 @@ race:
   actionbar:
     lap: "&e周 &f{lap}/{total}"
     checkpoint: "&eCP &f{done}/{total}"
-    pitstop: "&ePit &f{done}/{total}"
+    pitstop: "&eピット &f{done}/{total}"
     time: "&eタイム &f{time}"
 
 setup:
@@ -232,7 +227,7 @@ setup:
     cmd-clearlights: "&7 - &f/{label} setup clearlights &7(設定済みのスタートライトをすべて削除します)"
     cmd-setlaps: "&7 - &f/{label} setup setlaps <n> &7(レースの周回数を設定します)"
     cmd-setpitstops: "&7 - &f/{label} setup setpitstops <n> &7(フィニッシュに必要な必須ピットストップ数を設定します。0 で無効化)"
-    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Set registration wait time in seconds)"
+    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(登録の待ち時間を秒単位で設定します)"
     cmd-setlobby: "&7 - &f/{label} setup setlobby &7(現在位置を参加受付ロビーに設定して有効化します)"
     cmd-clearlobby: "&7 - &f/{label} setup clearlobby &7(このトラックの登録ロビーを無効にします)"
     cmd-setpos: "&7 - &f/{label} setup setpos <player> <slot|auto> &7(プレイヤーを特定のスタート枠に割り当てます。1始まり。auto で割り当て解除)"
@@ -249,6 +244,7 @@ setup:
   error:
     setlaps: "&c使用法: /{label} setup setlaps <number>"
     setpitstops: "&c使用法: /{label} setup setpitstops <number>"
+    setregtime: "&c使用法: /{label} setup setregtime <seconds>"
     removestart: "&c使用法: /{label} setup removestart <slot>"
     removelight: "&c使用法: /{label} setup removelight <index>"
     setpos: "&c使用法: /{label} setup setpos <player> <slot|auto>"
@@ -267,12 +263,12 @@ setup:
   team-not-found: "&cチームが見つかりません。"
   checkpoint-added: "&aチェックポイント #&f{num} &7を追加しました ({box})"
   checkpoint-added-tip: "&7ヒント: チェックポイントは複数追加できます。順序が重要です。"
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&c杖でレッドストーンランプをShift+左クリックで追加、Shift+右クリックで削除。"
+  light-look-cmd: "&c6ブロック以内のレッドストーンランプを見るか、杖でShift+クリックしてください。"
   light-fail: "&cライトを追加できませんでした。レッドストーンランプを使用し、重複を避け、最大 5 個までです。"
   light-added: "&aスタートライトを追加しました &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aスタートライトを削除しました &7({x}, {y}, {z})"
+  light-not-found: "&cその位置にスタートライトが見つかりません。"
   light-removed: "&aスタートライト &f#{slot} を削除しました &7({x}, {y}, {z} in {world})"
   removelight-invalid: "&c無効なスタートライト番号です。範囲: 1-{max}"
   lights-cleared: "&aすべてのスタートライトを削除しました。"
@@ -285,7 +281,7 @@ setup:
   language-updated: "&a言語を &f{old} &aから &f{new}&a に変更しました。"
   laps-set: "&a周回数を &f{laps}{track_info} に設定しました"
   pitstops-set: "&a必須ピットストップ数を &f{count}{track_info} に設定しました"
-  regtime-set: "&aRegistration time set to &f{seconds}s{track_info}"
+  regtime-set: "&a登録時間を &f{seconds}秒{track_info} に設定しました"
   lobby-set: "&a参加受付ロビーを &f{x}, {y}, {z} &7({world})&a に設定し、有効化しました。"
   lobby-cleared: "&aこのトラックのロビーを無効にしました。"
   track-info: " &7(トラック: {track})"
@@ -321,6 +317,7 @@ setup:
     checkpoints: "&7 - &fチェックポイント: &e{count}"
     pitstops: "&7 - &f必須ピットストップ: &e{count}"
     laps: "&7 - &f周回数: &e{count}"
+    regtime: "&7 - &f登録時間: &e{seconds}s"
     overrides-header: "&7 - &fトラック上書き設定:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} 件設定済み"
@@ -340,7 +337,7 @@ setup:
       checkpoints: "&e5/8 &fチェックポイント (任意)"
       pitstops: "&e6/8 &f必須ピットストップ (任意)"
       laps: "&e7/8 &f周回数"
-      regtime: "&e8/8 &fRegistration time (optional)"
+      regtime: "&e8/8 &f登録時間 (任意)"
     starts:
       description: "&f少なくとも 1 つのスタート枠を追加してください。必要に応じて繰り返します。"
       added: "&7追加済み: &f{count}"
@@ -387,9 +384,9 @@ setup:
       current: "&7現在値: &f{laps} 周"
       btn-next: "&b[完了]"
     regtime:
-      current: "&7Current: &f{seconds}s"
-      prompt: "&fSet registration time (seconds): "
-      btn-finish: "&b[Finish]"
+      current: "&7現在値: &f{seconds}秒"
+      prompt: "&f登録時間を設定 (秒): "
+      btn-finish: "&b[完了]"
     error:
       need-starts: "&c先に少なくとも 1 つのスタート枠を追加する必要があります。"
       need-finish: "&c先にフィニッシュ領域を設定する必要があります。"
@@ -485,8 +482,6 @@ admin:
     player-setnumber: "&7 - &f/{label} admin player setnumber <player> <1-99>"
     player-setboat: "&7 - &f/{label} admin player setboat <player> <BoatType>"
     tracks: "&7 - &f/{label} admin tracks &7(GUI で名前付きトラックを管理)"
-
-    language: "&c使用法: /{label} admin language <code>"
 
     language: "&7 - &f/{label} admin language <code> &7(プラグイン言語を変更し、メッセージを即時再読み込み)"
   usage:
@@ -616,6 +611,7 @@ gui:
   race:
     title: "管理 • レース"
     btn-status: "&e&lレース状況"
+    btn-checkpoints-editor: "&b&lチェックポイントエディター"
     lore-track: "&7トラック: &f{track}"
     lore-ready-yes: "&7準備完了: &aはい"
     lore-ready-no: "&7準備完了: &cいいえ"
@@ -635,6 +631,8 @@ gui:
     lore-vote-closed: "&7投票: &c終了"
     btn-set-laps: "&b周回設定: &f{n}"
     btn-custom-laps: "&eカスタム周回を設定..."
+    btn-set-pitstops: "&b義務ピット回数: &f{n}"
+    btn-custom-pitstops: "&eカスタム義務ピット回数を設定..."
     btn-add-start-tip: "&fスタート枠を追加 (ヒント)"
     btn-clear-starts: "&cスタート枠をクリア"
     btn-set-finish-tip: "&eフィニッシュを設定 (ヒント)"
@@ -646,9 +644,6 @@ gui:
     btn-open-wizard-tip: "&dセットアップウィザードを開く (ヒント)"
     lore-click-remove-reg: "&7クリック: &f受付から除外"
     anvil-set-laps: "周回数を設定"
-    btn-checkpoints-editor: "&b&lチェックポイントエディター"
-    btn-set-pitstops: "&b義務ピット回数: &f{n}"
-    btn-custom-pitstops: "&eカスタム義務ピット回数を設定..."
     anvil-set-pitstops: "義務ピット回数を設定"
     cp-invalid-region: "(無効なリージョン)"
     cp-item-title: "&fチェックポイント #{index}"
@@ -668,7 +663,6 @@ gui:
     cp-page: "&7ページ: &f{current}&7/&f{total}"
     btn-prev-page: "&e前のページ"
     btn-next-page: "&e次のページ"
-
 
   vote:
     title-admin: "管理 • マップ投票"
@@ -691,6 +685,7 @@ gui:
     lore-current-seconds: "&7時間: &f{seconds}s"
     status-open: "&7投票状態: &a開催中"
     status-closed: "&7投票状態: &c終了"
+
   tracks:
     title: "管理 • トラック"
     title-confirm: "トラックを削除しますか?"
@@ -754,4 +749,10 @@ gui:
     btn-leave-now: "&c&l今すぐ脱退"
     anvil-team-name: "チーム名"
     anvil-racer-number: "レーサー番号"
+
+placeholder:
+  race-status:
+    running: "レース中"
+    registering: "受付中"
+    idle: "待機中"
 

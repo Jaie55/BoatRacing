@@ -1,11 +1,8 @@
 # BoatRacing – Сообщения / i18n (Русский)
-#
 # ⚠  Это неофициальный перевод сообщества, не проверенный автором плагина.
 # ⚠  Возможны ошибки. Исправления и вклад приветствуются.
-#
 # Здесь можно настроить все сообщения, видимые игрокам.
 # Используйте & для цветовых кодов. Заполнители записываются как {name}.
-# После редактирования выполните /boatracing reload для применения изменений.
 
 general:
   players-only: "&cТолько для игроков."
@@ -65,7 +62,7 @@ race:
     force: "&cИспользование: /{label} race force <трасса>"
     start: "&cИспользование: /{label} race start <трасса>"
     practice: "&cИспользование: /{label} race practice <трасса>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&cИспользование: /{label} race practice leave <track>"
     stop: "&cИспользование: /{label} race stop <трасса>"
     restart: "&cИспользование: /{label} race restart <track>"
     voteopen: "&cИспользование: /{label} race voteopen [all|<track1> <track2> ...] [секунды]"
@@ -187,7 +184,6 @@ race:
     registration-open: "&eРегистрация открыта &7(Зарегистрировано: &f{count}&7)"
     registration-closed: "&7Регистрация закрыта."
     laps: "&7Кругов: &f{count}"
-    regtime: "&7 - &fВремя регистрации: &e{seconds}s"
     starts-lights: "&7Старты: &f{starts} &8\u2022 &7Стартовые огни: &f{lights}/5 &8\u2022 &7Финиш: &f{finish} &8\u2022 &7Пит-зона: &f{pit}"
     checkpoints: "&7Контрольные точки: &f{count}"
     mandatory-pitstops: "&7Обязательные пит-стопы: &f{count}"
@@ -231,7 +227,7 @@ setup:
     cmd-clearlights: "&7 - &f/{label} setup clearlights &7(Удалить все стартовые огни)"
     cmd-setlaps: "&7 - &f/{label} setup setlaps <n> &7(Установить количество кругов)"
     cmd-setpitstops: "&7 - &f/{label} setup setpitstops <n> &7(Обязательные пит-стопы; 0 — отключить)"
-    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Set registration wait time in seconds)"
+    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Установить время ожидания регистрации в секундах)"
     cmd-setlobby: "&7 - &f/{label} setup setlobby &7(Установить лобби регистрации в вашей текущей точке и включить его)"
     cmd-clearlobby: "&7 - &f/{label} setup clearlobby &7(Отключает лобби регистрации для этой трассы)"
     cmd-setpos: "&7 - &f/{label} setup setpos <игрок> <место|auto> &7(Привязать игрока к стартовому месту)"
@@ -248,6 +244,7 @@ setup:
   error:
     setlaps: "&cИспользование: /{label} setup setlaps <число>"
     setpitstops: "&cИспользование: /{label} setup setpitstops <число>"
+    setregtime: "&cИспользование: /{label} setup setregtime <seconds>"
     removestart: "&cИспользование: /{label} setup removestart <slot>"
     removelight: "&cИспользование: /{label} setup removelight <index>"
     setpos: "&cИспользование: /{label} setup setpos <игрок> <место|auto>"
@@ -266,12 +263,12 @@ setup:
   team-not-found: "&cКоманда не найдена."
   checkpoint-added: "&aДобавлена контрольная точка #&f{num} &7({box})"
   checkpoint-added-tip: "&7Подсказка: Можно добавить несколько КТ. Порядок важен."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&cShift+ЛКМ по редстоуновому светильнику с палочкой, чтобы добавить, Shift+ПКМ, чтобы убрать."
+  light-look-cmd: "&cПосмотрите на редстоуновый светильник в пределах 6 блоков или используйте палочку с Shift+кликом."
   light-fail: "&cНе удалось добавить огонь. Используйте лампу из красного камня, без дублирования, макс. 5."
   light-added: "&aСтартовый огонь добавлен &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aСтартовый свет убран &7({x}, {y}, {z})"
+  light-not-found: "&cСтартовый свет не найден в этой позиции."
   light-removed: "&aСтартовый огонь &f#{slot} удалён &7({x}, {y}, {z} в {world})"
   removelight-invalid: "&cНеверный индекс стартового огня. Диапазон: 1-{max}"
   lights-cleared: "&aВсе стартовые огни удалены."
@@ -284,7 +281,7 @@ setup:
   language-updated: "&aЯзык изменён с &f{old} &aна &f{new}&a."
   laps-set: "&aКруги установлены на &f{laps}{track_info}"
   pitstops-set: "&aОбязательных пит-стопов: &f{count}{track_info}"
-  regtime-set: "&aRegistration time set to &f{seconds}s{track_info}"
+  regtime-set: "&aВремя регистрации установлено на &f{seconds}s{track_info}"
   lobby-set: "&aЛобби регистрации установлено в точку &f{x}, {y}, {z} &7({world})&a и включено."
   lobby-cleared: "&aЛобби отключено для этой трассы."
   track-info: " &7(трасса: {track})"
@@ -320,6 +317,7 @@ setup:
     checkpoints: "&7 - &fКонтрольные точки: &e{count}"
     pitstops: "&7 - &fОбязательные пит-стопы: &e{count}"
     laps: "&7 - &fКруги: &e{count}"
+    regtime: "&7 - &fВремя регистрации: &e{seconds}s"
     overrides-header: "&7 - &fПереопределения трассы:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} настроено"
@@ -339,7 +337,7 @@ setup:
       checkpoints: "&e5/8 &fКонтрольные точки (необязательно)"
       pitstops: "&e6/8 &fОбязательные пит-стопы (необязательно)"
       laps: "&e7/8 &fКруги"
-      regtime: "&e8/8 &fRegistration time (optional)"
+      regtime: "&e8/8 &fВремя регистрации (необязательно)"
     starts:
       description: "&fДобавьте минимум 1 стартовое место. При необходимости повторите."
       added: "&7Добавлено: &f{count}"
@@ -386,9 +384,9 @@ setup:
       current: "&7Текущее: &f{laps} кругов"
       btn-next: "&b[Завершить]"
     regtime:
-      current: "&7Current: &f{seconds}s"
-      prompt: "&fSet registration time (seconds): "
-      btn-finish: "&b[Finish]"
+      current: "&7Текущее: &f{seconds}s"
+      prompt: "&fУстановите время регистрации (секунды): "
+      btn-finish: "&b[Завершить]"
     error:
       need-starts: "&cСначала добавьте хотя бы 1 стартовое место."
       need-finish: "&cСначала установите финишную зону."
@@ -484,8 +482,6 @@ admin:
     player-setnumber: "&7 - &f/{label} admin player setnumber <игрок> <1-99>"
     player-setboat: "&7 - &f/{label} admin player setboat <игрок> <тип лодки>"
     tracks: "&7 - &f/{label} admin tracks &7(Управление трассами через GUI)"
-
-    language: "&cИспользование: /{label} admin language <code>"
 
     language: "&7 - &f/{label} admin language <code> &7(Изменить язык плагина и мгновенно перезагрузить сообщения)"
   usage:
@@ -615,6 +611,7 @@ gui:
   race:
     title: "Администратор \u2022 Гонка"
     btn-status: "&e&lСтатус гонки"
+    btn-checkpoints-editor: "&b&lРедактор чекпоинтов"
     lore-track: "&7Трасса: &f{track}"
     lore-ready-yes: "&7Готово: &aда"
     lore-ready-no: "&7Готово: &cнет"
@@ -634,6 +631,8 @@ gui:
     lore-vote-closed: "&7Голосование: &cзакрыто"
     btn-set-laps: "&bКругов: &f{n}"
     btn-custom-laps: "&eУстановить круги..."
+    btn-set-pitstops: "&bОбязательные пит-стопы: &f{n}"
+    btn-custom-pitstops: "&eЗадать пользовательские обязательные пит-стопы..."
     btn-add-start-tip: "&fДобавить старт (подсказка)"
     btn-clear-starts: "&cОчистить старты"
     btn-set-finish-tip: "&eУстановить финиш (подсказка)"
@@ -645,9 +644,6 @@ gui:
     btn-open-wizard-tip: "&dМастер настройки (подсказка)"
     lore-click-remove-reg: "&7Нажмите: &fУдалить из регистрации"
     anvil-set-laps: "Установить круги"
-    btn-checkpoints-editor: "&b&lРедактор чекпоинтов"
-    btn-set-pitstops: "&bОбязательные пит-стопы: &f{n}"
-    btn-custom-pitstops: "&eЗадать пользовательские обязательные пит-стопы..."
     anvil-set-pitstops: "Установить обязательные пит-стопы"
     cp-invalid-region: "(некорректный регион)"
     cp-item-title: "&fЧекпоинт #{index}"
@@ -667,7 +663,6 @@ gui:
     cp-page: "&7Страница: &f{current}&7/&f{total}"
     btn-prev-page: "&eПредыдущая страница"
     btn-next-page: "&eСледующая страница"
-
 
   vote:
     title-admin: "Админ • Голосование за карту"
@@ -690,6 +685,7 @@ gui:
     lore-current-seconds: "&7Длительность: &f{seconds}с"
     status-open: "&7Статус голосования: &aоткрыто"
     status-closed: "&7Статус голосования: &cзакрыто"
+
   tracks:
     title: "Администратор \u2022 Трассы"
     title-confirm: "Удалить трассу?"
@@ -753,4 +749,10 @@ gui:
     btn-leave-now: "&c&lПокинуть сейчас"
     anvil-team-name: "Название команды"
     anvil-racer-number: "Номер гонщика"
+
+placeholder:
+  race-status:
+    running: "в процессе"
+    registering: "регистрация"
+    idle: "неактивно"
 

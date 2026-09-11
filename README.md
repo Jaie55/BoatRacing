@@ -45,11 +45,11 @@ Thanks to all the server owners for using this plugin, I hope it gave you guys a
 
 [![bStats](https://bstats.org/signatures/bukkit/BoatRacing.svg)](https://bstats.org/plugin/bukkit/BoatRacing/26881)
 
-[![Languages](https://img.shields.io/badge/Languages-16-0ea5e9)](#available-languages) [![Official](https://img.shields.io/badge/Official-2-22c55e)](#available-languages) [![Community](https://img.shields.io/badge/Community-14-f59e0b)](#available-languages)
+[![Languages](https://img.shields.io/badge/Languages-27-0ea5e9)](#available-languages) [![Official](https://img.shields.io/badge/Official-2-22c55e)](#available-languages) [![Community](https://img.shields.io/badge/Community-25-f59e0b)](#available-languages)
 
 An F1‒style ice boat racing plugin for Bukkit/Spigot (compatible with Paper/Purpur) with a clean, vanilla‒like GUI. Manage teams, configure tracks with the built‒in BoatRacing selection tool, run timed races with checkpoints, pit area penalties, and a guided setup wizard.
 
-> Status: Public release (26.2)
+> Status: Public release (26.2.1)
 > Authors: [Jaie55](https://github.com/Jaie55) & [MC-MrBirdy](https://github.com/MC-MrBirdy)
 
 <a id="snapshot-261-warning"></a>
@@ -62,6 +62,20 @@ An F1‒style ice boat racing plugin for Bukkit/Spigot (compatible with Paper/Pu
 See the changelog in [CHANGELOG.md](https://github.com/Jaie55/BoatRacing/blob/main/CHANGELOG.md).
 
 This is how we test the plugin to validate its behavior after each update: see the QA checklist in [CHECKLIST.md](CHECKLIST.md)
+
+Locale files are validated with `python tools/check_locales.py` (Python 3.8+), which checks key parity, placeholders, duplicated keys, colour/escape differences, and possible untranslated text across every `messages_*.yml`.
+
+<details>
+<summary><strong>What's New (26.2.1)</strong></summary>
+
+Global race placeholders and translatable status labels:
+
+- **Added**: global race placeholders `%boatracing_race_running%`, `%boatracing_race_registering%`, and `%boatracing_race_status%` resolve across all track sessions, so a single scoreboard/hologram line reacts when any race opens or starts.
+- **Added**: `%boatracing_race_status%` labels are translated in `messages_<lang>.yml` under `placeholder.race-status.*` across all 27 bundled languages.
+- **Added**: 11 new community language bundles — `uk` (Ukrainian), `id` (Indonesian), `ar` (Arabic), `nl` (Dutch), `cs` (Czech), `vi` (Vietnamese), `th` (Thai), `tl` (Filipino), `da` (Danish), `no` (Norwegian), and `fi` (Finnish) — fully translated with the same keys as English.
+- **Docs**: README placeholder tables and CHECKLIST include validation steps for the new global placeholders and language bundles.
+
+</details>
 
 <details>
 <summary><strong>What's New (26.2)</strong></summary>
@@ -413,8 +427,8 @@ Fixes and polish:
 Official translations: <img src="https://hatscripts.github.io/circle-flags/flags/gb.svg" width="16" height="16" alt="English" /> <img src="https://hatscripts.github.io/circle-flags/flags/es.svg" width="16" height="16" alt="Espanol" />
 [![en official](https://img.shields.io/badge/en-official-22c55e)](#available-languages) [![es official](https://img.shields.io/badge/es-official-22c55e)](#available-languages)
 
-Community translations: <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" width="16" height="16" alt="French" /> <img src="https://hatscripts.github.io/circle-flags/flags/br.svg" width="16" height="16" alt="Portuguese Brazil" /> <img src="https://hatscripts.github.io/circle-flags/flags/pt.svg" width="16" height="16" alt="Portuguese Portugal" /> <img src="https://hatscripts.github.io/circle-flags/flags/mx.svg" width="16" height="16" alt="Spanish Latin America" /> <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" width="16" height="16" alt="German" /> <img src="https://hatscripts.github.io/circle-flags/flags/it.svg" width="16" height="16" alt="Italian" /> <img src="https://hatscripts.github.io/circle-flags/flags/pl.svg" width="16" height="16" alt="Polish" /> <img src="https://hatscripts.github.io/circle-flags/flags/tr.svg" width="16" height="16" alt="Turkish" /> <img src="https://hatscripts.github.io/circle-flags/flags/jp.svg" width="16" height="16" alt="Japanese" /> <img src="https://hatscripts.github.io/circle-flags/flags/kr.svg" width="16" height="16" alt="Korean" /> <img src="https://hatscripts.github.io/circle-flags/flags/se.svg" width="16" height="16" alt="Swedish" /> <img src="https://hatscripts.github.io/circle-flags/flags/tw.svg" width="16" height="16" alt="Chinese (Taiwan, Traditional)" /> <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" width="16" height="16" alt="Chinese (Mainland, Simplified)" /> <img src="https://hatscripts.github.io/circle-flags/flags/ru.svg" width="16" height="16" alt="Russian" />
-[![fr community](https://img.shields.io/badge/fr-community-f59e0b)](#available-languages) [![pt_BR community](https://img.shields.io/badge/pt_BR-community-f59e0b)](#available-languages) [![pt_PT community](https://img.shields.io/badge/pt_PT-community-f59e0b)](#available-languages) [![es_419 community](https://img.shields.io/badge/es_419-community-f59e0b)](#available-languages) [![de community](https://img.shields.io/badge/de-community-f59e0b)](#available-languages) [![it community](https://img.shields.io/badge/it-community-f59e0b)](#available-languages) [![pl community](https://img.shields.io/badge/pl-community-f59e0b)](#available-languages) [![tr community](https://img.shields.io/badge/tr-community-f59e0b)](#available-languages) [![ja community](https://img.shields.io/badge/ja-community-f59e0b)](#available-languages) [![ko community](https://img.shields.io/badge/ko-community-f59e0b)](#available-languages) [![sv community](https://img.shields.io/badge/sv-community-f59e0b)](#available-languages) [![zh_TW community](https://img.shields.io/badge/zh_TW-community-f59e0b)](#available-languages) [![zh_CN community](https://img.shields.io/badge/zh_CN-community-f59e0b)](#available-languages) [![ru community](https://img.shields.io/badge/ru-community-f59e0b)](#available-languages)
+Community translations: <img src="https://hatscripts.github.io/circle-flags/flags/fr.svg" width="16" height="16" alt="French" /> <img src="https://hatscripts.github.io/circle-flags/flags/br.svg" width="16" height="16" alt="Portuguese Brazil" /> <img src="https://hatscripts.github.io/circle-flags/flags/pt.svg" width="16" height="16" alt="Portuguese Portugal" /> <img src="https://hatscripts.github.io/circle-flags/flags/mx.svg" width="16" height="16" alt="Spanish Latin America" /> <img src="https://hatscripts.github.io/circle-flags/flags/de.svg" width="16" height="16" alt="German" /> <img src="https://hatscripts.github.io/circle-flags/flags/it.svg" width="16" height="16" alt="Italian" /> <img src="https://hatscripts.github.io/circle-flags/flags/pl.svg" width="16" height="16" alt="Polish" /> <img src="https://hatscripts.github.io/circle-flags/flags/tr.svg" width="16" height="16" alt="Turkish" /> <img src="https://hatscripts.github.io/circle-flags/flags/jp.svg" width="16" height="16" alt="Japanese" /> <img src="https://hatscripts.github.io/circle-flags/flags/kr.svg" width="16" height="16" alt="Korean" /> <img src="https://hatscripts.github.io/circle-flags/flags/se.svg" width="16" height="16" alt="Swedish" /> <img src="https://hatscripts.github.io/circle-flags/flags/tw.svg" width="16" height="16" alt="Chinese (Taiwan, Traditional)" /> <img src="https://hatscripts.github.io/circle-flags/flags/cn.svg" width="16" height="16" alt="Chinese (Mainland, Simplified)" /> <img src="https://hatscripts.github.io/circle-flags/flags/ru.svg" width="16" height="16" alt="Russian" /> <img src="https://hatscripts.github.io/circle-flags/flags/ua.svg" width="16" height="16" alt="Ukrainian" /> <img src="https://hatscripts.github.io/circle-flags/flags/id.svg" width="16" height="16" alt="Indonesian" /> <img src="https://hatscripts.github.io/circle-flags/flags/sa.svg" width="16" height="16" alt="Arabic" /> <img src="https://hatscripts.github.io/circle-flags/flags/nl.svg" width="16" height="16" alt="Dutch" /> <img src="https://hatscripts.github.io/circle-flags/flags/cz.svg" width="16" height="16" alt="Czech" /> <img src="https://hatscripts.github.io/circle-flags/flags/vn.svg" width="16" height="16" alt="Vietnamese" /> <img src="https://hatscripts.github.io/circle-flags/flags/th.svg" width="16" height="16" alt="Thai" /> <img src="https://hatscripts.github.io/circle-flags/flags/ph.svg" width="16" height="16" alt="Filipino" /> <img src="https://hatscripts.github.io/circle-flags/flags/dk.svg" width="16" height="16" alt="Danish" /> <img src="https://hatscripts.github.io/circle-flags/flags/no.svg" width="16" height="16" alt="Norwegian" /> <img src="https://hatscripts.github.io/circle-flags/flags/fi.svg" width="16" height="16" alt="Finnish" />
+[![fr community](https://img.shields.io/badge/fr-community-f59e0b)](#available-languages) [![pt_BR community](https://img.shields.io/badge/pt_BR-community-f59e0b)](#available-languages) [![pt_PT community](https://img.shields.io/badge/pt_PT-community-f59e0b)](#available-languages) [![es_419 community](https://img.shields.io/badge/es_419-community-f59e0b)](#available-languages) [![de community](https://img.shields.io/badge/de-community-f59e0b)](#available-languages) [![it community](https://img.shields.io/badge/it-community-f59e0b)](#available-languages) [![pl community](https://img.shields.io/badge/pl-community-f59e0b)](#available-languages) [![tr community](https://img.shields.io/badge/tr-community-f59e0b)](#available-languages) [![ja community](https://img.shields.io/badge/ja-community-f59e0b)](#available-languages) [![ko community](https://img.shields.io/badge/ko-community-f59e0b)](#available-languages) [![sv community](https://img.shields.io/badge/sv-community-f59e0b)](#available-languages) [![zh_TW community](https://img.shields.io/badge/zh_TW-community-f59e0b)](#available-languages) [![zh_CN community](https://img.shields.io/badge/zh_CN-community-f59e0b)](#available-languages) [![ru community](https://img.shields.io/badge/ru-community-f59e0b)](#available-languages) [![uk community](https://img.shields.io/badge/uk-community-f59e0b)](#available-languages) [![id community](https://img.shields.io/badge/id-community-f59e0b)](#available-languages) [![ar community](https://img.shields.io/badge/ar-community-f59e0b)](#available-languages) [![nl community](https://img.shields.io/badge/nl-community-f59e0b)](#available-languages) [![cs community](https://img.shields.io/badge/cs-community-f59e0b)](#available-languages) [![vi community](https://img.shields.io/badge/vi-community-f59e0b)](#available-languages) [![th community](https://img.shields.io/badge/th-community-f59e0b)](#available-languages) [![tl community](https://img.shields.io/badge/tl-community-f59e0b)](#available-languages) [![da community](https://img.shields.io/badge/da-community-f59e0b)](#available-languages) [![no community](https://img.shields.io/badge/no-community-f59e0b)](#available-languages) [![fi community](https://img.shields.io/badge/fi-community-f59e0b)](#available-languages)
 
 Available codes and names:
 - `en` English (official)
@@ -433,6 +447,17 @@ Available codes and names:
 - `zh_TW` Chinese (Taiwan, Traditional)
 - `zh_CN` Chinese (Mainland, Simplified)
 - `ru` Russian
+- `uk` Ukrainian
+- `id` Bahasa Indonesia
+- `ar` Arabic
+- `nl` Nederlands
+- `cs` Čeština
+- `vi` Tiếng Việt
+- `th` ไทย
+- `tl` Filipino
+- `da` Dansk
+- `no` Norsk
+- `fi` Suomi
 
 ## Features
 - Team GUI for players: browse teams, open team view, join/leave, manage your racer number and boat type, and optionally rename/change color/disband from the GUI when enabled in config.
@@ -444,7 +469,7 @@ Available codes and names:
 - Multi-track race orchestration: independent race sessions per track and map-vote commands for admins/players in chat.
 - HUD and scoreboard: in-race sidebar plus ActionBar with per-section config toggles, safe scoreboard restoration after races, and compatibility flow for external scoreboards.
 - Persistent stats: `stats.yml` stores wins, best race and best lap so PlaceholderAPI, holograms, scoreboards, and NPCs can show live and historical data.
-- i18n: bundled message packs for `en`, `es`, `es_419`, `fr`, `pt_BR`, `pt_PT`, `de`, `it`, `pl`, `tr`, `ja`, `ko`, `sv`, `zh_TW`, `zh_CN`, and `ru`; `en`/`es` are official and the rest are community translations. All are hot-reloadable with `/boatracing reload`.
+- i18n: bundled message packs for `en`, `es`, `es_419`, `fr`, `pt_BR`, `pt_PT`, `de`, `it`, `pl`, `tr`, `ja`, `ko`, `sv`, `zh_TW`, `zh_CN`, `ru`, `uk`, `id`, `ar`, `nl`, `cs`, `vi`, `th`, `tl`, `da`, `no`, and `fi`; `en`/`es` are official and the rest are community translations. All are hot-reloadable with `/boatracing reload`.
 - Rewards, updates, and metrics: per-position race rewards, Modrinth update checks, and optional bStats metrics.
 
 ## Requirements
@@ -683,7 +708,7 @@ Permission notes:
 ## Configuration
 Core:
 - `prefix`: chat prefix.
-- `language`: bundled values are `en`, `es`, `es_419`, `fr`, `pt_BR`, `pt_PT`, `de`, `it`, `pl`, `tr`, `ja`, `ko`, `sv`, `zh_TW`, `zh_CN`, and `ru`; can be changed live with `/boatracing admin language <code>`.
+- `language`: bundled values are `en`, `es`, `es_419`, `fr`, `pt_BR`, `pt_PT`, `de`, `it`, `pl`, `tr`, `ja`, `ko`, `sv`, `zh_TW`, `zh_CN`, `ru`, `uk`, `id`, `ar`, `nl`, `cs`, `vi`, `th`, `tl`, `da`, `no`, and `fi`; can be changed live with `/boatracing admin language <code>`.
 - `max-members-per-team`: team size limit.
 
 Player actions:
@@ -779,8 +804,8 @@ Legacy migration:
 - Optional PlaceholderAPI support through a soft dependency
 - SimpleScore compatibility hook for hiding/restoring external sidebars during races
 - Compatible with TAB environments for scoreboard usage, without requiring a TAB-specific dependency
-- Bundled languages: English, Spanish, French, Portuguese (Brazil), Portuguese (Portugal), German, Italian, Polish, Turkish, Japanese, Korean, Swedish, Chinese (Taiwan, Traditional), Chinese (Mainland, Simplified), Russian
-- Note: `pt_BR`, `pt_PT`, `de`, `it`, `pl`, `tr`, `ja`, `ko`, and `sv` are bundled community files and may still require translation review.
+- Bundled languages: English, Spanish, French, Portuguese (Brazil), Portuguese (Portugal), German, Italian, Polish, Turkish, Japanese, Korean, Swedish, Chinese (Taiwan, Traditional), Chinese (Mainland, Simplified), Russian, Ukrainian, Indonesian, Arabic, Dutch, Czech, Vietnamese, Thai, Filipino, Danish, Norwegian, Finnish
+- Note: `pt_BR`, `pt_PT`, `de`, `it`, `pl`, `tr`, `ja`, `ko`, `sv`, `uk`, `id`, `ar`, `nl`, `cs`, `vi`, `th`, `tl`, `da`, `no`, and `fi` are bundled community files translated from English; native-speaker refinements are still welcome.
 - Custom languages are supported via `messages_<lang>.yml` in the plugin data folder and can be selected with `language: "<lang>"`.
 
 ## Placeholders (PlaceholderAPI)
@@ -793,6 +818,7 @@ Resolution rules:
 - `%boatracing_player_*_<player>%` uses an explicit player name or UUID and is ideal for NPCs and static holograms.
 - Team leader placeholders always resolve the current saved leader of that team.
 - Track-scoped race placeholders (`%boatracing_track_race_*_<track>%`) resolve against the race session of the requested track.
+- Global race placeholders (`%boatracing_race_running%`, `%boatracing_race_registering%`, `%boatracing_race_status%`) resolve across all track sessions, so a single display can react to any track: `status` returns `running` if any race is running, otherwise `registering` if any registration is open, otherwise `idle`. The `status` label is translated from `placeholder.race-status.*` in `messages_<lang>.yml`; the boolean placeholders stay `true`/`false`.
 - Track-scoped practice placeholders (`%boatracing_track_practice_running_<track>%`) resolve whether the requested track is currently in practice mode (including countdown).
 - Track-scoped best-record placeholders (`%boatracing_track_best_*_<track>%`) resolve against the requested track token, not only the currently selected track.
 - Compatibility aliases are available: `%boatracing_track_racerunning_<track>%` and `%boatracing_track_raceregistering_<track>%`.
@@ -817,6 +843,7 @@ Resolution rules:
 | `%boatracing_player_race_running%` / `%boatracing_player_race_registering%` | Whether the viewer is currently racing or currently registered in their own race session | `Running: true` / `Registering: false` | Viewer context |
 | `%boatracing_player_practice_running%` | Whether the viewer is currently in a solo practice session | `Practice running: true` | Viewer context |
 | `%boatracing_track_race_running_<track>%` / `%boatracing_track_race_registering_<track>%` / `%boatracing_track_race_status_<track>%` | Track-scoped race state (`running`, `registering`, `idle`) for a specific track token | `Harbor running: true` / `Harbor status: running` / `Desert status: idle` | Same for every viewer |
+| `%boatracing_race_running%` / `%boatracing_race_registering%` / `%boatracing_race_status%` | Global race state across all tracks (`running`, `registering`, `idle`) for a single server-wide display | `Any race: true` / `Status: registering` / `Status: idle` | Same for every viewer |
 | `%boatracing_track_racerunning_<track>%` / `%boatracing_track_raceregistering_<track>%` | Backward-compatible aliases for track running/registering booleans | `Harbor running(alias): true` / `Desert registering(alias): false` | Same for every viewer |
 | `%boatracing_track_practice_running_<track>%` / `%boatracing_track_practicerunning_<track>%` | Track-scoped practice state (true while practice countdown or run is active) | `Harbor practice: true` / `Harbor practice(alias): true` | Same for every viewer |
 | `%boatracing_player_current_time%` / `%boatracing_player_current_time_ms%` | Live timer for the viewer | `Time: 1:42.355` / `TimeMs: 102355` | Viewer context |

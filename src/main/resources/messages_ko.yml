@@ -1,11 +1,8 @@
 # BoatRacing - 메시지 / i18n (한국어)
-#
 # ⚠  비공식 커뮤니티 번역이며 플러그인 제작자가 검수하지 않았습니다.
 # ⚠  오류가 있을 수 있습니다. 수정 및 기여를 환영합니다.
-#
 # 여기에서 사용자에게 표시되는 모든 메시지를 사용자 지정할 수 있습니다.
 # 색상 코드는 & 를 사용하고, 자리표시자는 {name} 형식으로 작성합니다.
-# 수정 후 /boatracing reload 를 실행해 변경 사항을 적용하세요.
 
 general:
   players-only: "&c플레이어만 가능합니다."
@@ -65,7 +62,7 @@ race:
     force: "&c사용법: /{label} race force <track>"
     start: "&c사용법: /{label} race start <track>"
     practice: "&c사용법: /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&c사용법: /{label} race practice leave <track>"
     stop: "&c사용법: /{label} race stop <track>"
     restart: "&c사용법: /{label} race restart <track>"
     voteopen: "&c사용법: /{label} race voteopen [all|<track1> <track2> ...] [초]"
@@ -187,7 +184,6 @@ race:
     registration-open: "&e등록 열림 &7(등록됨: &f{count}&7)"
     registration-closed: "&7등록 종료."
     laps: "&7랩: &f{count}"
-    regtime: "&7 - &f등록 시간: &e{seconds}s"
     starts-lights: "&7스타트: &f{starts} &8\u2022 &7스타트 조명: &f{lights}/5 &8\u2022 &7피니시: &f{finish} &8\u2022 &7피트: &f{pit}"
     checkpoints: "&7체크포인트: &f{count}"
     mandatory-pitstops: "&7필수 피트 정차: &f{count}"
@@ -231,7 +227,7 @@ setup:
     cmd-clearlights: "&7 - &f/{label} setup clearlights &7(설정된 모든 스타트 조명 제거)"
     cmd-setlaps: "&7 - &f/{label} setup setlaps <n> &7(레이스 랩 수 설정)"
     cmd-setpitstops: "&7 - &f/{label} setup setpitstops <n> &7(필수 피트 정차 설정, 0으로 비활성화)"
-    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Set registration wait time in seconds)"
+    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(등록 대기 시간을 초 단위로 설정)"
     cmd-setlobby: "&7 - &f/{label} setup setlobby &7(등록 로비를 현재 위치로 설정 및 활성화)"
     cmd-clearlobby: "&7 - &f/{label} setup clearlobby &7(이 트랙의 등록 로비를 비활성화합니다)"
     cmd-setpos: "&7 - &f/{label} setup setpos <player> <slot|auto> &7(플레이어를 특정 스타트 슬롯에 바인드, 1 기반; auto는 바인드 제거)"
@@ -248,6 +244,7 @@ setup:
   error:
     setlaps: "&c사용법: /{label} setup setlaps <number>"
     setpitstops: "&c사용법: /{label} setup setpitstops <number>"
+    setregtime: "&c사용법: /{label} setup setregtime <seconds>"
     removestart: "&c사용법: /{label} setup removestart <slot>"
     removelight: "&c사용법: /{label} setup removelight <index>"
     setpos: "&c사용법: /{label} setup setpos <player> <slot|auto>"
@@ -266,12 +263,12 @@ setup:
   team-not-found: "&c팀을 찾을 수 없습니다."
   checkpoint-added: "&a체크포인트 #&f{num}&a 추가됨 &7({box})"
   checkpoint-added-tip: "&7팁: 여러 체크포인트를 추가할 수 있습니다. 순서가 중요합니다."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&c완드로 레드스톤 램프를 Shift+좌클릭하여 추가하고, Shift+우클릭하여 제거합니다."
+  light-look-cmd: "&c6블록 이내의 레드스톤 램프를 바라보거나, 완드로 Shift+클릭하세요."
   light-fail: "&c조명을 추가할 수 없습니다. 레드스톤 랜프를 사용하고, 중복을 피하고, 최대 5개입니다."
   light-added: "&a스타트 조명 추가됨 &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&a스타트 조명을 제거했습니다 &7({x}, {y}, {z})"
+  light-not-found: "&c해당 위치에서 스타트 조명을 찾을 수 없습니다."
   light-removed: "&a스타트 조명 &f#{slot}&a 제거됨 &7({x}, {y}, {z} in {world})"
   removelight-invalid: "&c잘못된 조명 번호입니다. 범위: 1-{max}"
   lights-cleared: "&a모든 스타트 조명이 제거되었습니다."
@@ -284,7 +281,7 @@ setup:
   language-updated: "&a언어가 &f{old} &a에서 &f{new}&a(으)로 변경되었습니다."
   laps-set: "&a랩이 &f{laps}{track_info}&a로 설정되었습니다."
   pitstops-set: "&a필수 피트 정차가 &f{count}{track_info}&a로 설정되었습니다."
-  regtime-set: "&aRegistration time set to &f{seconds}s{track_info}"
+  regtime-set: "&a등록 시간이 &f{seconds}초로 설정되었습니다{track_info}"
   lobby-set: "&a등록 로비가 &f{x}, {y}, {z}&a로 설정됨 &7({world})&a 및 활성화됨."
   lobby-cleared: "&a이 트랙의 로비가 비활성화되었습니다."
   track-info: " &7(트랙: {track})"
@@ -320,6 +317,7 @@ setup:
     checkpoints: "&7 - &f체크포인트: &e{count}"
     pitstops: "&7 - &f필수 피트 정차: &e{count}"
     laps: "&7 - &f랩: &e{count}"
+    regtime: "&7 - &f등록 시간: &e{seconds}s"
     overrides-header: "&7 - &f트랙 재정의:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count}개 설정됨"
@@ -339,7 +337,7 @@ setup:
       checkpoints: "&e5/8 &f체크포인트 (선택)"
       pitstops: "&e6/8 &f필수 피트 정차 (선택)"
       laps: "&e7/8 &f랩"
-      regtime: "&e8/8 &fRegistration time (optional)"
+      regtime: "&e8/8 &f등록 시간 (선택)"
     starts:
       description: "&f최소한 1개의 스타트를 추가하세요. 필요하면 반복합니다."
       added: "&7추가됨: &f{count}"
@@ -386,9 +384,9 @@ setup:
       current: "&7현재: &f{laps} 랩"
       btn-next: "&b[완료]"
     regtime:
-      current: "&7Current: &f{seconds}s"
-      prompt: "&fSet registration time (seconds): "
-      btn-finish: "&b[Finish]"
+      current: "&7현재: &f{seconds}초"
+      prompt: "&f등록 시간 설정 (초): "
+      btn-finish: "&b[완료]"
     error:
       need-starts: "&c먼저 최소 1개의 스타트 슬롯을 추가해야 합니다."
       need-finish: "&c먼저 피니시 영역을 설정해야 합니다."
@@ -484,8 +482,6 @@ admin:
     player-setnumber: "&7 - &f/{label} admin player setnumber <player> <1-99>"
     player-setboat: "&7 - &f/{label} admin player setboat <player> <BoatType>"
     tracks: "&7 - &f/{label} admin tracks &7(GUI를 통해 이름이 지정된 트랙 관리)"
-
-    language: "&c사용법: /{label} admin language <code>"
 
     language: "&7 - &f/{label} admin language <code> &7(플러그인 언어를 변경하고 메시지를 즉시 다시 불러옵니다)"
   usage:
@@ -615,6 +611,7 @@ gui:
   race:
     title: "관리자 • 레이스"
     btn-status: "&e&l레이스 상태"
+    btn-checkpoints-editor: "&b&l체크포인트 편집기"
     lore-track: "&7트랙: &f{track}"
     lore-ready-yes: "&7준비: &a예"
     lore-ready-no: "&7준비: &c아니오"
@@ -634,6 +631,8 @@ gui:
     lore-vote-closed: "&7투표: &c닫힘"
     btn-set-laps: "&b랩 설정: &f{n}"
     btn-custom-laps: "&e커스텀 랩 설정..."
+    btn-set-pitstops: "&b필수 피트 스톱: &f{n}"
+    btn-custom-pitstops: "&e사용자 지정 필수 피트 스톱 설정..."
     btn-add-start-tip: "&f스타트 추가 (팁)"
     btn-clear-starts: "&c스타트 제거"
     btn-set-finish-tip: "&e피니시 설정 (팁)"
@@ -645,9 +644,6 @@ gui:
     btn-open-wizard-tip: "&d설정 마법사 열기 (팁)"
     lore-click-remove-reg: "&7클릭: &f등록 제거"
     anvil-set-laps: "랩 설정"
-    btn-checkpoints-editor: "&b&l체크포인트 편집기"
-    btn-set-pitstops: "&b필수 피트 스톱: &f{n}"
-    btn-custom-pitstops: "&e사용자 지정 필수 피트 스톱 설정..."
     anvil-set-pitstops: "필수 피트 스톱 설정"
     cp-invalid-region: "(유효하지 않은 영역)"
     cp-item-title: "&f체크포인트 #{index}"
@@ -667,7 +663,6 @@ gui:
     cp-page: "&7페이지: &f{current}&7/&f{total}"
     btn-prev-page: "&e이전 페이지"
     btn-next-page: "&e다음 페이지"
-
 
   vote:
     title-admin: "관리 • 맵 투표"
@@ -690,6 +685,7 @@ gui:
     lore-current-seconds: "&7시간: &f{seconds}s"
     status-open: "&7투표 상태: &a열림"
     status-closed: "&7투표 상태: &c닫힘"
+
   tracks:
     title: "관리자 • 트랙"
     title-confirm: "트랙을 삭제하시겠습니까?"
@@ -753,4 +749,10 @@ gui:
     btn-leave-now: "&c&l지금 나가기"
     anvil-team-name: "팀 이름"
     anvil-racer-number: "선수 번호"
+
+placeholder:
+  race-status:
+    running: "레이스 중"
+    registering: "등록 중"
+    idle: "대기 중"
 

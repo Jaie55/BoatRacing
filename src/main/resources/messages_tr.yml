@@ -1,12 +1,8 @@
 # BoatRacing - Mesajlar / i18n (Turkce)
-#
 # ⚠  Bu, eklenti yazari tarafindan incelenmemis resmi olmayan topluluk cevirisidir.
 # ⚠  Hatalar icerebilir. Duzeltmeler ve katkilari memnuniyetle karsilariz.
-#
 # Oyunculara gorunen tum mesajlari buradan ozellestirebilirsin.
 # Renk kodlari icin & kullan. Yer tutucular {name} biciminde yazilir.
-# Duzenlemeden sonra degisiklikleri uygulamak icin /boatracing reload calistir.
-#
 
 general:
   players-only: "&cSadece oyuncular."
@@ -66,7 +62,7 @@ race:
     force: "&cKullanım: /{label} race force <track>"
     start: "&cKullanım: /{label} race start <track>"
     practice: "&cKullanım: /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&cKullanım: /{label} race practice leave <track>"
     stop: "&cKullanım: /{label} race stop <track>"
     restart: "&cKullanım: /{label} race restart <track>"
     voteopen: "&cKullanım: /{label} race voteopen [all|<track1> <track2> ...] [saniye]"
@@ -188,7 +184,6 @@ race:
     registration-open: "&eKayıt açık &7(Kayıtlı: &f{count}&7)"
     registration-closed: "&7Kayıt kapalı."
     laps: "&7Turlar: &f{count}"
-    regtime: "&7 - &fKayıt süresi: &e{seconds}s"
     starts-lights: "&7Başlangıçlar: &f{starts} &8\u2022 &7Başlangıç ışıkları: &f{lights}/5 &8\u2022 &7Bitiş: &f{finish} &8\u2022 &7Pit alanı: &f{pit}"
     checkpoints: "&7Kontrol noktaları: &f{count}"
     mandatory-pitstops: "&7Zorunlu pit stop: &f{count}"
@@ -213,7 +208,7 @@ race:
   actionbar:
     lap: "&eT &f{lap}/{total}"
     checkpoint: "&eCP &f{done}/{total}"
-    pitstop: "&ePit &f{done}/{total}"
+    pitstop: "&eServis &f{done}/{total}"
     time: "&eSüre &f{time}"
 
 setup:
@@ -232,7 +227,7 @@ setup:
     cmd-clearlights: "&7 - &f/{label} setup clearlights &7(Yapılandırılmış tüm başlangıç ışıklarını kaldırır)"
     cmd-setlaps: "&7 - &f/{label} setup setlaps <n> &7(Yarış için tur sayısını ayarlar)"
     cmd-setpitstops: "&7 - &f/{label} setup setpitstops <n> &7(Bitirmek için gerekli zorunlu pit stop sayısını ayarlar; kapatmak için 0)"
-    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Set registration wait time in seconds)"
+    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Kayıt bekleme süresini saniye olarak ayarla)"
     cmd-setlobby: "&7 - &f/{label} setup setlobby &7(Kayıt lobisini mevcut konumuna ayarlar ve etkinleştirir)"
     cmd-clearlobby: "&7 - &f/{label} setup clearlobby &7(Bu pist için kayıt lobisini devre dışı bırak)"
     cmd-setpos: "&7 - &f/{label} setup setpos <player> <slot|auto> &7(Bir oyuncuyu belirli bir başlangıç slotuna bağlar, 1'den başlar; auto bağlamayı kaldırır)"
@@ -249,6 +244,7 @@ setup:
   error:
     setlaps: "&cKullanım: /{label} setup setlaps <number>"
     setpitstops: "&cKullanım: /{label} setup setpitstops <number>"
+    setregtime: "&cKullanım: /{label} setup setregtime <seconds>"
     removestart: "&cKullanım: /{label} setup removestart <slot>"
     removelight: "&cKullanım: /{label} setup removelight <index>"
     setpos: "&cKullanım: /{label} setup setpos <player> <slot|auto>"
@@ -267,12 +263,12 @@ setup:
   team-not-found: "&cTakım bulunamadı."
   checkpoint-added: "&aKontrol noktası eklendi #&f{num} &7({box})"
   checkpoint-added-tip: "&7İpucu: Birden fazla kontrol noktası ekleyebilirsin. Sıra önemlidir."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&cEklemek için asayla bir Redstone Lambasına Shift+Sol Tıkla, kaldırmak için Shift+Sağ Tıkla."
+  light-look-cmd: "&c6 blok içindeki bir Redstone Lambasına bak veya asayı Shift+Tıklama ile kullan."
   light-fail: "&cIşık eklenemedi. Redstone Lambası kullan, yinelenenlerden kaçın ve en fazla 5."
   light-added: "&aBaşlangıç ışığı eklendi &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aBaşlangıç lambası kaldırıldı &7({x}, {y}, {z})"
+  light-not-found: "&cBu konumda başlangıç lambası bulunamadı."
   light-removed: "&aBaşlangıç ışığı &f#{slot} kaldırıldı &7({x}, {y}, {z} - {world})"
   removelight-invalid: "&cGeçersiz başlangıç ışığı indeksi. Aralık: 1-{max}"
   lights-cleared: "&aTüm başlangıç ışıkları temizlendi."
@@ -285,7 +281,7 @@ setup:
   language-updated: "&aDil &f{old} &adeğerinden &f{new}&a değerine değiştirildi."
   laps-set: "&aTur sayısı &f{laps}{track_info} olarak ayarlandı"
   pitstops-set: "&aZorunlu pit stop sayısı &f{count}{track_info} olarak ayarlandı"
-  regtime-set: "&aRegistration time set to &f{seconds}s{track_info}"
+  regtime-set: "&aKayıt süresi &f{seconds}s{track_info} olarak ayarlandı"
   lobby-set: "&aKayıt lobisi &f{x}, {y}, {z} &7({world})&a konumuna ayarlandı ve etkinleştirildi."
   lobby-cleared: "&aBu pist için lobi devre dışı bırakıldı."
   track-info: " &7(parkur: {track})"
@@ -321,6 +317,7 @@ setup:
     checkpoints: "&7 - &fKontrol noktaları: &e{count}"
     pitstops: "&7 - &fZorunlu pit stop: &e{count}"
     laps: "&7 - &fTurlar: &e{count}"
+    regtime: "&7 - &fKayıt süresi: &e{seconds}s"
     overrides-header: "&7 - &fParkur geçersiz kılmaları:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} yapılandırıldı"
@@ -340,7 +337,7 @@ setup:
       checkpoints: "&e5/8 &fKontrol noktaları (isteğe bağlı)"
       pitstops: "&e6/8 &fZorunlu pit stop (isteğe bağlı)"
       laps: "&e7/8 &fTurlar"
-      regtime: "&e8/8 &fRegistration time (optional)"
+      regtime: "&e8/8 &fKayıt süresi (isteğe bağlı)"
     starts:
       description: "&fEn az bir başlangıç slotu ekle. Gerektikçe tekrarla."
       added: "&7Eklendi: &f{count}"
@@ -387,9 +384,9 @@ setup:
       current: "&7Mevcut: &f{laps} tur"
       btn-next: "&b[Bitir]"
     regtime:
-      current: "&7Current: &f{seconds}s"
-      prompt: "&fSet registration time (seconds): "
-      btn-finish: "&b[Finish]"
+      current: "&7Mevcut: &f{seconds}s"
+      prompt: "&fKayıt süresini ayarla (saniye): "
+      btn-finish: "&b[Bitir]"
     error:
       need-starts: "&cÖnce en az 1 başlangıç slotu eklemelisin."
       need-finish: "&cÖnce bitiş bölgesini ayarlamalısın."
@@ -485,8 +482,6 @@ admin:
     player-setnumber: "&7 - &f/{label} admin player setnumber <player> <1-99>"
     player-setboat: "&7 - &f/{label} admin player setboat <player> <BoatType>"
     tracks: "&7 - &f/{label} admin tracks &7(Adlandırılmış parkurları GUI ile yönet)"
-
-    language: "&cKullanım: /{label} admin language <code>"
 
     language: "&7 - &f/{label} admin language <code> &7(Eklenti dilini değiştir ve mesajları anında yeniden yükle)"
   usage:
@@ -616,6 +611,7 @@ gui:
   race:
     title: "Yönetici • Yarış"
     btn-status: "&e&lYarış durumu"
+    btn-checkpoints-editor: "&b&lKontrol noktası düzenleyici"
     lore-track: "&7Parkur: &f{track}"
     lore-ready-yes: "&7Hazır: &aevet"
     lore-ready-no: "&7Hazır: &chayır"
@@ -635,6 +631,8 @@ gui:
     lore-vote-closed: "&7Oylama: &ckapali"
     btn-set-laps: "&bTur ayarla: &f{n}"
     btn-custom-laps: "&eÖzel tur sayısı ayarla..."
+    btn-set-pitstops: "&bZorunlu pit stopları: &f{n}"
+    btn-custom-pitstops: "&eÖzel zorunlu pit stoplarını ayarla..."
     btn-add-start-tip: "&fBaşlangıç ekle (ipucu)"
     btn-clear-starts: "&cBaşlangıçları temizle"
     btn-set-finish-tip: "&eBitişi ayarla (ipucu)"
@@ -646,9 +644,6 @@ gui:
     btn-open-wizard-tip: "&dKurulum Sihirbazını aç (ipucu)"
     lore-click-remove-reg: "&7Tıkla: &fKayıttan çıkar"
     anvil-set-laps: "Tur sayısını ayarla"
-    btn-checkpoints-editor: "&b&lKontrol noktası düzenleyici"
-    btn-set-pitstops: "&bZorunlu pit stopları: &f{n}"
-    btn-custom-pitstops: "&eÖzel zorunlu pit stoplarını ayarla..."
     anvil-set-pitstops: "Zorunlu pit stoplarını ayarla"
     cp-invalid-region: "(geçersiz bölge)"
     cp-item-title: "&fKontrol noktası #{index}"
@@ -668,7 +663,6 @@ gui:
     cp-page: "&7Sayfa: &f{current}&7/&f{total}"
     btn-prev-page: "&eÖnceki sayfa"
     btn-next-page: "&eSonraki sayfa"
-
 
   vote:
     title-admin: "Admin • Harita oylamasi"
@@ -691,6 +685,7 @@ gui:
     lore-current-seconds: "&7Sure: &f{seconds}s"
     status-open: "&7Oylama durumu: &aacik"
     status-closed: "&7Oylama durumu: &ckapali"
+
   tracks:
     title: "Yönetici • Parkurlar"
     title-confirm: "Parkur silinsin mi?"
@@ -754,3 +749,10 @@ gui:
     btn-leave-now: "&c&lŞimdi ayrıl"
     anvil-team-name: "Takım adı"
     anvil-racer-number: "Yarışçı numarası"
+
+placeholder:
+  race-status:
+    running: "devam ediyor"
+    registering: "kayıt"
+    idle: "boşta"
+

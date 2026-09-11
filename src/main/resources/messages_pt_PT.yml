@@ -1,11 +1,8 @@
 # BoatRacing - Mensagens / i18n (Portugues de Portugal)
-#
 # ⚠ Traducao comunitaria nao oficial, nao revista pelo autor do plugin.
 # ⚠ Pode conter erros. Correcoes e contribuicoes sao bem-vindas.
-#
 # Podes personalizar aqui todas as mensagens visiveis para os jogadores.
 # Usa & para codigos de cor. Placeholders escrevem-se como {name}.
-# Depois de editar, executa /boatracing reload para aplicar as alteracoes.
 
 general:
   players-only: "&cApenas jogadores."
@@ -22,7 +19,7 @@ update:
   releases: "&7Lancamentos: &f{url}"
   outdated: "&eTu estas {behind} versao(oes) desatualizado(a)!"
   version-info: "&eTu estas a usar &6{current}&e, a versao mais recente e &6{latest}&e."
-  download-link: "&eDownload: &b{url}"
+  download-link: "&eDescarregar: &b{url}"
   available: "&eUma atualizacao para {name} esta disponivel. Tu estas {behind} versao(oes) atras."
   current-vs-latest: "&eTu estas a usar &6{current}&e, a versao mais recente e &6{latest}&e."
   link: "&eAtualize em &f{url}"
@@ -65,7 +62,7 @@ race:
     force: "&cUso: /{label} race force <track>"
     start: "&cUso: /{label} race start <track>"
     practice: "&cUso: /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&cUtilização: /{label} race practice leave <track>"
     stop: "&cUso: /{label} race stop <track>"
     restart: "&cUso: /{label} race restart <track>"
     voteopen: "&cUso: /{label} race voteopen [all|<track1> <track2> ...] [segundos]"
@@ -92,7 +89,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [segundos] &7(Abre a votacao de mapa)"
     voteclose: "&7 - &f/{label} race voteclose &7(Fecha e resolve a votacao agora)"
     back: "&7 - &f/{label} race back &7(Regressar para a tua localizacao guardada antes de entrar no lobby da corrida)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
+    admin: "&8Administrador:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cSubcomando de corrida desconhecido. Use /{label} race help"
 
   registration:
@@ -187,7 +184,6 @@ race:
     registration-open: "&eInscricoes abertas &7(Inscritos: &f{count}&7)"
     registration-closed: "&7Inscricoes fechadas."
     laps: "&7Voltas: &f{count}"
-    regtime: "&7 - &fTempo de registo: &e{seconds}s"
     starts-lights: "&7Partidas: &f{starts} &8\u2022 &7Luzes de partida: &f{lights}/5 &8\u2022 &7Chegada: &f{finish} &8\u2022 &7Area de pit: &f{pit}"
     checkpoints: "&7Pontos de controlo: &f{count}"
     mandatory-pitstops: "&7Pit stops obrigatorios: &f{count}"
@@ -212,7 +208,7 @@ race:
   actionbar:
     lap: "&eV &f{lap}/{total}"
     checkpoint: "&eCP &f{done}/{total}"
-    pitstop: "&ePit &f{done}/{total}"
+    pitstop: "&eBox &f{done}/{total}"
     time: "&eTempo &f{time}"
 
 setup:
@@ -231,7 +227,7 @@ setup:
     cmd-clearlights: "&7 - &f/{label} setup clearlights &7(Remove todas as luzes de partida configuradas)"
     cmd-setlaps: "&7 - &f/{label} setup setlaps <n> &7(Define o numero de voltas da corrida)"
     cmd-setpitstops: "&7 - &f/{label} setup setpitstops <n> &7(Define os pit stops obrigatorios para terminar; 0 para desativar)"
-    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Set registration wait time in seconds)"
+    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Define o tempo de espera de registo em segundos)"
     cmd-setlobby: "&7 - &f/{label} setup setlobby &7(Define o lobby de inscricao na tua posicao atual e ativa)"
     cmd-clearlobby: "&7 - &f/{label} setup clearlobby &7(Desativa o lobby de registo para esta pista)"
     cmd-setpos: "&7 - &f/{label} setup setpos <player> <slot|auto> &7(Vincula um jogador a um slot de partida especifico, base 1; auto remove o vinculo)"
@@ -248,6 +244,7 @@ setup:
   error:
     setlaps: "&cUso: /{label} setup setlaps <number>"
     setpitstops: "&cUso: /{label} setup setpitstops <number>"
+    setregtime: "&cUso: /{label} setup setregtime <seconds>"
     removestart: "&cUso: /{label} setup removestart <slot>"
     removelight: "&cUso: /{label} setup removelight <index>"
     setpos: "&cUso: /{label} setup setpos <player> <slot|auto>"
@@ -266,12 +263,12 @@ setup:
   team-not-found: "&cEquipa nao encontrada."
   checkpoint-added: "&aPonto de controlo #&f{num} adicionado &7({box})"
   checkpoint-added-tip: "&7Dica: tu podes adicionar varios pontos de controlo. A ordem importa."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&cShift+Clique Esquerdo numa Lâmpada de Redstone com a varinha para adicionar, Shift+Clique Direito para remover."
+  light-look-cmd: "&cOlhe para uma Lâmpada de Redstone num raio de 6 blocos, ou use a varinha com Shift+Clique."
   light-fail: "&cNao foi possivel adicionar a luz. Use uma Redstone Lamp, evite duplicatas e maximo 5."
   light-added: "&aLuz de partida adicionada &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aLuz de partida removida &7({x}, {y}, {z})"
+  light-not-found: "&cNenhuma luz de partida encontrada nessa posição."
   light-removed: "&aLuz de partida &f#{slot} removida &7({x}, {y}, {z} em {world})"
   removelight-invalid: "&cIndice de luz invalido. Intervalo: 1-{max}"
   lights-cleared: "&aTodas as luzes de partida foram limpas."
@@ -284,7 +281,7 @@ setup:
   language-updated: "&aIdioma alterado de &f{old} &apara &f{new}&a."
   laps-set: "&aVoltas definidas para &f{laps}{track_info}"
   pitstops-set: "&aPit stops obrigatorios definidos para &f{count}{track_info}"
-  regtime-set: "&aRegistration time set to &f{seconds}s{track_info}"
+  regtime-set: "&aTempo de registo definido para &f{seconds}s{track_info}"
   lobby-set: "&aLobby de inscricao definido em &f{x}, {y}, {z} &7({world})&a e ativado."
   lobby-cleared: "&aLobby desativado para esta pista."
   track-info: " &7(pista: {track})"
@@ -320,6 +317,7 @@ setup:
     checkpoints: "&7 - &fPontos de controlo: &e{count}"
     pitstops: "&7 - &fPit stops obrigatorios: &e{count}"
     laps: "&7 - &fVoltas: &e{count}"
+    regtime: "&7 - &fTempo de registo: &e{seconds}s"
     overrides-header: "&7 - &fSobrescritas da pista:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} configurado(s)"
@@ -339,7 +337,7 @@ setup:
       checkpoints: "&e5/8 &fPontos de controlo (opcional)"
       pitstops: "&e6/8 &fPit stops obrigatorios (opcional)"
       laps: "&e7/8 &fVoltas"
-      regtime: "&e8/8 &fRegistration time (optional)"
+      regtime: "&e8/8 &fTempo de registo (opcional)"
     starts:
       description: "&fAdiciona pelo menos um slot de partida. Repete conforme necessario."
       added: "&7Adicionados: &f{count}"
@@ -354,7 +352,7 @@ setup:
       btn-auto-assign: "&b[Atribuir automaticamente]"
     finish:
       description: "&fMarque Canto A/B e depois clique em &a[Definir chegada]&f."
-      status: "&7Status: {status}"
+      status: "&7Estado: {status}"
       wand-prompt: "&7Precisa da varinha? "
       btn-set-finish: "&a[Definir chegada]"
     lights:
@@ -369,7 +367,7 @@ setup:
       default-prefix: "&fPit padrao: marque a regiao de pit (entrada e saida dentro do mesmo cuboide), depois "
       team-prefix: "&fPit de equipa: marca o pit de uma equipa, depois "
       team-suffix: " &7(use autocompletar apos 'setpit')"
-      status-label: "&7Status: "
+      status-label: "&7Estado: "
       default-label: "&7Padrao: "
       team-pits-label: " &8\u2022 &7Pits de equipa: &f{count}"
       btn-set-pit: "&b[Definir pit]"
@@ -386,9 +384,9 @@ setup:
       current: "&7Atual: &f{laps} volta(s)"
       btn-next: "&b[Concluir]"
     regtime:
-      current: "&7Current: &f{seconds}s"
-      prompt: "&fSet registration time (seconds): "
-      btn-finish: "&b[Finish]"
+      current: "&7Atual: &f{seconds}s"
+      prompt: "&fDefina o tempo de registo (segundos): "
+      btn-finish: "&b[Concluir]"
     error:
       need-starts: "&cTu deves adicionar pelo menos 1 slot de partida primeiro."
       need-finish: "&cVoce deve definir a regiao de chegada primeiro."
@@ -484,8 +482,6 @@ admin:
     player-setnumber: "&7 - &f/{label} admin player setnumber <player> <1-99>"
     player-setboat: "&7 - &f/{label} admin player setboat <player> <BoatType>"
     tracks: "&7 - &f/{label} admin tracks &7(Gerenciar pistas nomeadas via GUI)"
-
-    language: "&cUso: /{label} admin language <code>"
 
     language: "&7 - &f/{label} admin language <code> &7(Alterar o idioma do plugin e recarregar mensagens instantaneamente)"
   usage:
@@ -615,6 +611,7 @@ gui:
   race:
     title: "Admin \u2022 Corrida"
     btn-status: "&e&lEstado da corrida"
+    btn-checkpoints-editor: "&b&lEditor de checkpoints"
     lore-track: "&7Pista: &f{track}"
     lore-ready-yes: "&7Pronta: &asim"
     lore-ready-no: "&7Pronta: &cnao"
@@ -634,6 +631,8 @@ gui:
     lore-vote-closed: "&7Votacao: &cfechada"
     btn-set-laps: "&bDefinir voltas: &f{n}"
     btn-custom-laps: "&eDefinir voltas personalizadas..."
+    btn-set-pitstops: "&bParagens obrigatorias nas boxes: &f{n}"
+    btn-custom-pitstops: "&eDefinir paragens obrigatorias personalizadas..."
     btn-add-start-tip: "&fAdicionar partida (dica)"
     btn-clear-starts: "&cLimpar partidas"
     btn-set-finish-tip: "&eDefinir chegada (dica)"
@@ -645,12 +644,9 @@ gui:
     btn-open-wizard-tip: "&dAbrir Assistente de Configuracao (dica)"
     lore-click-remove-reg: "&7Clique: &fRemover da inscricao"
     anvil-set-laps: "Definir voltas"
-    btn-checkpoints-editor: "&b&lEditor de checkpoints"
-    btn-set-pitstops: "&bParagens obrigatorias nas boxes: &f{n}"
-    btn-custom-pitstops: "&eDefinir paragens obrigatorias personalizadas..."
     anvil-set-pitstops: "Definir paragens obrigatorias nas boxes"
     cp-invalid-region: "(regiao invalida)"
-    cp-item-title: "&fCheckpoint #{index}"
+    cp-item-title: "&fPonto de controlo #{index}"
     cp-item-lore-region: "&7{region}"
     cp-item-lore-replace: "&eClique esquerdo: &fSubstituir da selecao"
     cp-item-lore-remove: "&eClique direito: &cRemover"
@@ -667,7 +663,6 @@ gui:
     cp-page: "&7Pagina: &f{current}&7/&f{total}"
     btn-prev-page: "&ePagina anterior"
     btn-next-page: "&ePagina seguinte"
-
 
   vote:
     title-admin: "Admin • Votacao de mapa"
@@ -690,6 +685,7 @@ gui:
     lore-current-seconds: "&7Duracao: &f{seconds}s"
     status-open: "&7Estado da votacao: &aaberta"
     status-closed: "&7Estado da votacao: &cfechada"
+
   tracks:
     title: "Admin \u2022 Pistas"
     title-confirm: "Excluir pista?"
@@ -753,4 +749,10 @@ gui:
     btn-leave-now: "&c&lSair agora"
     anvil-team-name: "Nome da equipa"
     anvil-racer-number: "Numero do piloto"
+
+placeholder:
+  race-status:
+    running: "em andamento"
+    registering: "inscrições abertas"
+    idle: "inativa"
 

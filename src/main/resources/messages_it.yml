@@ -1,12 +1,8 @@
 # BoatRacing – Messaggi / i18n (Italiano)
-#
 # ⚠  Traduzione della community non ufficiale, non revisionata dall'autore del plugin.
 # ⚠  Potrebbe contenere errori. Correzioni e contributi sono benvenuti.
-#
 # Puoi personalizzare qui tutti i messaggi visibili ai giocatori.
 # Usa & per i codici colore. I segnaposto sono scritti come {name}.
-# Dopo le modifiche, esegui /boatracing reload per applicarle.
-#
 
 general:
   players-only: "&cSolo i giocatori."
@@ -23,7 +19,7 @@ update:
   releases: "&7Release: &f{url}"
   outdated: "&eSei indietro di {behind} versione/i!"
   version-info: "&eStai usando &6{current}&e, l'ultima versione e &6{latest}&e."
-  download-link: "&eDownload: &b{url}"
+  download-link: "&eScarica: &b{url}"
   available: "&eE disponibile un aggiornamento per {name}. Sei indietro di {behind} versione/i."
   current-vs-latest: "&eStai usando &6{current}&e, l'ultima versione e &6{latest}&e."
   link: "&eAggiornamento su &f{url}"
@@ -36,7 +32,7 @@ stats:
   header-self: "&eLe tue statistiche BoatRacing:"
   header-other: "&eStatistiche BoatRacing di &f{player}&e:"
   line-player: "&7Giocatore: &f{player}"
-  line-team: "&7Team: &f{team}"
+  line-team: "&7Squadra: &f{team}"
   line-best-race: "&7Miglior gara: &f{time}"
   line-best-lap: "&7Miglior giro: &f{time}"
   positions-header: "&eRiepilogo posizioni in gara:"
@@ -66,7 +62,7 @@ race:
     force: "&cUso: /{label} race force <track>"
     start: "&cUso: /{label} race start <track>"
     practice: "&cUso: /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&cUso: /{label} race practice leave <track>"
     stop: "&cUso: /{label} race stop <track>"
     restart: "&cUso: /{label} race restart <track>"
     voteopen: "&cUso: /{label} race voteopen [all|<track1> <track2> ...] [secondi]"
@@ -93,7 +89,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [secondi] &7(Apre la votazione mappa)"
     voteclose: "&7 - &f/{label} race voteclose &7(Chiude e risolve subito la votazione)"
     back: "&7 - &f/{label} race back &7(Torna alla tua posizione salvata prima di entrare nella lobby gara)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
+    admin: "&8Amministratore:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cSottocomando gara sconosciuto. Usa /{label} race help"
 
   registration:
@@ -156,7 +152,7 @@ race:
   lap-completed: "&eGiro &f{lap}/{total}"
   lap-finished: "&eGiro &f{num} &7completato: &f{player}{gap}"
   player-finished: "&a{player} ha finito! &7Tempo: &f{time}{gap}"
-  checkpoint-reached: "&eCheckpoint &f{num}/{total}"
+  checkpoint-reached: "&ePunto di controllo &f{num}/{total}"
   sector-gap: "&eSettore &f{cp}&7 Giro &f{lap}&7: &f{player} &7+{gap}s"
   pit-penalty: "&cPenalita tempo area pit: &f+{time}s"
   pit-completed: "&ePit stop completato. &7Totale: &f{count}"
@@ -188,7 +184,6 @@ race:
     registration-open: "&eIscrizioni aperte &7(Iscritti: &f{count}&7)"
     registration-closed: "&7Iscrizioni chiuse."
     laps: "&7Giri: &f{count}"
-    regtime: "&7 - &fTempo di registrazione: &e{seconds}s"
     starts-lights: "&7Partenze: &f{starts} &8\u2022 &7Semafori partenza: &f{lights}/5 &8\u2022 &7Arrivo: &f{finish} &8\u2022 &7Area pit: &f{pit}"
     checkpoints: "&7Checkpoint: &f{count}"
     mandatory-pitstops: "&7Pit stop obbligatori: &f{count}"
@@ -213,7 +208,7 @@ race:
   actionbar:
     lap: "&eL &f{lap}/{total}"
     checkpoint: "&eCP &f{done}/{total}"
-    pitstop: "&ePit &f{done}/{total}"
+    pitstop: "&eBox &f{done}/{total}"
     time: "&eTempo &f{time}"
 
 setup:
@@ -232,7 +227,7 @@ setup:
     cmd-clearlights: "&7 - &f/{label} setup clearlights &7(Rimuovi tutti i semafori di partenza configurati)"
     cmd-setlaps: "&7 - &f/{label} setup setlaps <n> &7(Imposta il numero di giri per la gara)"
     cmd-setpitstops: "&7 - &f/{label} setup setpitstops <n> &7(Imposta i pit stop obbligatori necessari per finire; 0 per disabilitare)"
-    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Set registration wait time in seconds)"
+    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Imposta il tempo di attesa della registrazione in secondi)"
     cmd-setlobby: "&7 - &f/{label} setup setlobby &7(Imposta la lobby di iscrizione alla tua posizione corrente e la abilita)"
     cmd-clearlobby: "&7 - &f/{label} setup clearlobby &7(Disattiva la lobby di registrazione per questa pista)"
     cmd-setpos: "&7 - &f/{label} setup setpos <player> <slot|auto> &7(Associa un giocatore a uno slot di partenza specifico, base 1; auto rimuove l'associazione)"
@@ -249,6 +244,7 @@ setup:
   error:
     setlaps: "&cUso: /{label} setup setlaps <number>"
     setpitstops: "&cUso: /{label} setup setpitstops <number>"
+    setregtime: "&cUso: /{label} setup setregtime <seconds>"
     removestart: "&cUso: /{label} setup removestart <slot>"
     removelight: "&cUso: /{label} setup removelight <index>"
     setpos: "&cUso: /{label} setup setpos <player> <slot|auto>"
@@ -267,12 +263,12 @@ setup:
   team-not-found: "&cTeam non trovato."
   checkpoint-added: "&aAggiunto checkpoint #&f{num} &7({box})"
   checkpoint-added-tip: "&7Suggerimento: puoi aggiungere piu checkpoint. L'ordine conta."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&cShift+Clic sinistro su una lampada di redstone con la bacchetta per aggiungere, Shift+Clic destro per rimuovere."
+  light-look-cmd: "&cGuarda una lampada di redstone nel raggio di 6 blocchi, oppure usa la bacchetta con Shift+Clic."
   light-fail: "&cImpossibile aggiungere il semaforo. Usa una Redstone Lamp, evita duplicati e max 5."
   light-added: "&aAggiunto semaforo di partenza &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aSemaforo di partenza rimosso &7({x}, {y}, {z})"
+  light-not-found: "&cNessun semaforo di partenza trovato in quella posizione."
   light-removed: "&aSemaforo di partenza &f#{slot} rimosso &7({x}, {y}, {z} in {world})"
   removelight-invalid: "&cIndice semaforo non valido. Intervallo: 1-{max}"
   lights-cleared: "&aTutti i semafori di partenza rimossi."
@@ -285,7 +281,7 @@ setup:
   language-updated: "&aLingua cambiata da &f{old} &aa &f{new}&a."
   laps-set: "&aGiri impostati a &f{laps}{track_info}"
   pitstops-set: "&aPit stop obbligatori impostati a &f{count}{track_info}"
-  regtime-set: "&aRegistration time set to &f{seconds}s{track_info}"
+  regtime-set: "&aTempo di registrazione impostato a &f{seconds}s{track_info}"
   lobby-set: "&aLobby iscrizione impostata a &f{x}, {y}, {z} &7({world})&a e abilitata."
   lobby-cleared: "&aLobby disattivato per questa pista."
   track-info: " &7(pista: {track})"
@@ -321,6 +317,7 @@ setup:
     checkpoints: "&7 - &fCheckpoint: &e{count}"
     pitstops: "&7 - &fPit stop obbligatori: &e{count}"
     laps: "&7 - &fGiri: &e{count}"
+    regtime: "&7 - &fTempo di registrazione: &e{seconds}s"
     overrides-header: "&7 - &fOverride pista:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} configurati"
@@ -340,7 +337,7 @@ setup:
       checkpoints: "&e5/8 &fCheckpoint (opzionale)"
       pitstops: "&e6/8 &fPit stop obbligatori (opzionale)"
       laps: "&e7/8 &fGiri"
-      regtime: "&e8/8 &fRegistration time (optional)"
+      regtime: "&e8/8 &fTempo di registrazione (opzionale)"
     starts:
       description: "&fAggiungi almeno uno slot di partenza. Ripeti se necessario."
       added: "&7Aggiunti: &f{count}"
@@ -387,9 +384,9 @@ setup:
       current: "&7Attuale: &f{laps} giro/i"
       btn-next: "&b[Fine]"
     regtime:
-      current: "&7Current: &f{seconds}s"
-      prompt: "&fSet registration time (seconds): "
-      btn-finish: "&b[Finish]"
+      current: "&7Attuale: &f{seconds}s"
+      prompt: "&fImposta il tempo di registrazione (secondi): "
+      btn-finish: "&b[Fine]"
     error:
       need-starts: "&cDevi prima aggiungere almeno 1 slot di partenza."
       need-finish: "&cDevi prima impostare la regione di arrivo."
@@ -486,8 +483,6 @@ admin:
     player-setboat: "&7 - &f/{label} admin player setboat <player> <BoatType>"
     tracks: "&7 - &f/{label} admin tracks &7(Gestisci piste nominate via GUI)"
 
-    language: "&cUso: /{label} admin language <code>"
-
     language: "&7 - &f/{label} admin language <code> &7(Cambia la lingua del plugin e ricarica i messaggi all'istante)"
   usage:
     admin-help: "&cUso: /{label} admin help"
@@ -571,16 +566,16 @@ gui:
     unset: "(non impostato)"
 
   admin:
-    title: "BoatRacing • Admin"
+    title: "BoatRacing • Amministratore"
     title-teams: "Admin • Team"
-    title-team: "Admin • Team"
+    title-team: "Admin • Squadra"
     title-team-color: "Admin • Colore team"
     title-confirm-delete: "Eliminare il team?"
     title-players: "Admin • Giocatori"
     title-player: "Admin • Giocatore"
     title-assign-team: "Admin • Assegna team"
     title-boat-picker: "Admin • Scegli barca"
-    title-team-prefix: "Admin • Team • "
+    title-team-prefix: "Admin • Squadra • "
     btn-manage-teams: "&b&lGestisci team"
     btn-manage-race: "&6&lGestisci gara"
     btn-manage-tracks: "&d&lGestisci piste"
@@ -593,7 +588,7 @@ gui:
     lore-refresh: "&7Ricarica questa vista e aggiorna la lista."
     btn-player-view: "&d&lVista giocatore"
     lore-player-view: "&7Apri la vista team lato giocatore."
-    lore-team: "&7Team: &f{team}"
+    lore-team: "&7Squadra: &f{team}"
     lore-team-none: "&7Team: &f(nessuno)"
     lore-racer-number: "&7N. pilota: &f{num}"
     lore-boat: "&7Barca: &f{boat}"
@@ -616,6 +611,7 @@ gui:
   race:
     title: "Admin • Gara"
     btn-status: "&e&lStato gara"
+    btn-checkpoints-editor: "&b&lEditor checkpoint"
     lore-track: "&7Pista: &f{track}"
     lore-ready-yes: "&7Pronta: &asi"
     lore-ready-no: "&7Pronta: &cno"
@@ -635,6 +631,8 @@ gui:
     lore-vote-closed: "&7Votazione: &cchiusa"
     btn-set-laps: "&bImposta giri: &f{n}"
     btn-custom-laps: "&eImposta giri personalizzati..."
+    btn-set-pitstops: "&bImposta pit stop: &f{n}"
+    btn-custom-pitstops: "&eImposta pit stop personalizzati..."
     btn-add-start-tip: "&fAggiungi partenza (tip)"
     btn-clear-starts: "&cPulisci partenze"
     btn-set-finish-tip: "&eImposta arrivo (tip)"
@@ -646,12 +644,9 @@ gui:
     btn-open-wizard-tip: "&dApri Assistente Setup (tip)"
     lore-click-remove-reg: "&7Clicca: &fRimuovi da iscrizioni"
     anvil-set-laps: "Imposta giri"
-    btn-checkpoints-editor: "&b&lEditor checkpoint"
-    btn-set-pitstops: "&bImposta pit stop: &f{n}"
-    btn-custom-pitstops: "&eImposta pit stop personalizzati..."
     anvil-set-pitstops: "Imposta pit stop obbligatori"
     cp-invalid-region: "(regione non valida)"
-    cp-item-title: "&fCheckpoint #{index}"
+    cp-item-title: "&fPunto di controllo #{index}"
     cp-item-lore-region: "&7{region}"
     cp-item-lore-replace: "&eClick sinistro: &fSostituisci dalla selezione"
     cp-item-lore-remove: "&eClick destro: &cRimuovi"
@@ -668,7 +663,6 @@ gui:
     cp-page: "&7Pagina: &f{current}&7/&f{total}"
     btn-prev-page: "&ePagina precedente"
     btn-next-page: "&ePagina successiva"
-
 
   vote:
     title-admin: "Admin • Votazione mappa"
@@ -691,6 +685,7 @@ gui:
     lore-current-seconds: "&7Durata: &f{seconds}s"
     status-open: "&7Stato votazione: &aaperta"
     status-closed: "&7Stato votazione: &cchiusa"
+
   tracks:
     title: "Admin • Piste"
     title-confirm: "Eliminare la pista?"
@@ -707,8 +702,8 @@ gui:
 
   team:
     title: "Team"
-    title-team: "Team"
-    title-team-prefix: "Team • "
+    title-team: "Squadra"
+    title-team-prefix: "Squadra • "
     title-member: "Il tuo profilo"
     title-color-picker: "Scegli colore team"
     title-boat-picker: "Scegli la tua barca"
@@ -738,7 +733,7 @@ gui:
     btn-leave: "&c&lLascia team"
     lore-your-profile-title: "&6&lIl tuo profilo"
     lore-player-label: "&7Giocatore: &f{player}"
-    lore-team-label: "&7Team: &f{team}"
+    lore-team-label: "&7Squadra: &f{team}"
     btn-set-racer-number: "&eImposta il tuo numero pilota #"
     btn-change-boat: "&bCambia tipo barca &7(Clicca)"
     lore-click-set-color: "&eClicca: &fImposta questo colore"
@@ -754,4 +749,10 @@ gui:
     btn-leave-now: "&c&lLascia ora"
     anvil-team-name: "Nome team"
     anvil-racer-number: "Numero pilota"
+
+placeholder:
+  race-status:
+    running: "in corso"
+    registering: "registrazione"
+    idle: "inattiva"
 

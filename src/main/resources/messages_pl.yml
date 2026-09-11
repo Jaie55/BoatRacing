@@ -1,11 +1,8 @@
 # BoatRacing – Wiadomości / i18n (Polski)
-#
 # ⚠  To nieoficjalne tłumaczenie społeczności, niezweryfikowane przez autora pluginu.
 # ⚠  Mogą występować błędy. Poprawki i wkład są mile widziane.
-#
 # Tutaj możesz dostosować wszystkie wiadomości widoczne dla graczy.
 # Użyj & dla kodów kolorów. Placeholdery zapisuje się jako {name}.
-# Po edycji uruchom /boatracing reload, aby zastosować zmiany.
 
 general:
   players-only: "&cTylko gracze."
@@ -65,7 +62,7 @@ race:
     force: "&cUżycie: /{label} race force <track>"
     start: "&cUżycie: /{label} race start <track>"
     practice: "&cUżycie: /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&cUżycie: /{label} race practice leave <track>"
     stop: "&cUżycie: /{label} race stop <track>"
     restart: "&cUżycie: /{label} race restart <track>"
     voteopen: "&cUżycie: /{label} race voteopen [all|<track1> <track2> ...] [sekundy]"
@@ -92,7 +89,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [sekundy] &7(Otwórz głosowanie mapy)"
     voteclose: "&7 - &f/{label} race voteclose &7(Zamknij i rozstrzygnij głosowanie teraz)"
     back: "&7 - &f/{label} race back &7(Wróć do swojej zapisanej lokalizacji przed dołączeniem do poczekalní wyścigu)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
+    admin: "&8Administrator:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cNieznane polecenie podrzędne wyścigu. Użyj /{label} race help"
 
   registration:
@@ -187,7 +184,6 @@ race:
     registration-open: "&eRejestracja otwarta &7(Zarejestrowani: &f{count}&7)"
     registration-closed: "&7Rejestracja zamknięta."
     laps: "&7Okrążenia: &f{count}"
-    regtime: "&7 - &fCzas rejestracji: &e{seconds}s"
     starts-lights: "&7Starty: &f{starts} &8\u2022 &7Światła startowe: &f{lights}/5 &8\u2022 &7Meta: &f{finish} &8\u2022 &7Boksy: &f{pit}"
     checkpoints: "&7Punkty kontrolne: &f{count}"
     mandatory-pitstops: "&7Obowiązkowe postoje w boksach: &f{count}"
@@ -231,7 +227,7 @@ setup:
     cmd-clearlights: "&7 - &f/{label} setup clearlights &7(Usuń wszystkie skonfigurowane światła startowe)"
     cmd-setlaps: "&7 - &f/{label} setup setlaps <n> &7(Ustaw liczbę okrążeń w wyścigu)"
     cmd-setpitstops: "&7 - &f/{label} setup setpitstops <n> &7(Ustaw obowiązkowe postoje w boksach; 0 wyłącza)"
-    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Set registration wait time in seconds)"
+    cmd-setregtime: "&7 - &f/{label} setup setregtime <seconds> &7(Ustaw czas oczekiwania rejestracji w sekundach)"
     cmd-setlobby: "&7 - &f/{label} setup setlobby &7(Ustaw poczekalniię rejestracji na bieżącą lokalizację i włącz ją)"
     cmd-clearlobby: "&7 - &f/{label} setup clearlobby &7(Wyłącza lobby rejestracji dla tego toru)"
     cmd-setpos: "&7 - &f/{label} setup setpos <player> <slot|auto> &7(Przywiąż gracza do konkretnego stanowiska startowego, 1-based; auto usuwa przywiązanie)"
@@ -248,6 +244,7 @@ setup:
   error:
     setlaps: "&cUżycie: /{label} setup setlaps <number>"
     setpitstops: "&cUżycie: /{label} setup setpitstops <number>"
+    setregtime: "&cUżycie: /{label} setup setregtime <seconds>"
     removestart: "&cUżycie: /{label} setup removestart <slot>"
     removelight: "&cUżycie: /{label} setup removelight <index>"
     setpos: "&cUżycie: /{label} setup setpos <player> <slot|auto>"
@@ -266,12 +263,12 @@ setup:
   team-not-found: "&cZespół nie znaleziony."
   checkpoint-added: "&aDodano punkt kontrolny #&f{num} &7({box})"
   checkpoint-added-tip: "&7Porada: Możesz dodać wiele punktów kontrolnych. Kolejność ma znaczenie."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&cShift+LPM na lampę redstone z różdżką, aby dodać, Shift+PPM, aby usunąć."
+  light-look-cmd: "&cSpójrz na lampę redstone w zasięgu 6 bloków lub użyj różdżki z Shift+kliknięciem."
   light-fail: "&cNie można dodać światła. Użyj Lampy Redstone, unikaj duplikatów i max 5."
   light-added: "&aDodano światło startowe &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aUsunięto światło startowe &7({x}, {y}, {z})"
+  light-not-found: "&cNie znaleziono światła startowego w tej pozycji."
   light-removed: "&aUsunięto światło startowe &f#{slot} &7({x}, {y}, {z} w {world})"
   removelight-invalid: "&cNieprawidłowy indeks światła. Zakres: 1-{max}"
   lights-cleared: "&aWyczyszczono wszystkie światła startowe."
@@ -284,7 +281,7 @@ setup:
   language-updated: "&aJęzyk zmieniono z &f{old} &ana &f{new}&a."
   laps-set: "&aOkrążenia ustalone na &f{laps}{track_info}"
   pitstops-set: "&aObowiązkowe postoje w boksach ustalone na &f{count}{track_info}"
-  regtime-set: "&aRegistration time set to &f{seconds}s{track_info}"
+  regtime-set: "&aUstawiono czas rejestracji na &f{seconds}s{track_info}"
   lobby-set: "&aPoczekalnia rejestracji ustawiona na &f{x}, {y}, {z} &7({world})&a i włączona."
   lobby-cleared: "&aLobby wyłączone dla tego toru."
   track-info: " &7(tor: {track})"
@@ -320,6 +317,7 @@ setup:
     checkpoints: "&7 - &fPunkty kontrolne: &e{count}"
     pitstops: "&7 - &fObowiązkowe postoje w boksach: &e{count}"
     laps: "&7 - &fOkrążenia: &e{count}"
+    regtime: "&7 - &fCzas rejestracji: &e{seconds}s"
     overrides-header: "&7 - &fPrzesłonięcia toru:"
     override-entry: "&7   &f{key}: &e{value}"
     info-configured: "{count} skonfigurowane"
@@ -339,7 +337,7 @@ setup:
       checkpoints: "&e5/8 &fPunkty kontrolne (opcjonalnie)"
       pitstops: "&e6/8 &fObowiązkowe postoje w boksach (opcjonalnie)"
       laps: "&e7/8 &fOkrążenia"
-      regtime: "&e8/8 &fRegistration time (optional)"
+      regtime: "&e8/8 &fCzas rejestracji (opcjonalny)"
     starts:
       description: "&fDodaj co najmniej jedno stanowisko startowe. Powtórz w razie potrzeby."
       added: "&7Dodano: &f{count}"
@@ -354,7 +352,7 @@ setup:
       btn-auto-assign: "&b[Automatyczne przydzielanie]"
     finish:
       description: "&fZaznacz Narożnik A/B, a następnie kliknij &a[Ustaw metę]&f."
-      status: "&7Status: {status}"
+      status: "&7Stan: {status}"
       wand-prompt: "&7Potrzebujesz narzędzia? "
       btn-set-finish: "&a[Ustaw metę]"
     lights:
@@ -369,7 +367,7 @@ setup:
       default-prefix: "&fDomyślne boksy: zaznacz region boksów (wejście i wyjście w tym samym prostopadłościanie), a następnie "
       team-prefix: "&fBoksy zespołu: zaznacz boksy dla zespołu, a następnie "
       team-suffix: " &7(użyj uzupełniania tabulatora po 'setpit')"
-      status-label: "&7Status: "
+      status-label: "&7Stan: "
       default-label: "&7Domyślne: "
       team-pits-label: " &8\u2022 &7Boksy zespołów: &f{count}"
       btn-set-pit: "&b[Ustaw boksy]"
@@ -386,9 +384,9 @@ setup:
       current: "&7Bieżący: &f{laps} okrążenie(a)"
       btn-next: "&b[Zakończ]"
     regtime:
-      current: "&7Current: &f{seconds}s"
-      prompt: "&fSet registration time (seconds): "
-      btn-finish: "&b[Finish]"
+      current: "&7Aktualny: &f{seconds}s"
+      prompt: "&fUstaw czas rejestracji (sekundy): "
+      btn-finish: "&b[Zakończ]"
     error:
       need-starts: "&cMusisz najpierw dodać co najmniej 1 stanowisko startowe."
       need-finish: "&cMusisz najpierw ustawić region mety."
@@ -397,7 +395,7 @@ setup:
   status-no: "&cNie"
   nav-label: "&8Nawigacja: "
   nav-back: "&b⟵ Wstecz"
-  nav-status: "&bℹ Status"
+  nav-status: "&bℹ Stan"
   nav-cancel: "&b✖ Anuluj"
   nav-skip: "&b⏭ Pomiń"
   when-ready: "&7Gdy będzie gotowe: "
@@ -484,8 +482,6 @@ admin:
     player-setnumber: "&7 - &f/{label} admin player setnumber <player> <1-99>"
     player-setboat: "&7 - &f/{label} admin player setboat <player> <BoatType>"
     tracks: "&7 - &f/{label} admin tracks &7(Zarządzaj nazwanymi torami przez GUI)"
-
-    language: "&cUżycie: /{label} admin language <code>"
 
     language: "&7 - &f/{label} admin language <code> &7(Zmień język pluginu i natychmiast przeładuj wiadomości)"
   usage:
@@ -615,6 +611,7 @@ gui:
   race:
     title: "Administrator • Wyścig"
     btn-status: "&e&lStatus wyścigu"
+    btn-checkpoints-editor: "&b&lEdytor checkpointow"
     lore-track: "&7Tor: &f{track}"
     lore-ready-yes: "&7Gotowy: &aTak"
     lore-ready-no: "&7Gotowy: &cNie"
@@ -634,6 +631,8 @@ gui:
     lore-vote-closed: "&7Głosowanie: &czamknięte"
     btn-set-laps: "&bUstaw okrążenia: &f{n}"
     btn-custom-laps: "&eUstaw niestandardowe okrążenia..."
+    btn-set-pitstops: "&bWymagane pit stopy: &f{n}"
+    btn-custom-pitstops: "&eUstaw niestandardowe wymagane pit stopy..."
     btn-add-start-tip: "&fDodaj start (porada)"
     btn-clear-starts: "&cWyczyść starty"
     btn-set-finish-tip: "&eUstaw metę (porada)"
@@ -645,12 +644,9 @@ gui:
     btn-open-wizard-tip: "&dOtwórz Asystenta Konfiguracji (porada)"
     lore-click-remove-reg: "&7Klik: &fUsuń z rejestracji"
     anvil-set-laps: "Ustaw okrążenia"
-    btn-checkpoints-editor: "&b&lEdytor checkpointow"
-    btn-set-pitstops: "&bWymagane pit stopy: &f{n}"
-    btn-custom-pitstops: "&eUstaw niestandardowe wymagane pit stopy..."
     anvil-set-pitstops: "Ustaw wymagane pit stopy"
     cp-invalid-region: "(nieprawidlowy region)"
-    cp-item-title: "&fCheckpoint #{index}"
+    cp-item-title: "&fPunkt kontrolny #{index}"
     cp-item-lore-region: "&7{region}"
     cp-item-lore-replace: "&eLewy klik: &fZastap z zaznaczenia"
     cp-item-lore-remove: "&ePrawy klik: &cUsun"
@@ -667,7 +663,6 @@ gui:
     cp-page: "&7Strona: &f{current}&7/&f{total}"
     btn-prev-page: "&ePoprzednia strona"
     btn-next-page: "&eNastepna strona"
-
 
   vote:
     title-admin: "Admin • Głosowanie mapy"
@@ -690,6 +685,7 @@ gui:
     lore-current-seconds: "&7Czas: &f{seconds}s"
     status-open: "&7Status głosowania: &aotwarte"
     status-closed: "&7Status głosowania: &czamknięte"
+
   tracks:
     title: "Administrator • Tory"
     title-confirm: "Usunąć tor?"
@@ -753,4 +749,10 @@ gui:
     btn-leave-now: "&c&lOpuść teraz"
     anvil-team-name: "Nazwa zespołu"
     anvil-racer-number: "Numer wyścigowy"
+
+placeholder:
+  race-status:
+    running: "w trakcie"
+    registering: "rejestracja"
+    idle: "bezczynny"
 

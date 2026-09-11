@@ -1,12 +1,8 @@
 # BoatRacing – Nachrichten / i18n (Deutsch)
-#
 # ⚠  Inoffizielle Community-Uebersetzung, nicht vom Plugin-Autor geprueft.
 # ⚠  Es koennen Fehler enthalten sein. Korrekturen und Beitraege sind willkommen.
-#
 # Du kannst alle nutzersichtbaren Nachrichten hier anpassen.
 # Verwende & fuer Farbcodes. Platzhalter werden als {name} geschrieben.
-# Fuehre nach dem Bearbeiten /boatracing reload aus, um die Aenderungen anzuwenden.
-#
 
 general:
   players-only: "&cNur Spieler."
@@ -23,7 +19,7 @@ update:
   releases: "&7Veröffentlichungen: &f{url}"
   outdated: "&eDu bist um {behind} Version(en) veraltet!"
   version-info: "&eDu verwendest &6{current}&e, die neueste Version ist &6{latest}&e."
-  download-link: "&eDownload: &b{url}"
+  download-link: "&eHerunterladen: &b{url}"
   available: "&eEin Update für {name} ist verfügbar. Du bist {behind} Version(en) zurück."
   current-vs-latest: "&eDu verwendest &6{current}&e, die neueste Version ist &6{latest}&e."
   link: "&eUpdate unter &f{url}"
@@ -36,7 +32,7 @@ stats:
   header-self: "&eDeine BoatRacing-Statistiken:"
   header-other: "&eBoatRacing-Statistiken für &f{player}&e:"
   line-player: "&7Spieler: &f{player}"
-  line-team: "&7Team: &f{team}"
+  line-team: "&7Mannschaft: &f{team}"
   line-best-race: "&7Bestes Rennen: &f{time}"
   line-best-lap: "&7Beste Runde: &f{time}"
   positions-header: "&eZusammenfassung der Rennplatzierungen:"
@@ -66,7 +62,7 @@ race:
     force: "&cVerwendung: /{label} race force <track>"
     start: "&cVerwendung: /{label} race start <track>"
     practice: "&cVerwendung: /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&cVerwendung: /{label} race practice leave <track>"
     stop: "&cVerwendung: /{label} race stop <track>"
     restart: "&cVerwendung: /{label} race restart <track>"
     voteopen: "&cVerwendung: /{label} race voteopen [all|<track1> <track2> ...] [sekunden]"
@@ -93,7 +89,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [sekunden] &7(Öffnet die Streckenabstimmung)"
     voteclose: "&7 - &f/{label} race voteclose &7(Schließt die Abstimmung und löst sie sofort auf)"
     back: "&7 - &f/{label} race back &7(Kehrt zu deinem gespeicherten Ort vor dem Beitritt zur Renn-Lobby zurück)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
+    admin: "&8Administrator:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cUnbekannter Renn-Unterbefehl. Verwende /{label} race help"
 
   registration:
@@ -156,7 +152,7 @@ race:
   lap-completed: "&eRunde &f{lap}/{total}"
   lap-finished: "&eRunde &f{num} &7beendet: &f{player}{gap}"
   player-finished: "&a{player} im Ziel! &7Zeit: &f{time}{gap}"
-  checkpoint-reached: "&eCheckpoint &f{num}/{total}"
+  checkpoint-reached: "&eKontrollpunkt &f{num}/{total}"
   sector-gap: "&eSektor &f{cp}&7 Runde &f{lap}&7: &f{player} &7+{gap}s"
   pit-penalty: "&cZeitstrafe im Boxenbereich: &f+{time}s"
   pit-completed: "&eBoxenstopp abgeschlossen. &7Gesamt: &f{count}"
@@ -189,7 +185,7 @@ race:
     registration-closed: "&7Anmeldung geschlossen."
     laps: "&7Runden: &f{count}"
     starts-lights: "&7Starts: &f{starts} &8\u2022 &7Startlichter: &f{lights}/5 &8\u2022 &7Ziel: &f{finish} &8\u2022 &7Boxenbereich: &f{pit}"
-    checkpoints: "&7Checkpoints: &f{count}"
+    checkpoints: "&7Kontrollpunkte: &f{count}"
     mandatory-pitstops: "&7Pflicht-Boxenstopps: &f{count}"
     track-ready: "&aStrecke ist bereit."
 
@@ -267,12 +263,12 @@ setup:
   team-not-found: "&cTeam nicht gefunden."
   checkpoint-added: "&aCheckpoint #&f{num} &7hinzugefügt ({box})"
   checkpoint-added-tip: "&7Tipp: Du kannst mehrere Checkpoints hinzufügen. Reihenfolge ist wichtig."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&cShift+Linksklick auf eine Redstone-Lampe mit dem Zauberstab zum Hinzufügen, Shift+Rechtsklick zum Entfernen."
+  light-look-cmd: "&cSieh eine Redstone-Lampe innerhalb von 6 Blöcken an oder benutze den Zauberstab mit Shift+Klick."
   light-fail: "&cStartlicht konnte nicht hinzugefügt werden. Nutze eine Redstone-Lampe, vermeide Duplikate und maximal 5."
   light-added: "&aStartlicht hinzugefügt &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aStartlicht entfernt &7({x}, {y}, {z})"
+  light-not-found: "&cAn dieser Position wurde kein Startlicht gefunden."
   light-removed: "&aStartlicht &f#{slot} entfernt &7({x}, {y}, {z} in {world})"
   removelight-invalid: "&cUngültiger Startlicht-Index. Bereich: 1-{max}"
   lights-cleared: "&aAlle Startlichter entfernt."
@@ -312,13 +308,13 @@ setup:
   show:
     header: "&eStreckenkonfiguration:"
     track: "&7 - &fStrecke: &e{track}"
-    starts: "&7 - &fStarts: &e{count}"
+    starts: "&7 - &fStartlichter: &e{count}"
     lights: "&7 - &fStartlichter: &e{count}/5"
     finish: "&7 - &fZiel: &e{status}"
     pit-default: "&7 - &fBoxenbereich (Standard): &e{status}"
     pit-teams: "&7 - &fTeam-spezifische Boxen: &e{info}"
     custom-starts: "&7 - &fBenutzerdefinierte Startpositionen: &e{info}"
-    checkpoints: "&7 - &fCheckpoints: &e{count}"
+    checkpoints: "&7 - &fKontrollpunkte: &e{count}"
     pitstops: "&7 - &fPflicht-Boxenstopps: &e{count}"
     laps: "&7 - &fRunden: &e{count}"
     regtime: "&7 - &fRegistrierungszeit: &e{seconds}s"
@@ -334,11 +330,11 @@ setup:
     complete: "&aSetup abgeschlossen!"
     cannot-skip: "&cDu kannst diesen Schritt nicht überspringen."
     step:
-      starts: "&e1/8 &fStarts"
+      starts: "&e1/8 &fStartlichter"
       finish: "&e2/8 &fZiel"
       lights: "&e3/8 &fStartlichter (5 erforderlich)"
       pit: "&e4/8 &fBoxenbereiche (optional)"
-      checkpoints: "&e5/8 &fCheckpoints (optional)"
+      checkpoints: "&e5/8 &fKontrollpunkte (optional)"
       pitstops: "&e6/8 &fPflicht-Boxenstopps (optional)"
       laps: "&e7/8 &fRunden"
       regtime: "&e8/8 &fRegistrierungszeit (optional)"
@@ -356,7 +352,7 @@ setup:
       btn-auto-assign: "&b[Automatisch zuweisen]"
     finish:
       description: "&fMarkiere Ecke A/B und klicke dann &a[Ziel setzen]&f."
-      status: "&7Status: {status}"
+      status: "&7Zustand: {status}"
       wand-prompt: "&7Brauchst du den Stab? "
       btn-set-finish: "&a[Ziel setzen]"
     lights:
@@ -371,7 +367,7 @@ setup:
       default-prefix: "&fStandard-Box: Markiere die Boxenregion (Einfahrt und Ausfahrt im selben Quader), dann "
       team-prefix: "&fTeam-Box: Markiere die Box für ein Team, dann "
       team-suffix: " &7(nutze Tab-Complete nach 'setpit')"
-      status-label: "&7Status: "
+      status-label: "&7Zustand: "
       default-label: "&7Standard: "
       team-pits-label: " &8\u2022 &7Team-Boxen: &f{count}"
       btn-set-pit: "&b[Box setzen]"
@@ -388,18 +384,18 @@ setup:
       current: "&7Aktuell: &f{laps} Runde(n)"
       btn-next: "&b[Fertig]"
     regtime:
-        current: "&7Aktuell: &f{seconds}s"
-        prompt: "&fRegistrierungszeit festlegen (Sekunden): "
-        btn-finish: "&b[Fertig]"
+      current: "&7Aktuell: &f{seconds}s"
+      prompt: "&fRegistrierungszeit festlegen (Sekunden): "
+      btn-finish: "&b[Fertig]"
     error:
       need-starts: "&cDu musst zuerst mindestens 1 Startplatz hinzufügen."
       need-finish: "&cDu musst zuerst die Zielregion setzen."
       need-lights: "&cDu musst genau 5 Startlichter (Redstone-Lampen) hinzufügen."
   status-yes: "&aja"
   status-no: "&cnein"
-  nav-label: "&8Navigation: "
+  nav-label: "&8Navigierung: "
   nav-back: "&b⟵ Zurück"
-  nav-status: "&bℹ Status"
+  nav-status: "&bℹ Zustand"
   nav-cancel: "&b✖ Abbrechen"
   nav-skip: "&b⏭ Überspringen"
   when-ready: "&7Wenn bereit: "
@@ -411,7 +407,7 @@ setup:
   btn-setup-show: "&b[Setup anzeigen]"
   summary: "&7Zusammenfassung: &fStarts {starts} &8• &7Ziel {finish} &8• &7Boxenbereich {pit} &8• &7Checkpoints &f{checkpoints} &8• &7Benutzerdef. Plätze &f{custom_slots} &8• &7Runden &f{laps}"
   next-label: "&7Weiter: "
-  details-label: " &8• &7Details: "
+  details-label: " &8• &7Einzelheiten: "
 
 team:
   created: "&aTeam '{name}' erstellt"
@@ -486,6 +482,7 @@ admin:
     player-setnumber: "&7 - &f/{label} admin player setnumber <player> <1-99>"
     player-setboat: "&7 - &f/{label} admin player setboat <player> <BoatType>"
     tracks: "&7 - &f/{label} admin tracks &7(Verwalte benannte Strecken per GUI)"
+
     language: "&7 - &f/{label} admin language <code> &7(Plugin-Sprache ändern und Nachrichten sofort neu laden)"
   usage:
     admin-help: "&cVerwendung: /{label} admin help"
@@ -500,6 +497,7 @@ admin:
     player-setteam: "&cVerwendung: /{label} admin player setteam <player> <team|none>"
     player-setnumber: "&cVerwendung: /{label} admin player setnumber <player> <1-99>"
     player-setboat: "&cVerwendung: /{label} admin player setboat <player> <BoatType>"
+
     language: "&cVerwendung: /{label} admin language <code>"
   invalid-color: "&cUngültige Farbe."
   invalid-boat: "&cUngültiger Boottyp."
@@ -537,6 +535,7 @@ admin:
   player-no-team: "&cSpieler ist in keinem Team."
   racer-number-set: "&aFahrer-Nummer für &f{player} &aauf &f{num} gesetzt"
   racer-number-changed-notify: "&eEin Administrator hat deine Fahrer-Nummer auf &f{num}&e geändert."
+  laps-set: "&aRunden auf &f{laps} gesetzt"
 
   language-current: "&7Aktuelle Sprache: &f{lang}"
   language-available: "&7Verfügbare Sprachen: &f{langs}"
@@ -544,7 +543,6 @@ admin:
   language-not-found: "&cSprache nicht gefunden: &f{code}"
   language-already-set: "&eDie Sprache ist bereits auf &f{lang}&e gesetzt."
   language-updated: "&aSprache geändert von &f{old} &aauf &f{new}&a."
-  laps-set: "&aRunden auf &f{laps} gesetzt"
 
   track:
     exists: "&cEine Strecke mit diesem Namen existiert bereits."
@@ -568,16 +566,16 @@ gui:
     unset: "(nicht gesetzt)"
 
   admin:
-    title: "BoatRacing • Admin"
-    title-teams: "Admin • Teams"
-    title-team: "Admin • Team"
+    title: "BoatRacing • Administrator"
+    title-teams: "Administrator • Mannschaften"
+    title-team: "Administrator • Mannschaft"
     title-team-color: "Admin • Teamfarbe"
     title-confirm-delete: "Team löschen?"
     title-players: "Admin • Spieler"
     title-player: "Admin • Spieler"
     title-assign-team: "Admin • Team zuweisen"
     title-boat-picker: "Admin • Boot wählen"
-    title-team-prefix: "Admin • Team • "
+    title-team-prefix: "Administrator • Mannschaft • "
     btn-manage-teams: "&b&lTeams verwalten"
     btn-manage-race: "&6&lRennen verwalten"
     btn-manage-tracks: "&d&lStrecken verwalten"
@@ -590,7 +588,7 @@ gui:
     lore-refresh: "&7Diese Ansicht neu laden und die Liste aktualisieren."
     btn-player-view: "&d&lSpieleransicht"
     lore-player-view: "&7Die teambezogene Spieleransicht öffnen."
-    lore-team: "&7Team: &f{team}"
+    lore-team: "&7Mannschaft: &f{team}"
     lore-team-none: "&7Team: &f(keins)"
     lore-racer-number: "&7Fahrer-Nr.: &f{num}"
     lore-boat: "&7Boot: &f{boat}"
@@ -613,6 +611,7 @@ gui:
   race:
     title: "Admin • Rennen"
     btn-status: "&e&lRennstatus"
+    btn-checkpoints-editor: "&b&lCheckpoint-Editor"
     lore-track: "&7Strecke: &f{track}"
     lore-ready-yes: "&7Bereit: &aja"
     lore-ready-no: "&7Bereit: &cnein"
@@ -632,6 +631,8 @@ gui:
     lore-vote-closed: "&7Abstimmung: &cgeschlossen"
     btn-set-laps: "&bRunden setzen: &f{n}"
     btn-custom-laps: "&eBenutzerdefinierte Runden setzen..."
+    btn-set-pitstops: "&bPitstopps setzen: &f{n}"
+    btn-custom-pitstops: "&eBenutzerdefinierte Pitstopps setzen..."
     btn-add-start-tip: "&fStart hinzufügen (Tipp)"
     btn-clear-starts: "&cStarts löschen"
     btn-set-finish-tip: "&eZiel setzen (Tipp)"
@@ -643,12 +644,9 @@ gui:
     btn-open-wizard-tip: "&dSetup-Wizard öffnen (Tipp)"
     lore-click-remove-reg: "&7Klick: &fAus Anmeldung entfernen"
     anvil-set-laps: "Runden setzen"
-    btn-checkpoints-editor: "&b&lCheckpoint-Editor"
-    btn-set-pitstops: "&bPitstopps setzen: &f{n}"
-    btn-custom-pitstops: "&eBenutzerdefinierte Pitstopps setzen..."
     anvil-set-pitstops: "Pflicht-Pitstopps setzen"
     cp-invalid-region: "(ungueltige Region)"
-    cp-item-title: "&fCheckpoint #{index}"
+    cp-item-title: "&fKontrollpunkt #{index}"
     cp-item-lore-region: "&7{region}"
     cp-item-lore-replace: "&eLinksklick: &fAus Auswahl ersetzen"
     cp-item-lore-remove: "&eRechtsklick: &cEntfernen"
@@ -665,7 +663,6 @@ gui:
     cp-page: "&7Seite: &f{current}&7/&f{total}"
     btn-prev-page: "&eVorherige Seite"
     btn-next-page: "&eNaechste Seite"
-
 
   vote:
     title-admin: "Admin • Streckenabstimmung"
@@ -688,6 +685,7 @@ gui:
     lore-current-seconds: "&7Dauer: &f{seconds}s"
     status-open: "&7Abstimmungsstatus: &aoffen"
     status-closed: "&7Abstimmungsstatus: &cgeschlossen"
+
   tracks:
     title: "Admin • Strecken"
     title-confirm: "Strecke löschen?"
@@ -703,9 +701,9 @@ gui:
     anvil-track-name: "Streckenname"
 
   team:
-    title: "Teams"
-    title-team: "Team"
-    title-team-prefix: "Team • "
+    title: "Mannschaften"
+    title-team: "Mannschaft"
+    title-team-prefix: "Mannschaft • "
     title-member: "Dein Profil"
     title-color-picker: "Teamfarbe wählen"
     title-boat-picker: "Dein Boot wählen"
@@ -735,7 +733,7 @@ gui:
     btn-leave: "&c&lTeam verlassen"
     lore-your-profile-title: "&6&lDein Profil"
     lore-player-label: "&7Spieler: &f{player}"
-    lore-team-label: "&7Team: &f{team}"
+    lore-team-label: "&7Mannschaft: &f{team}"
     btn-set-racer-number: "&eSetze deine Fahrer-Nr."
     btn-change-boat: "&bBoottyp ändern &7(Klick)"
     lore-click-set-color: "&eKlick: &fDiese Farbe setzen"
@@ -751,3 +749,10 @@ gui:
     btn-leave-now: "&c&lJetzt verlassen"
     anvil-team-name: "Teamname"
     anvil-racer-number: "Fahrer-Nummer"
+
+placeholder:
+  race-status:
+    running: "läuft"
+    registering: "anmeldung"
+    idle: "inaktiv"
+

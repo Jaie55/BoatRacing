@@ -71,7 +71,8 @@ public class BoatRacingPlugin extends JavaPlugin {
     private final java.util.Map<java.util.UUID, java.util.UUID> pendingTransfer = new java.util.HashMap<>();
     private final java.util.Map<java.util.UUID, java.util.UUID> pendingKick = new java.util.HashMap<>();
         private static final java.util.List<String> BUNDLED_LANGUAGE_CODES = java.util.Arrays.asList(
-            "en", "es", "es_419", "fr", "pt_BR", "pt_PT", "de", "it", "pl", "tr", "ja", "ko", "sv", "zh_TW", "zh_CN", "ru"
+            "en", "es", "es_419", "fr", "pt_BR", "pt_PT", "de", "it", "pl", "tr", "ja", "ko", "sv", "zh_TW", "zh_CN", "ru",
+            "uk", "id", "ar", "nl", "cs", "vi", "th", "tl", "da", "no", "fi"
         );
 
     public static BoatRacingPlugin getInstance() { return instance; }

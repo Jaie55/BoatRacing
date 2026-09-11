@@ -750,3 +750,9 @@ gui:
     anvil-team-name: "Team name"
     anvil-racer-number: "Racer number"
 
+placeholder:
+  race-status:
+    running: "running"
+    registering: "registering"
+    idle: "idle"
+

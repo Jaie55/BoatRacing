@@ -5,6 +5,7 @@ import es.jaie55.boatracing.race.RaceManager;
 import es.jaie55.boatracing.team.Team;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -73,6 +74,14 @@ public class BoatRacingPlaceholderExpansion extends PlaceholderExpansion {
         final String trackRaceStatusPrefix = "track_race_status_";
         final String trackPracticeRunningPrefix = "track_practice_running_";
         final String trackPracticeRunningCompatPrefix = "track_practicerunning_";
+
+        if (key.equals("race_running")) return String.valueOf(anyRaceRunning());
+        if (key.equals("race_registering")) return String.valueOf(anyRaceRegistering());
+        if (key.equals("race_status")) {
+            if (anyRaceRunning()) return raceStatusLabel("running");
+            if (anyRaceRegistering()) return raceStatusLabel("registering");
+            return raceStatusLabel("idle");
+        }
 
         if (key.equals("teams_count")) return String.valueOf(plugin.getTeamManager().getTeams().size());
         if (key.equals("teams_list")) return plugin.getTeamManager().getTeams().stream().map(Team::getName).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.joining(", "));
@@ -581,6 +590,24 @@ public class BoatRacingPlaceholderExpansion extends PlaceholderExpansion {
         // Backward compatibility for placeholders explicitly targeting the in-memory unsaved track.
         if (requested.equalsIgnoreCase("unsaved")) return plugin.getRaceManager();
         return null;
+    }
+
+    private boolean anyRaceRunning() {
+        for (RaceManager rm : plugin.getAllRaceManagers()) {
+            if (rm != null && rm.isRunning()) return true;
+        }
+        return false;
+    }
+
+    private boolean anyRaceRegistering() {
+        for (RaceManager rm : plugin.getAllRaceManagers()) {
+            if (rm != null && rm.isRegistering()) return true;
+        }
+        return false;
+    }
+
+    private String raceStatusLabel(String state) {
+        return ChatColor.stripColor(plugin.msg().get("placeholder.race-status." + state));
     }
 
     private static String normalizeTrackToken(String value) {

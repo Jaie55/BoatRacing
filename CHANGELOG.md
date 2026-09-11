@@ -1,5 +1,18 @@
 ﻿# Changelog
 
+## 26.2.1 — 11/09/2026
+### Added
+- **Global race placeholders**: `%boatracing_race_running%`, `%boatracing_race_registering%`, and `%boatracing_race_status%` now resolve across every track session, so a single scoreboard/hologram line can react when any race opens or starts. `%boatracing_race_status%` returns `running`, `registering`, or `idle`, with running taking precedence when multiple tracks are active.
+- **Translatable race status labels**: `%boatracing_race_status%` labels now come from `placeholder.race-status.*` in `messages_<lang>.yml` and are translated across all 27 bundled languages (for example `running`/`registering`/`idle` in English and `en curso`/`registro`/`inactiva` in Spanish).
+- **11 new community language bundles**: added `uk` (Українська), `id` (Bahasa Indonesia), `ar` (العربية), `nl` (Nederlands), `cs` (Čeština), `vi` (Tiếng Việt), `th` (ไทย), `tl` (Filipino), `da` (Dansk), `no` (Norsk), and `fi` (Suomi). Every bundle is fully translated from the English file with the same 719 keys and line-for-line structure, including localized `placeholder.race-status.*` labels. Bundled languages are now 27 (2 official + 25 community).
+- **Locale validation tool**: `tools/check_locales.py` compares every `messages_*.yml` against `messages_en.yml` and reports missing/extra/duplicate keys, placeholder mismatches, colour/escape differences, and possible untranslated text.
+
+### Fixed
+- **Duplicate `admin.help.language` key**: removed a wrongly placed usage line that silently overrode the help entry in 11 community bundles (`fr`, `it`, `ja`, `ko`, `pl`, `pt_BR`, `pt_PT`, `ru`, `sv`, `tr`, `zh_CN`).
+- **Registration-time messages in community bundles**: `es_419`, `it`, `ja`, `ko`, `pl`, `pt_BR`, `pt_PT`, `ru`, `sv`, `tr`, `zh_CN`, and `zh_TW` now define `setup.show.regtime` and `setup.error.setregtime` (replacing the obsolete `race.status.regtime`), so registration-time output is no longer shown in English.
+- **Completed translations in existing bundles**: translated 353 remaining English strings across 22 bundles (start-light messages, registration-time wizard steps, navigation/status/admin labels, download/usage lines, etc.), so no bundled message text falls back to English. The only intentionally identical value is `gui.admin.lore-color` in `es`/`es_419` because `Color` is also the Spanish word.
+- **Uniform bundle structure**: all 27 `messages_*.yml` files now mirror `messages_en.yml` exactly (758 lines, same key order, blank lines and CRLF endings), so the bundles stay consistent and diff cleanly. The locale checker now also rejects keys that have an inline value and child keys (a broken YAML shape).
+
 ## 26.2 — 24/06/2026
 ### Added
 - **MC-MrBirdy added as co-author** for ongoing contributions across multiple releases.

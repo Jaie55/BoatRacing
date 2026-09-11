@@ -16,7 +16,7 @@ update:
   disabled: "&7Las comprobaciones de actualización están deshabilitadas en la configuración."
   checking: "&7Comprobando actualizaciones..."
   failed: "&7La comprobación de actualización falló. Revisa la consola para más detalles."
-  releases: "&7Releases: &f{url}"
+  releases: "&7Versiones: &f{url}"
   outdated: "&c¡Estás {behind} versión(es) atrasado/a!"
   version-info: "&eEstás ejecutando &6{current}&e, la última versión es &6{latest}&e."
   download-link: "&eDescargar: &b{url}"
@@ -62,7 +62,7 @@ race:
     force: "&cUso: /{label} race force <track>"
     start: "&cUso: /{label} race start <track>"
     practice: "&cUso: /{label} race practice <track>"
-    practice-leave: "&cUsage: /{label} race practice leave <track>"
+    practice-leave: "&cUso: /{label} race practice leave <track>"
     stop: "&cUso: /{label} race stop <track>"
     restart: "&cUso: /{label} race restart <track>"
     voteopen: "&cUso: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
@@ -89,7 +89,7 @@ race:
     voteopen: "&7 - &f/{label} race voteopen [all|<track1> <track2> ...] [seconds] &7(Abre la votación de mapa; sin pistas abre todas)"
     voteclose: "&7 - &f/{label} race voteclose &7(Cierra y resuelve la votación ahora)"
     back: "&7 - &f/{label} race back &7(Vuelve a tu ubicación guardada antes de entrar al lobby de carrera)"
-    admin: "&8Admin:&7 /{label} race open|start|force|stop|restart <track>"
+    admin: "&8Administrador:&7 /{label} race open|start|force|stop|restart <track>"
   unknown-subcommand: "&cSubcomando de carrera desconocido. Usa /{label} race help"
 
   registration:
@@ -152,7 +152,7 @@ race:
   lap-completed: "&eVuelta &f{lap}/{total}"
   lap-finished: "&eVuelta &f{num} &7finalizada: &f{player}{gap}"
   player-finished: "&a{player} ¡ha terminado! &7Tiempo: &f{time}{gap}"
-  checkpoint-reached: "&eCheckpoint &f{num}/{total}"
+  checkpoint-reached: "&ePunto de control &f{num}/{total}"
   sector-gap: "&eSector &f{cp}&7 Vuelta &f{lap}&7: &f{player} &7+{gap}s"
   pit-penalty: "&cPenalización en el pit: &f+{time}s"
   pit-completed: "&ePit completado. &7Total: &f{count}"
@@ -185,7 +185,7 @@ race:
     registration-closed: "&7Registro cerrado."
     laps: "&7Vueltas: &f{count}"
     starts-lights: "&7Salidas: &f{starts} &8\u2022 &7Luces de salida: &f{lights}/5 &8\u2022 &7Meta: &f{finish} &8\u2022 &7Pit: &f{pit}"
-    checkpoints: "&7Checkpoints: &f{count}"
+    checkpoints: "&7Puntos de control: &f{count}"
     mandatory-pitstops: "&7Paradas obligatorias en el pit: &f{count}"
     track-ready: "&aPista lista."
 
@@ -208,7 +208,7 @@ race:
   actionbar:
     lap: "&eV &f{lap}/{total}"
     checkpoint: "&eCP &f{done}/{total}"
-    pitstop: "&ePit &f{done}/{total}"
+    pitstop: "&eBoxes &f{done}/{total}"
     time: "&eTiempo &f{time}"
 
 setup:
@@ -263,12 +263,12 @@ setup:
   team-not-found: "&cEquipo no encontrado."
   checkpoint-added: "&aCheckpoint #&f{num} añadido &7({box})"
   checkpoint-added-tip: "&7Consejo: Puedes añadir múltiples checkpoints. El orden importa."
-  light-look: "&cShift+Left Click a Redstone Lamp with the wand to add, Shift+Right Click to remove."
-  light-look-cmd: "&cLook at a Redstone Lamp within 6 blocks, or use the wand with Shift+Click."
+  light-look: "&cShift+Clic izquierdo sobre una lámpara de redstone con la varita para añadir, Shift+Clic derecho para quitar."
+  light-look-cmd: "&cMira una lámpara de redstone a 6 bloques o menos, o usa la varita con Shift+Clic."
   light-fail: "&cNo se pudo añadir la luz. Usa una Lámpara de Piedra Roja, evita duplicados y máximo 5."
   light-added: "&aLuz de salida añadida &7({x}, {y}, {z})"
-  light-removed-pos: "&aRemoved start light &7({x}, {y}, {z})"
-  light-not-found: "&cNo start light found at that position."
+  light-removed-pos: "&aLuz de salida eliminada &7({x}, {y}, {z})"
+  light-not-found: "&cNo se encontró ninguna luz de salida en esa posición."
   light-removed: "&aLuz de salida &f#{slot} eliminada &7({x}, {y}, {z} en {world})"
   removelight-invalid: "&cÍndice de luz inválido. Rango: 1-{max}"
   lights-cleared: "&aTodas las luces de salida han sido eliminadas."
@@ -314,7 +314,7 @@ setup:
     pit-default: "&7 - &fÁrea de pit (por defecto): &e{status}"
     pit-teams: "&7 - &fPits específicos de equipos: &e{info}"
     custom-starts: "&7 - &fPosiciones de salida personalizadas: &e{info}"
-    checkpoints: "&7 - &fCheckpoints: &e{count}"
+    checkpoints: "&7 - &fPuntos de control: &e{count}"
     pitstops: "&7 - &fParadas obligatorias en el pit: &e{count}"
     laps: "&7 - &fVueltas: &e{count}"
     regtime: "&7 - &fTiempo de registro: &e{seconds}s"
@@ -384,9 +384,9 @@ setup:
       current: "&7Actual: &f{laps} vuelta(s)"
       btn-next: "&b[Finalizar]"
     regtime:
-        current: "&7Actual: &f{seconds}s"
-        prompt: "&fEstablecer tiempo de registro (segundos): "
-        btn-finish: "&b[Finalizar]"
+      current: "&7Actual: &f{seconds}s"
+      prompt: "&fEstablecer tiempo de registro (segundos): "
+      btn-finish: "&b[Finalizar]"
     error:
       need-starts: "&cDebes añadir al menos 1 slot de salida primero."
       need-finish: "&cDebes establecer la región de meta primero."
@@ -566,7 +566,7 @@ gui:
     unset: "(sin asignar)"
 
   admin:
-    title: "BoatRacing • Admin"
+    title: "BoatRacing • Administrador"
     title-teams: "Admin • Equipos"
     title-team: "Admin • Equipo"
     title-team-color: "Admin • Color de equipo"
@@ -646,7 +646,7 @@ gui:
     anvil-set-laps: "Establecer vueltas"
     anvil-set-pitstops: "Establecer pit stops obligatorios"
     cp-invalid-region: "(región inválida)"
-    cp-item-title: "&fCheckpoint #{index}"
+    cp-item-title: "&fPunto de control #{index}"
     cp-item-lore-region: "&7{region}"
     cp-item-lore-replace: "&eClick izquierdo: &fReemplazar desde selección"
     cp-item-lore-remove: "&eClick derecho: &cEliminar"
@@ -749,4 +749,10 @@ gui:
     btn-leave-now: "&c&lAbandonar ahora"
     anvil-team-name: "Nombre del equipo"
     anvil-racer-number: "Número de corredor"
+
+placeholder:
+  race-status:
+    running: "en curso"
+    registering: "registro"
+    idle: "inactiva"
 
