@@ -39,7 +39,7 @@ Thanks to all the server owners for using this plugin, I hope it gave you guys a
 <a id="en"></a>
 # BoatRacing
 
-[![Modrinth](https://img.shields.io/modrinth/v/boatracing?logo=modrinth&label=Modrinth)](https://modrinth.com/plugin/boatracing) [![Downloads](https://img.shields.io/modrinth/dt/boatracing?logo=modrinth&label=Downloads)](https://modrinth.com/plugin/boatracing) [![Minecraft](https://img.shields.io/badge/Minecraft-1.19--26.2-3b82f6)](https://modrinth.com/plugin/boatracing/versions) [![Java](https://img.shields.io/badge/Java-17%2B-22c55e)](https://adoptium.net/) [![Servers](https://img.shields.io/badge/Servers-Bukkit%20%7C%20Spigot%20%7C%20Paper%20%7C%20Purpur-f59e0b)](https://modrinth.com/plugin/boatracing)
+[![Modrinth](https://img.shields.io/modrinth/v/boatracing?logo=modrinth&label=Modrinth)](https://modrinth.com/plugin/boatracing) [![Downloads](https://img.shields.io/modrinth/dt/boatracing?logo=modrinth&label=Downloads)](https://modrinth.com/plugin/boatracing) [![Minecraft](https://img.shields.io/badge/Minecraft-1.19--26.3-3b82f6)](https://modrinth.com/plugin/boatracing/versions) [![Java](https://img.shields.io/badge/Java-17%2B-22c55e)](https://adoptium.net/) [![Servers](https://img.shields.io/badge/Servers-Bukkit%20%7C%20Spigot%20%7C%20Paper%20%7C%20Purpur-f59e0b)](https://modrinth.com/plugin/boatracing)
 
 [![Compatible with SimpleScore](https://img.shields.io/badge/Compatible%20with-SimpleScore-3fb950)](https://github.com/RuiPereiraDev/SimpleScore) [![Compatible with TAB](https://img.shields.io/badge/Compatible%20with-TAB-3fb950)](https://github.com/NEZNAMY/TAB)
 
