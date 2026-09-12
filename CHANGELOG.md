@@ -1,7 +1,7 @@
 ﻿# Changelog
 
 ## 26.3 — Unreleased
-Track onboarding, live viewing, cosmetics, diagnostics and replay release.
+Track onboarding, live viewing, cosmetics, extension system and replay release.
 
 ### Added
 - **Oriented checkpoint gates (PLANE)**: checkpoints can be oriented rectangles, so diagonal and curved track sections no longer need oversized axis-aligned boxes.
@@ -49,7 +49,7 @@ Track onboarding, live viewing, cosmetics, diagnostics and replay release.
 	- **Extension HUD hook**: `HudProvider` (sidebar lines + action bar suffix) with `registerHudProvider`/`unregisterHudProvider`; lines are appended after the race content, capped by the scoreboard limit and isolated per provider so a failing extension cannot break the race HUD.
 - **Base-managed extension system**: BoatRacing now loads extension jars from `plugins/BoatRacing/extensions/` itself instead of requiring a separate Bukkit plugin.
 	- New contract in `api/extension`: `BoatRacingExtension`, `ExtensionContext`, `ExtensionCommand`, `ExtensionStorage` and `ExtensionScheduler`; each jar carries an `extension.yml` descriptor (`name`, `main`, `version`, `api-version`) validated against `BoatRacingAPI.API_VERSION`.
-	- BoatRacing creates `plugins/BoatRacing/extensions/<name>/` and extracts the bundled `config.yml` and `messages_*.yml`; extensions get their own folder for config and language files while the active language follows the plugin setting (English fallback). Bundled resources are read from the extension jar itself, and keys accidentally copied from the base config into an extension config are removed on load while extension/custom keys are kept.
+	- BoatRacing creates `plugins/BoatRacing/extensions/<name>/` and extracts the bundled `config.yml` and `lang/messages_*.yml`; extensions get their own folder for config and language files while the active language follows the plugin setting (English fallback). Bundled resources are read from the extension jar itself, and keys accidentally copied from the base config into an extension config are removed on load while extension/custom keys are kept.
 	- Extension data is persisted through the BoatRacing `DocumentStore`, so extension documents respect `database.mode` (YAML files under the extension folder, or SQLite/MySQL documents in the shared table).
 	- Extension commands are registered under the normal root with tab completion (`/boatracing <name> ...`), and extensions can register Bukkit listeners, HUD providers and `%boatracing_<id>%` placeholders through the context.
 	- Extensions can declare their own permissions in `extension.yml` (`permissions:`, with `description` and `default`); BoatRacing registers them on load and removes them on disable, so extension nodes respect their declared default instead of falling back to OP.
@@ -59,7 +59,7 @@ Track onboarding, live viewing, cosmetics, diagnostics and replay release.
 	- Eight abilities: Mushroom (boost), Banana (trap), Green Shell (projectile that slows on hit), Lightning (slows every rival), Super Star (invincibility + boost), Blooper (blindness ink), Coin (party points) and Bob-omb (fused explosion with knockback). Items are granted at race start, by chance on checkpoints and from collectible item boxes.
 	- Item boxes are stored by BoatRacing (`boxes.yml` document) and managed with `/boatracing party box add|remove|list`; they respawn on a configurable cooldown.
 	- Party points from Coins and finish positions, stored by BoatRacing (`party-stats.yml` document), shown in the sidebar via the extension HUD hook; `/boatracing party points [player]` and `/boatracing party top`.
-	- Placeholders `%boatracing_party_points%`, `%boatracing_party_item%`, `%boatracing_party_top1_name%` and `%boatracing_party_top1_points%`; messages in `messages_en.yml`/`messages_es.yml`; permissions `boatracing.party.use` (default true) and `boatracing.party.admin` (default op).
+	- Placeholders `%boatracing_party_points%`, `%boatracing_party_item%`, `%boatracing_party_top1_name%` and `%boatracing_party_top1_points%`; messages in `lang/messages_*.yml` (all bundled languages); permissions `boatracing.party.use` (default true) and `boatracing.party.admin` (default op).
 	- Build with `scripts/build-all.ps1` (base `clean install` + extension `clean package`); the extension is skipped with a console warning when its `api-version` is newer than the running BoatRacing API.
 - **Stats GUI**: `/boatracing stats [player]` opens a readable menu (player head with team/number/boat/title/trail/effect/wins, results and positions grid) plus a paginated Practice page per track built from `PracticeStatsManager`. The chat report now also lists the player's title, trail and checkpoint effect, and console keeps the text report.
 - **Setup Wizard step titles**: every wizard step shows an on-screen title/subtitle (`setup.wizard.subtitle.*`) and a completion title, so admins always know which step they are on.
@@ -72,16 +72,17 @@ Track onboarding, live viewing, cosmetics, diagnostics and replay release.
 	- Prints plugin, server, API, Java, storage mode, language, debug level, track/team/active-session counts and the fixed GitHub Issues URL; never prints secrets (no MySQL password, no webhook URL).
 	- The report URL is hardcoded (`https://github.com/Jaie55/BoatRacing/issues`) and cannot be changed from the config; the old `diagnostics.*` options were removed. The startup console line now points admins to GitHub Issues.
 - **Debug tracing**: `fine`/`finer` entries for cosmetics, trails, Discord, spectator, victory effects, AutoTrace and race replay under the existing `debug` levels.
-- **New messages**: `setup.autotrace.*`, `setup.alternate-added|cleared|invalid|none`, `setup.error.addalt|clearalt`, `setup.usage.cmd-addalt|cmd-clearalt`, `race.spectate.*`, `race.victory.*`, `race.replay.stored`, `race.practice.ghost-suffix-race`, `gui.cosmetics.*` (selectors, density and shop lore), `gui.stats.*`, `gui.team.*` cosmetics lines, `gui.common.close`, `gui.race.cp-item-lore-alternates`, `cosmetics.*` (categories, density, buy, unlock/revoke/unlocks, durations and errors), `cosmetics.trail.*` (24 trails), `cosmetics.effect.*`, `cosmetics.sound.*`, `cosmetics.checkpoint.*`, `cosmetics.title.*`, `setup.wizard.subtitle.*` and `plugin.debug-*`. Added to `messages_en.yml` and `messages_es.yml`; other bundles fall back to English.
+- **New messages**: `setup.autotrace.*`, `setup.alternate-added|cleared|invalid|none`, `setup.error.addalt|clearalt`, `setup.usage.cmd-addalt|cmd-clearalt`, `race.spectate.*`, `race.victory.*`, `race.replay.stored`, `race.practice.ghost-suffix-race`, `gui.cosmetics.*` (selectors, density and shop lore), `gui.stats.*`, `gui.team.*` cosmetics lines, `gui.common.close`, `gui.race.cp-item-lore-alternates`, `cosmetics.*` (categories, density, buy, unlock/revoke/unlocks, durations and errors), `cosmetics.trail.*` (24 trails), `cosmetics.effect.*`, `cosmetics.sound.*`, `cosmetics.checkpoint.*`, `cosmetics.title.*`, `setup.wizard.subtitle.*`, `plugin.extensions-*` and `plugin.debug-*`. Added to every bundled language under `lang/`; any missing key still falls back to English.
 - **Language files moved to `lang/`**: every `messages_*.yml` now lives in `plugins/BoatRacing/lang/` (and `plugins/BoatRacing/extensions/<name>/lang/` for extensions) instead of next to `config.yml`. Existing root files are migrated automatically on startup (renamed to `.migrated` when a `lang/` copy already exists), and bundled resources are read from the jar so the base files can never shadow an extension's own bundles.
 - **All bundled languages completed**: the 26.3 keys were translated into every one of the 27 bundled languages (locale checker: 26 OK, 0 errors). Party extension language files also ship for all bundles.
-- **Permissions**: `boatracing.cosmetics`, `boatracing.cosmetics.admin` (default op), `boatracing.debug` (default op), `boatracing.race.spectate` (default true) and the wildcard `boatracing.cosmetics.unlock.all` (default false). `unlock.all` is granted by `boatracing.admin` but **removed from `boatracing.*`** so a plugin wildcard does not give away the shop.
+- **Permissions**: `boatracing.cosmetics`, `boatracing.cosmetics.admin` (default op), `boatracing.debug` (default op), `boatracing.extensions` (default op), `boatracing.race.spectate` (default true) and the wildcard `boatracing.cosmetics.unlock.all` (default false). `unlock.all` is granted by `boatracing.admin` but **removed from `boatracing.*`** so a plugin wildcard does not give away the shop.
 - **Config sections**: `setup.auto-trace.*`, `replay.*`, `discord.*`, `cosmetics.*` (master switch, `unsupported`, density, trails/custom/disabled, effects, victory-sounds, checkpoints, titles and shop with prices/gating), `racing.victory-effects.*` and `racing.spectate-on-finish.*`.
 
 ### Changed
 - **Checkpoint abstraction**: crossing now goes through `CheckpointShape`; the AABB slab algorithm moved unchanged from `RaceManager` to `Geometry.segmentIntersectsBox`; `TrackConfig` stores shapes (with `CheckpointGroup` support) instead of regions only; `RaceManager`, `AdminRaceGUI`, `SetupWizard` and `BoatRacingPlugin` were migrated.
 - **Setup help and tab-completion**: the `setup` root now suggests `autotrace`, `addalt`, `clearalt` and `setcosmetics`; `autotrace` suggests its subcommands; `addalt`/`clearalt` suggest valid checkpoint indexes; `setcosmetics` suggests `true`/`false`.
-- **Race help and usage**: `/boatracing race help` lists `spectate`, and the root usage line now reads `teams|race|stats|setup|admin|cosmetics|reload|version|debug`.
+- **Root command discovery**: the root now suggests `extensions` and every subcommand registered by a loaded extension (for example `party`), and extension subcommands get tab completion under `/boatracing <name> ...`.
+- **Race help and usage**: `/boatracing race help` lists `spectate`, and the root usage line now reads `teams|race|stats|setup|admin|cosmetics|extensions|reload|version|debug`.
 - **Diagnostics scope**: `/boatracing debug` is now op-only and its report URL is fixed to GitHub Issues; the `diagnostics.*` config options were removed (old keys in existing configs are ignored).
 - **Cosmetics menu** now has five cosmetic tabs (Trails, Titles, Victory effects, Victory sounds, Checkpoint effects) plus a Settings tab, and every tab icon mirrors the equipped cosmetic through the new per-entry icons.
 - **Stats command** now opens a GUI for players; console and targeted senders keep the text report.
@@ -103,7 +104,8 @@ Track onboarding, live viewing, cosmetics, diagnostics and replay release.
 - **AutoTrace stopped state**: running `stop` on an already stopped run now reports the generated gate count and the next steps (`preview`, `accept`, `cancel`) instead of "no data"; `cancel` also clears the action bar.
 
 ### Compatibility
-- All 26.3 additions are additive: previous `config.yml` files receive the new defaults without overwriting user values; previous `messages_*.yml` bundles fall back to English for new keys.
+- All 26.3 additions are additive: previous `config.yml` files receive the new defaults without overwriting user values; previous bundles fall back to English for new keys.
+- Legacy `messages_*.yml` files saved next to `config.yml` are moved into the new `lang/` folder on startup (renamed to `.migrated` when a `lang/` copy already exists); the plugin keeps working without any manual step.
 - Teams, racers, stats, practice stats and track data load unchanged across YAML/SQLite/MySQL.
 - Old `practice-ghosts.yml` entries without `source` load as practice ghosts; old tracks without `alternates` or `type` load as plain AABB checkpoints.
 - `player-prefs.yml` is a new document created on first use; deleting it is safe. Cosmetic purchases live in a new `cosmetic-unlocks.yml` document, also created on first use.
@@ -112,10 +114,12 @@ Track onboarding, live viewing, cosmetics, diagnostics and replay release.
 
 ### Docs
 - README now states Vault compatibility (badge, optional requirements and platform notes), documents the storage backend (`database.mode`, SQLite/MySQL/YAML documents), the cosmetic shop/density/admin commands, all permissions and placeholders, and the `player-prefs.yml`/`cosmetic-unlocks.yml` documents.
-- `plugin.yml` now declares `folia-supported: true` so the README's Folia claim actually applies.
+- README gained a "Developing Extensions" guide (Maven setup, `extension.yml`, lifecycle, commands, config/messages, storage, scheduler, HUD, placeholders, external plugin model and best practices) plus a `BoatRacing-PartyExtension` section and `/boatracing extensions` documentation.
+- New `API.md`: stable API contract, race events and live views, the HUD hook, the base-managed extension loader (`BoatRacingExtension`, `ExtensionContext`, commands, storage, placeholders) and a full developer guide.
+- `plugin.yml` now declares `folia-supported: true` and the `boatracing.extensions` permission leaf so the README's Folia/extension claims actually apply.
 - README gained a detailed "What's New (26.3)" block plus updated commands, permissions, configuration, placeholders, data files and compatibility (1.19–26.3).
-- CHECKLIST includes the full 26.3 QA block: backward compatibility, PLANE gates, AutoTrace, wizard/GUI, config/i18n, docs/discovery, Discord, victory effects, spectator, cosmetics, debug, alternate routes and race replay.
-- `tools/check_locales.py` reports the new keys only in `messages_en.yml`/`messages_es.yml`; the remaining bundles fall back to English until community translations are contributed.
+- CHECKLIST includes the full 26.3 QA block: backward compatibility, PLANE gates, AutoTrace, wizard/GUI, config/i18n, base-managed extensions, docs/discovery, Discord, victory effects, spectator, cosmetics, debug, alternate routes and race replay.
+- All 27 bundled bundles are complete for the 26.3 keys and live in `lang/`; `tools/check_locales.py` reads that folder and reports 26 OK / 0 errors.
 
 ## 26.2.1 — 11/09/2026
 ### Added
