@@ -21,8 +21,8 @@ final class YamlFileDocumentStore implements DocumentStore {
 
     @Override
     public void write(String documentName, String content) throws IOException {
-        Files.createDirectories(dataFolder);
         Path file = dataFolder.resolve(documentName);
+        if (file.getParent() != null) Files.createDirectories(file.getParent());
         Files.writeString(file, content == null ? "" : content, StandardCharsets.UTF_8);
     }
 }

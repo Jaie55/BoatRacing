@@ -49,6 +49,7 @@ public final class PracticeGhostManager {
         private final String boatType;
         private final long bestRunMillis;
         private final List<GhostSample> samples;
+        private final String source;
 
         private GhostPath(
                 UUID ownerUuid,
@@ -56,7 +57,8 @@ public final class PracticeGhostManager {
                 String worldName,
                 String boatType,
                 long bestRunMillis,
-                List<GhostSample> samples
+                List<GhostSample> samples,
+                String source
         ) {
             this.ownerUuid = ownerUuid;
             this.ownerName = ownerName;
@@ -64,6 +66,7 @@ public final class PracticeGhostManager {
             this.boatType = boatType;
             this.bestRunMillis = bestRunMillis;
             this.samples = Collections.unmodifiableList(new ArrayList<>(samples));
+            this.source = source == null || source.isBlank() ? "practice" : source;
         }
 
         public UUID getOwnerUuid() { return ownerUuid; }
@@ -72,6 +75,8 @@ public final class PracticeGhostManager {
         public String getBoatType() { return boatType; }
         public long getBestRunMillis() { return bestRunMillis; }
         public List<GhostSample> getSamples() { return samples; }
+        /** "practice" or "race". */
+        public String getSource() { return source; }
     }
 
     private final es.jaie55.boatracing.BoatRacingPlugin plugin;
@@ -129,12 +134,13 @@ public final class PracticeGhostManager {
                 String ownerName = entry.getString("ownerName", "ghost");
                 String worldName = entry.getString("world", "");
                 String boatType = entry.getString("boatType", "OAK_BOAT");
+                String source = entry.getString("source", "practice");
                 UUID ownerUuid = parseUuid(entry.getString("ownerUuid", null));
 
                 List<GhostSample> samples = sanitizeSamples(readSamples(entry.getList("samples")));
                 if (samples.isEmpty()) continue;
 
-                perLaps.put(laps, new GhostPath(ownerUuid, ownerName, worldName, boatType, bestRunMillis, samples));
+                perLaps.put(laps, new GhostPath(ownerUuid, ownerName, worldName, boatType, bestRunMillis, samples, source));
             }
 
             if (!perLaps.isEmpty()) bestGhosts.put(trackToken, perLaps);
@@ -161,6 +167,7 @@ public final class PracticeGhostManager {
                 cfg.set(base + ".ownerName", path.getOwnerName());
                 cfg.set(base + ".world", path.getWorldName());
                 cfg.set(base + ".boatType", path.getBoatType());
+                cfg.set(base + ".source", path.getSource());
                 cfg.set(base + ".samples", writeSamples(path.getSamples()));
             }
         }
@@ -192,6 +199,20 @@ public final class PracticeGhostManager {
             long runMillis,
             List<GhostSample> samples
     ) {
+        return updateBestGhost(trackToken, laps, ownerUuid, ownerName, worldName, boatType, runMillis, samples, "practice");
+    }
+
+    public synchronized boolean updateBestGhost(
+            String trackToken,
+            int laps,
+            UUID ownerUuid,
+            String ownerName,
+            String worldName,
+            String boatType,
+            long runMillis,
+            List<GhostSample> samples,
+            String source
+    ) {
         if (runMillis < 0L || samples == null || samples.isEmpty()) return false;
 
         int normalizedLaps = Math.max(1, laps);
@@ -211,7 +232,8 @@ public final class PracticeGhostManager {
                 worldName == null ? "" : worldName,
                 boatType == null || boatType.isBlank() ? "OAK_BOAT" : boatType,
                 runMillis,
-                sanitized
+                sanitized,
+                source
         );
         perLaps.put(normalizedLaps, updated);
         save();
@@ -225,7 +247,8 @@ public final class PracticeGhostManager {
                 path.getWorldName(),
                 path.getBoatType(),
                 path.getBestRunMillis(),
-                path.getSamples()
+                path.getSamples(),
+                path.getSource()
         );
     }
 

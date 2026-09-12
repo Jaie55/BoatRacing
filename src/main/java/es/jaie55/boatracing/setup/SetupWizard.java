@@ -156,12 +156,38 @@ public class SetupWizard {
         p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.7f);
     }
 
+    /** On-screen step guidance so admins always know which setup step they are on. */
+    private void showStepTitle(Player p, Step step, String trackName) {
+        if (step == null || step == Step.DONE) return;
+        String stepKey = switch (step) {
+            case STARTS -> "setup.wizard.step.starts";
+            case FINISH -> "setup.wizard.step.finish";
+            case LIGHTS -> "setup.wizard.step.lights";
+            case PIT -> "setup.wizard.step.pit";
+            case CHECKPOINTS -> "setup.wizard.step.checkpoints";
+            case PITSTOPS -> "setup.wizard.step.pitstops";
+            case LAPS -> "setup.wizard.step.laps";
+            case REGTIME -> "setup.wizard.step.regtime";
+            case DONE -> null;
+        };
+        if (stepKey == null) return;
+        String subtitleKey = "setup.wizard.subtitle." + step.name().toLowerCase(java.util.Locale.ROOT);
+        p.showTitle(net.kyori.adventure.title.Title.title(
+                Text.c(plugin.msg().get(stepKey)),
+                Text.c(plugin.msg().get(subtitleKey, "track", trackName)),
+                net.kyori.adventure.title.Title.Times.times(
+                        java.time.Duration.ofMillis(200),
+                        java.time.Duration.ofMillis(1600),
+                        java.time.Duration.ofMillis(300))));
+    }
+
     public void prompt(Player p) {
         Step s = states.getOrDefault(p.getUniqueId(), Step.STARTS);
         TrackConfig t = plugin.getRaceManager().getTrack();
         String tname = (plugin.getTrackLibrary() != null && plugin.getTrackLibrary().getCurrent() != null)
             ? plugin.getTrackLibrary().getCurrent() : plugin.msg().get("general.unsaved");
         p.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.wizard.header", "track", tname)));
+        showStepTitle(p, s, tname);
         switch (s) {
             case STARTS -> {
                 p.sendMessage(Text.c(" "));
@@ -214,6 +240,8 @@ public class SetupWizard {
                 p.sendMessage(Text.c(" "));
                 p.sendMessage(Text.colorize(plugin.msg().get("setup.wizard.step.checkpoints")));
                 p.sendMessage(Text.c(plugin.msg().get("setup.wizard.checkpoints.added", "count", t.getCheckpoints().size()))
+                    .append(Text.c(" &8• "))
+                    .append(Text.suggest(plugin.msg().get("setup.wizard.checkpoints.btn-autotrace"),"/boatracing setup autotrace start"))
                     .append(Text.c(" &8• "))
                     .append(Text.suggest(plugin.msg().get("setup.wizard.checkpoints.btn-add-checkpoint"),"/boatracing setup addcheckpoint"))
                     .append(Text.c(" &8• "))
@@ -310,6 +338,13 @@ public class SetupWizard {
             return;
         }
         p.sendMessage(Text.colorize(plugin.msg().get("setup.wizard.complete")));
+        p.showTitle(net.kyori.adventure.title.Title.title(
+                Text.c(plugin.msg().get("setup.wizard.complete")),
+                Text.c(plugin.msg().get("setup.wizard.subtitle.done")),
+                net.kyori.adventure.title.Title.Times.times(
+                        java.time.Duration.ofMillis(200),
+                        java.time.Duration.ofMillis(2000),
+                        java.time.Duration.ofMillis(400))));
         int laps = plugin.getRaceManager().getTotalLaps();
         p.sendMessage(Text.colorize(plugin.msg().get("setup.summary",
             "starts", t.getStarts().size(),

@@ -45,6 +45,44 @@ setup:
     # Once inside this range, the full wireframe is rendered.
     view-distance: 96.0
 
+  # AutoTrace: drive one lap and the plugin generates oriented checkpoint gates.
+  auto-trace:
+    enabled: true
+    # Capture interval in ticks (20 ticks = 1 second).
+    sample-ticks: 2
+    # Minimum movement (blocks) required to store a sample.
+    min-distance: 0.30
+    # Safety cap to avoid unbounded memory on very long traces.
+    max-samples: 6000
+    # Path simplification tolerance in blocks; higher = fewer gates.
+    simplify-epsilon: 0.4
+    # Distance between generated gates in blocks.
+    spacing: 3.0
+    # Gate half sizes in blocks (actual gate = 2x these values).
+    half-width: 4.5
+    half-height: 3.0
+    # Auto-stop when the driver returns this close to the start after the minimum path length.
+    auto-close-distance: 6.0
+    auto-close-min-length: 30.0
+    # Re-center each gate vertically on the nearest ice block.
+    recenter-ice: true
+    # Show a particle marker at the recording start point.
+    start-marker: true
+    # Show an action bar with time, samples and distance to the start while recording.
+    actionbar: true
+    # Chat reminder interval while recording, in seconds (0 disables it).
+    reminder-seconds: 15
+    # Particle preview before accepting the generated gates.
+    preview: true
+    preview-period-ticks: 10
+    preview-particle: "END_ROD"
+    preview-view-distance: 96.0
+    # Wand gate selection while previewing: left-click selects the nearest gate and
+    # right-click deselects it. Selected gates render with the selection particle.
+    wand-select: true
+    wand-select-radius: 4.0
+    selection-particle: "VILLAGER_HAPPY"
+
 # ------------------------------------------------------------
 # Persistent Storage
 # ------------------------------------------------------------
@@ -98,6 +136,14 @@ practice:
     show-name: true
 
 # ------------------------------------------------------------
+# Race replays
+# ------------------------------------------------------------
+# v1: stores the race winner's run as the track ghost, so it can be raced in practice.
+# The stored ghost is only replaced when the new run is faster (same store as practice ghosts).
+replay:
+  capture-race: true
+
+# ------------------------------------------------------------
 # Metrics and Updates
 # ------------------------------------------------------------
 bstats:
@@ -109,6 +155,120 @@ updates:
   console-warn: true
   # Notify admins with permission in-game on join
   notify-admins: true
+
+# ------------------------------------------------------------
+# Discord webhook
+# ------------------------------------------------------------
+# Posts race events to a Discord channel webhook.
+discord:
+  enabled: false
+  # Paste a Discord channel webhook URL (https://discord.com/api/webhooks/...)
+  webhook-url: ""
+  username: "BoatRacing"
+  avatar-url: ""
+  events:
+    race-start: true
+    race-results: true
+    record-broken: true
+
+# ------------------------------------------------------------
+# Cosmetics
+# ------------------------------------------------------------
+# Particle trails. Equip permissions: boatracing.cosmetics.trail.<id>
+cosmetics:
+  # Master switch for all cosmetics (trails, victory effects, checkpoint effects).
+  # Individual categories and per-track overrides (racing.cosmetics-enabled) can disable them further.
+  enabled: true
+  # What to do when a cosmetic particle does not exist on this server version:
+  # "hide" removes it from the menu and rendering (recommended).
+  unsupported: "hide"
+  # Particle density chosen by players: low/normal/high particle counts per sample.
+  density:
+    enabled: true
+    default: "normal"
+    low: 1
+    normal: 2
+    high: 4
+    # Safety cap for victory firework rockets.
+    max-victory-rockets: 3
+  trails:
+    enabled: true
+    # Rendering interval in ticks (20 ticks = 1 second).
+    period-ticks: 2
+    # When trails are shown: always | race | practice | race-and-practice
+    show-in: "race-and-practice"
+    # Built-in trail ids disabled here (for example: [smoke, ink]).
+    disabled: []
+    # Admins can add custom trails, or override built-in ones by using their id.
+    custom:
+      # aurora:
+      #   particle: "SCULK_SOUL"
+      #   material: "AMETHYST_SHARD"
+      #   count: 2
+      #   spread: 0.1
+      #   extra: 0.0
+      #   permission: "boatracing.cosmetics.trail.aurora"
+      #   enabled: true
+  effects:
+    enabled: true
+    # Effect ids listed here require their permission (boatracing.cosmetics.effect.<id>).
+    locked: []
+  victory-sounds:
+    enabled: true
+    # Sound ids listed here require their permission (boatracing.cosmetics.sound.<id>).
+    locked: []
+  checkpoints:
+    enabled: true
+    # Checkpoint effect ids listed here require their permission (boatracing.cosmetics.checkpoint.<id>).
+    locked: []
+  # Win-based titles. Thresholds: title id -> required wins.
+  # Players can equip any unlocked title; without a selection the highest unlocked one is used.
+  titles:
+    enabled: true
+    thresholds:
+      rookie: 0
+      pro: 5
+      elite: 25
+      legend: 100
+  # Cosmetic shop.
+  # gated-by-default: true means every cosmetic needs a permission, a purchase or a free price (0).
+  # Prices: 0 = free for everyone, -1/unset = only permissions (not purchasable).
+  shop:
+    enabled: true
+    gated-by-default: true
+    require-vault: true
+    currency-name: "coins"
+    default-price: -1
+    prices:
+      trail:
+        flame: 500
+      effect:
+        gold: 1000
+        rainbow: 1500
+      sound:
+        bell: 500
+        dragon: 1000
+      checkpoint:
+        spark: 250
+        totem: 750
+      title:
+        pro: 2000
+        elite: 2500
+
+# ------------------------------------------------------------
+# Diagnostics
+# ------------------------------------------------------------
+# /boatracing debug is admin-only and reports bugs to the fixed GitHub Issues page:
+# https://github.com/Jaie55/BoatRacing/issues
+
+# ------------------------------------------------------------
+# Extension API
+# ------------------------------------------------------------
+api:
+  # Registers the BoatRacingAPI service (ServicesManager) so extension plugins can hook into races.
+  enabled: true
+  # Log installed plugins that depend on BoatRacing at startup.
+  log-extensions: false
 
 # ------------------------------------------------------------
 # Race Defaults
@@ -151,6 +311,22 @@ racing:
   lights-out-delay-seconds: 1.0
   # Optional random jitter added on top of the delay (random between 0 and this value)
   lights-out-jitter-seconds: 0.0
+
+  # Optional post-finish spectator mode:
+  #   off    -> finishers are sent to the lobby as before
+  #   free   -> finishers stay in spectator mode until the race ends
+  #   follow -> finishers follow the race leader automatically
+  spectate-on-finish:
+    mode: "off"
+    follow-interval-ticks: 10
+
+  # Cosmetic effects for the first finishers (screen title, fireworks, sound).
+  victory-effects:
+    enabled: true
+    top-n: 3
+    screen-title: true
+    fireworks: true
+    sounds: true
 
   # Scoreboard & ActionBar customization
   ui:

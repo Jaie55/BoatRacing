@@ -10,7 +10,6 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 /**
  * Renders a lightweight particle wireframe for the current wand selection.
@@ -92,12 +91,7 @@ public final class SelectionVisualizer {
     }
 
     private static Particle resolveParticle(String raw) {
-        if (raw == null || raw.isBlank()) return Particle.END_ROD;
-        try {
-            return Particle.valueOf(raw.trim().toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException ignored) {
-            return Particle.END_ROD;
-        }
+        return es.jaie55.boatracing.util.ParticleResolver.resolveOr(raw, Particle.END_ROD);
     }
 
     private static boolean isHoldingWand(Player player) {

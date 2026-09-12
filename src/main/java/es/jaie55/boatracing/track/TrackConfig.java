@@ -35,7 +35,7 @@ public class TrackConfig {
     private final Map<String, Long> bestTimes = new LinkedHashMap<>();
     // Best race times segmented by total laps: laps -> (player UUID -> millis)
     private final Map<Integer, Map<String, Long>> bestTimesByLaps = new LinkedHashMap<>();
-    private final List<Region> checkpoints = new ArrayList<>();
+    private final List<CheckpointShape> checkpoints = new ArrayList<>();
     public static class LightPos {
         public final String world; public final int x, y, z;
         public LightPos(String world, int x, int y, int z) { this.world = world; this.x = x; this.y = y; this.z = z; }
@@ -69,7 +69,7 @@ public class TrackConfig {
     public Region getPitlane() { return pitlane; }
     public Map<String, Region> getTeamPits() { return Collections.unmodifiableMap(teamPits); }
     public Region getTeamPit(java.util.UUID teamId) { return teamId == null ? null : teamPits.get(teamId.toString()); }
-    public List<Region> getCheckpoints() { return Collections.unmodifiableList(checkpoints); }
+    public List<CheckpointShape> getCheckpoints() { return Collections.unmodifiableList(checkpoints); }
     public Map<String, Integer> getCustomStartSlots() { return Collections.unmodifiableMap(customStartSlots); }
     public Integer getCustomStartSlot(java.util.UUID playerId) { return playerId == null ? null : customStartSlots.get(playerId.toString()); }
     public void setCustomStartSlot(java.util.UUID playerId, int slotIndex0Based) { if (playerId != null) { customStartSlots.put(playerId.toString(), slotIndex0Based); save(); } }
@@ -152,8 +152,8 @@ public class TrackConfig {
     public void setPitlane(Region r) { this.pitlane = r; save(); }
     public void setTeamPit(java.util.UUID teamId, Region r) { if (teamId != null) { teamPits.put(teamId.toString(), r); save(); } }
     public void clearTeamPits() { teamPits.clear(); save(); }
-    public void addCheckpoint(Region r) { this.checkpoints.add(r); save(); }
-    public boolean replaceCheckpoint(int index0Based, Region r) {
+    public void addCheckpoint(CheckpointShape r) { this.checkpoints.add(r); save(); }
+    public boolean replaceCheckpoint(int index0Based, CheckpointShape r) {
         if (r == null || index0Based < 0 || index0Based >= checkpoints.size()) return false;
         checkpoints.set(index0Based, r);
         save();
@@ -169,12 +169,52 @@ public class TrackConfig {
         if (fromIndex0Based < 0 || fromIndex0Based >= checkpoints.size()) return false;
         if (toIndex0Based < 0 || toIndex0Based >= checkpoints.size()) return false;
         if (fromIndex0Based == toIndex0Based) return true;
-        Region moved = checkpoints.remove(fromIndex0Based);
+        CheckpointShape moved = checkpoints.remove(fromIndex0Based);
         checkpoints.add(toIndex0Based, moved);
         save();
         return true;
     }
     public void clearCheckpoints() { this.checkpoints.clear(); save(); }
+
+    /**
+     * Bulk-replaces all checkpoints and writes the track file once.
+     * Used by AutoTrace to avoid one file write per generated gate.
+     */
+    public void setCheckpoints(List<? extends CheckpointShape> newCheckpoints) {
+        this.checkpoints.clear();
+        if (newCheckpoints != null) {
+            for (CheckpointShape shape : newCheckpoints) {
+                if (shape != null) this.checkpoints.add(shape);
+            }
+        }
+        save();
+    }
+
+    /**
+     * Attaches an alternate gate to the checkpoint at the given index (wrapping it in a
+     * CheckpointGroup when needed). Crossing either gate advances the checkpoint.
+     */
+    public boolean addAlternate(int index0Based, CheckpointShape alternate) {
+        if (alternate == null || index0Based < 0 || index0Based >= checkpoints.size()) return false;
+        CheckpointShape current = checkpoints.get(index0Based);
+        CheckpointGroup group = current instanceof CheckpointGroup existing
+                ? existing
+                : new CheckpointGroup(current);
+        group.addAlternate(alternate);
+        checkpoints.set(index0Based, group);
+        save();
+        return true;
+    }
+
+    /** Removes all alternates from a checkpoint, restoring its primary gate. */
+    public boolean clearAlternates(int index0Based) {
+        if (index0Based < 0 || index0Based >= checkpoints.size()) return false;
+        CheckpointShape current = checkpoints.get(index0Based);
+        if (!(current instanceof CheckpointGroup group) || group.getAlternates().isEmpty()) return false;
+        checkpoints.set(index0Based, group.getPrimary());
+        save();
+        return true;
+    }
     public void clearStarts() { this.starts.clear(); save(); }
 
     /**
@@ -268,16 +308,10 @@ public class TrackConfig {
                 if (list != null) {
                     for (Object o : list) {
                         if (o instanceof Map<?,?> map) {
-                            String world = (String) map.get("world");
-                            if (world == null) continue;
-                            double minX = toD(map.get("minX"));
-                            double minY = toD(map.get("minY"));
-                            double minZ = toD(map.get("minZ"));
-                            double maxX = toD(map.get("maxX"));
-                            double maxY = toD(map.get("maxY"));
-                            double maxZ = toD(map.get("maxZ"));
-                            org.bukkit.util.BoundingBox b = new org.bukkit.util.BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
-                            checkpoints.add(new Region(world, b));
+                            CheckpointShape parsed = readCheckpointShape(map);
+                            if (parsed == null) continue;
+                            List<CheckpointShape> alternates = readAlternates(map.get("alternates"));
+                            checkpoints.add(alternates.isEmpty() ? parsed : new CheckpointGroup(parsed, alternates));
                         } else {
                             // Fallback by index if not a map (shouldn't happen with our save format)
                             int idx = checkpoints.size();
@@ -329,6 +363,101 @@ public class TrackConfig {
     }
 
     private double toD(Object o) { return o instanceof Number n ? n.doubleValue() : 0.0; }
+
+    /** Parses a checkpoint map ({@code type: plane} or legacy AABB keys) into a shape. */
+    private CheckpointShape readCheckpointShape(Map<?,?> map) {
+        if (map == null) return null;
+        String world = (String) map.get("world");
+        if (world == null) return null;
+        String type = map.get("type") == null ? "aabb" : String.valueOf(map.get("type"));
+        if ("plane".equalsIgnoreCase(type)) {
+            org.bukkit.util.Vector center = toVector(map.get("center"));
+            org.bukkit.util.Vector normal = toVector(map.get("normal"));
+            if (center == null || normal == null) return null;
+            org.bukkit.util.Vector right = toVector(map.get("right"));
+            org.bukkit.util.Vector up = toVector(map.get("up"));
+            double halfWidth = toD(map.get("halfWidth"));
+            double halfHeight = toD(map.get("halfHeight"));
+            return new PlaneCheckpoint(world, center, normal, right, up, halfWidth, halfHeight);
+        }
+        double minX = toD(map.get("minX"));
+        double minY = toD(map.get("minY"));
+        double minZ = toD(map.get("minZ"));
+        double maxX = toD(map.get("maxX"));
+        double maxY = toD(map.get("maxY"));
+        double maxZ = toD(map.get("maxZ"));
+        return new Region(world, new org.bukkit.util.BoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
+    }
+
+    private List<CheckpointShape> readAlternates(Object raw) {
+        List<CheckpointShape> out = new ArrayList<>();
+        if (!(raw instanceof List<?> list)) return out;
+        for (Object entry : list) {
+            if (entry instanceof Map<?,?> alternateMap) {
+                CheckpointShape shape = readCheckpointShape(alternateMap);
+                if (shape != null) out.add(shape);
+            }
+        }
+        return out;
+    }
+
+    /** Serializes a checkpoint (with its alternates, when present) into a YAML map. */
+    private Map<String,Object> checkpointToMap(CheckpointShape shape) {
+        Map<String,Object> map = new LinkedHashMap<>();
+        writeCheckpointShape(map, shape);
+        if (shape instanceof CheckpointGroup group && !group.getAlternates().isEmpty()) {
+            List<Map<String,Object>> alternates = new ArrayList<>();
+            for (CheckpointShape alternate : group.getAlternates()) {
+                Map<String,Object> alternateMap = new LinkedHashMap<>();
+                writeCheckpointShape(alternateMap, alternate);
+                alternates.add(alternateMap);
+            }
+            map.put("alternates", alternates);
+        }
+        return map;
+    }
+
+    private void writeCheckpointShape(Map<String,Object> map, CheckpointShape shape) {
+        if (shape instanceof PlaneCheckpoint pc) {
+            map.put("type", "plane");
+            map.put("world", pc.worldName());
+            map.put("center", formatVector(pc.getCenter()));
+            map.put("normal", formatVector(pc.getNormal()));
+            map.put("right", formatVector(pc.getRight()));
+            map.put("up", formatVector(pc.getUp()));
+            map.put("halfWidth", pc.getHalfWidth());
+            map.put("halfHeight", pc.getHalfHeight());
+        } else if (shape instanceof Region r) {
+            org.bukkit.util.BoundingBox b = r.getBox();
+            map.put("world", r.getWorldName());
+            map.put("minX", b.getMinX()); map.put("minY", b.getMinY()); map.put("minZ", b.getMinZ());
+            map.put("maxX", b.getMaxX()); map.put("maxY", b.getMaxY()); map.put("maxZ", b.getMaxZ());
+        }
+    }
+
+    private static String formatVector(org.bukkit.util.Vector v) {
+        return String.format(java.util.Locale.ROOT, "%.3f,%.3f,%.3f", v.getX(), v.getY(), v.getZ());
+    }
+
+    private org.bukkit.util.Vector toVector(Object o) {        if (o instanceof org.bukkit.util.Vector v) return v;
+        if (o instanceof List<?> list && list.size() >= 3) {
+            return new org.bukkit.util.Vector(toD(list.get(0)), toD(list.get(1)), toD(list.get(2)));
+        }
+        if (o instanceof String s) {
+            String[] parts = s.split(",");
+            if (parts.length >= 3) {
+                try {
+                    return new org.bukkit.util.Vector(
+                            Double.parseDouble(parts[0].trim()),
+                            Double.parseDouble(parts[1].trim()),
+                            Double.parseDouble(parts[2].trim()));
+                } catch (NumberFormatException ignored) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
 
     private Region readRegion(String path) {
         String world = cfg.getString(path + ".world");
@@ -407,13 +536,8 @@ public class TrackConfig {
         }
         if (!checkpoints.isEmpty()) {
             java.util.List<java.util.Map<String,Object>> cps = new java.util.ArrayList<>();
-            for (Region r : checkpoints) {
-                java.util.Map<String,Object> m = new java.util.LinkedHashMap<>();
-                org.bukkit.util.BoundingBox b = r.getBox();
-                m.put("world", r.getWorldName());
-                m.put("minX", b.getMinX()); m.put("minY", b.getMinY()); m.put("minZ", b.getMinZ());
-                m.put("maxX", b.getMaxX()); m.put("maxY", b.getMaxY()); m.put("maxZ", b.getMaxZ());
-                cps.add(m);
+            for (CheckpointShape shape : checkpoints) {
+                cps.add(checkpointToMap(shape));
             }
             cfg.set("checkpoints", cps);
         } else {

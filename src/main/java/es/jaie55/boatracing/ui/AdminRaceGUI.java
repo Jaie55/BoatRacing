@@ -2,6 +2,7 @@ package es.jaie55.boatracing.ui;
 
 import es.jaie55.boatracing.BoatRacingPlugin;
 import es.jaie55.boatracing.race.RaceManager;
+import es.jaie55.boatracing.track.CheckpointShape;
 import es.jaie55.boatracing.track.Region;
 import es.jaie55.boatracing.track.SelectionUtils;
 import es.jaie55.boatracing.track.TrackConfig;
@@ -338,6 +339,13 @@ public class AdminRaceGUI implements Listener {
             return;
         }
 
+        if ("cp:autotrace".equals(action)) {
+            if (!ensureTrackEditable(p, trackKey, rm)) return;
+            if (plugin.getAutoTraceManager() != null) plugin.getAutoTraceManager().start(p);
+            p.closeInventory();
+            return;
+        }
+
         if (!action.startsWith("cp:item:")) return;
         int idx;
         try {
@@ -417,19 +425,22 @@ public class AdminRaceGUI implements Listener {
         int start = page * CHECKPOINT_PAGE_SIZE;
         int end = Math.min(total, start + CHECKPOINT_PAGE_SIZE);
         for (int i = start; i < end; i++) {
-            Region r = tc.getCheckpoints().get(i);
+            CheckpointShape r = tc.getCheckpoints().get(i);
             int slot = i - start;
+            java.util.List<String> lore = new java.util.ArrayList<>();
+            lore.add(plugin.msg().get("gui.race.cp-item-lore-region", "region", summarizeRegion(r)));
+            if (r.alternateCount() > 0) {
+                lore.add(plugin.msg().get("gui.race.cp-item-lore-alternates", "count", r.alternateCount()));
+            }
+            lore.add(plugin.msg().get("gui.race.cp-item-lore-replace"));
+            lore.add(plugin.msg().get("gui.race.cp-item-lore-remove"));
+            lore.add(plugin.msg().get("gui.race.cp-item-lore-move-up"));
+            lore.add(plugin.msg().get("gui.race.cp-item-lore-move-down"));
             inv.setItem(slot, actionWithLore(
                     Material.LIGHT_BLUE_STAINED_GLASS,
                     plugin.msg().get("gui.race.cp-item-title", "index", String.valueOf(i + 1)),
                     "cp:item:" + i,
-                    java.util.Arrays.asList(
-                        plugin.msg().get("gui.race.cp-item-lore-region", "region", summarizeRegion(r)),
-                        plugin.msg().get("gui.race.cp-item-lore-replace"),
-                        plugin.msg().get("gui.race.cp-item-lore-remove"),
-                        plugin.msg().get("gui.race.cp-item-lore-move-up"),
-                        plugin.msg().get("gui.race.cp-item-lore-move-down")
-                    )
+                    lore
             ));
         }
 
@@ -447,6 +458,7 @@ public class AdminRaceGUI implements Listener {
                 plugin.msg().get("gui.race.cp-page", "current", String.valueOf(page + 1), "total", String.valueOf(maxPage + 1))
                 )
         ));
+        inv.setItem(51, action(Material.ENDER_EYE, plugin.msg().get("gui.race.btn-autotrace"), "cp:autotrace"));
         inv.setItem(52, action(Material.ARROW, plugin.msg().get("gui.race.btn-prev-page"), "cp:prev"));
         inv.setItem(53, action(Material.ARROW, plugin.msg().get("gui.race.btn-next-page"), "cp:next"));
 
@@ -573,9 +585,9 @@ public class AdminRaceGUI implements Listener {
                 .open(p);
     }
 
-    private String summarizeRegion(Region r) {
-        if (r == null || r.getBox() == null) return plugin.msg().get("gui.race.cp-invalid-region");
-        return r.getWorldName() + " " + fmtBox(r.getBox());
+    private String summarizeRegion(CheckpointShape r) {
+        if (r == null) return plugin.msg().get("gui.race.cp-invalid-region");
+        return r.worldName() + " " + r.describe();
     }
 
     private static String fmtBox(org.bukkit.util.BoundingBox b) {

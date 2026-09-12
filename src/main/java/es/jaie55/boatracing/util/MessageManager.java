@@ -9,9 +9,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Loads and serves user-facing messages from messages_en.yml, messages_es.yml,
- * messages_zh_TW.yml, messages_zh_CN.yml, messages_ru.yml – or any custom file placed in the plugin folder.
- * Language is configured in config.yml via the 'language' setting (default: "en").
+ * Loads and serves user-facing messages from the {@code lang/} folder
+ * ({@code lang/messages_en.yml}, {@code lang/messages_es.yml}, ...) or any custom bundle placed
+ * there. Language is configured in config.yml via the 'language' setting (default: "en").
+ * Legacy bundles saved next to config.yml are moved into lang/ automatically.
  */
 public final class MessageManager {
     private final JavaPlugin plugin;
@@ -24,9 +25,10 @@ public final class MessageManager {
     }
 
     public void reload() {
+        migrateLegacyBundles();
         String lang = sanitizeLanguage(plugin.getConfig().getString("language", "en"));
 
-        englishDefaults = loadBundledYaml("messages_en.yml");
+        englishDefaults = loadBundledYaml("lang/messages_en.yml");
 
         File file = resolveLanguageFile(lang);
         if (file == null && !"en".equalsIgnoreCase(lang)) {
@@ -35,7 +37,7 @@ public final class MessageManager {
             file = resolveLanguageFile(lang);
         }
         if (file == null) {
-            plugin.getLogger().severe("Could not load message bundle 'messages_en.yml'. Message keys will be shown as fallback.");
+            plugin.getLogger().severe("Could not load message bundle 'lang/messages_en.yml'. Message keys will be shown as fallback.");
             messages = new YamlConfiguration();
             return;
         }
@@ -49,7 +51,7 @@ public final class MessageManager {
         }
 
         // Merge any new keys added in future updates
-        try (InputStream defaults = plugin.getResource(filename)) {
+        try (InputStream defaults = plugin.getResource("lang/" + filename)) {
             if (defaults != null) {
                 YamlConfiguration def = YamlConfiguration.loadConfiguration(
                         new InputStreamReader(defaults, StandardCharsets.UTF_8));
@@ -60,6 +62,44 @@ public final class MessageManager {
         }
 
         messages.options().copyDefaults(true);
+    }
+
+    /** @return the folder holding every messages_*.yml bundle. */
+    public static File languageFolder(JavaPlugin plugin) {
+        return new File(plugin.getDataFolder(), "lang");
+    }
+
+    /**
+     * Moves language files that older versions saved next to config.yml into the lang folder.
+     * Files already present in lang/ are kept as-is and the old copy is renamed to .migrated.
+     */
+    private void migrateLegacyBundles() {
+        File root = plugin.getDataFolder();
+        File[] legacy = root.listFiles((dir, name) -> name.startsWith("messages_") && name.endsWith(".yml"));
+        if (legacy == null || legacy.length == 0) return;
+        File folder = languageFolder(plugin);
+        if (!folder.exists() && !folder.mkdirs()) {
+            plugin.getLogger().warning("Could not create the lang folder: " + folder.getAbsolutePath());
+            return;
+        }
+        for (File file : legacy) {
+            File target = new File(folder, file.getName());
+            try {
+                if (!target.exists()) {
+                    java.nio.file.Files.move(file.toPath(), target.toPath(),
+                            java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    plugin.getLogger().info("Moved " + file.getName() + " into the lang folder.");
+                } else {
+                    java.nio.file.Files.move(file.toPath(),
+                            file.toPath().resolveSibling(file.getName() + ".migrated"),
+                            java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    plugin.getLogger().info("Kept lang/" + file.getName() + " and renamed the old root copy to "
+                            + file.getName() + ".migrated.");
+                }
+            } catch (Exception ex) {
+                plugin.getLogger().warning("Could not move " + file.getName() + " into the lang folder: " + ex.getMessage());
+            }
+        }
     }
 
     private YamlConfiguration loadBundledYaml(String filename) {
@@ -85,16 +125,16 @@ public final class MessageManager {
 
     private File resolveLanguageFile(String lang) {
         String filename = "messages_" + lang + ".yml";
-        File file = new File(plugin.getDataFolder(), filename);
+        File file = new File(languageFolder(plugin), filename);
         if (file.exists()) return file;
 
-        try (InputStream bundled = plugin.getResource(filename)) {
+        try (InputStream bundled = plugin.getResource("lang/" + filename)) {
             if (bundled == null) return null;
         } catch (Exception ignored) {
             return null;
         }
 
-        plugin.saveResource(filename, false);
+        plugin.saveResource("lang/" + filename, false);
         return file.exists() ? file : null;
     }
 

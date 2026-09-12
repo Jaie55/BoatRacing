@@ -432,6 +432,9 @@ public class TeamGUI implements Listener {
             } else if (isBoatItem(it.getType())) {
                 openBoatPicker(p, team);
                 p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.2f);
+            } else if (it.getType() == Material.NETHER_STAR) {
+                if (plugin.getCosmeticsGUI() != null) plugin.getCosmeticsGUI().open(p);
+                p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.2f);
             }
         } else if (inColorPicker) {
             // Choose color
@@ -698,6 +701,7 @@ public class TeamGUI implements Listener {
                 List<String> lore = new ArrayList<>();
                 lore.add(plugin.msg().get("gui.team.lore-racer-number", "num", team.getRacerNumber(m) == 0 ? plugin.msg().get("gui.common.unset") : String.valueOf(team.getRacerNumber(m))));
                 lore.add(plugin.msg().get("gui.team.lore-boat", "boat", team.getBoatType(m)));
+                appendCosmeticsLore(lore, m);
                 if (m.equals(p.getUniqueId())) lore.add(plugin.msg().get("gui.team.lore-click-edit-profile"));
                 sm.lore(Text.lore(lore));
                 // Link back to team id for handling
@@ -796,6 +800,32 @@ public class TeamGUI implements Listener {
     p.openInventory(inv);
     }
 
+    /** Adds the player's equipped title, trail and checkpoint effect to a lore list. */
+    private void appendCosmeticsLore(List<String> lore, UUID memberId) {
+        if (plugin.getTitleManager() != null) {
+            String titleId = plugin.getTitleManager().resolvedTitle(memberId);
+            if (titleId != null) {
+                lore.add(plugin.msg().get("gui.team.lore-title", "title", plugin.getTitleManager().displayName(titleId)));
+            }
+        }
+        if (plugin.getPlayerPrefsManager() != null) {
+            String trailId = plugin.getPlayerPrefsManager().getTrail(memberId);
+            if (trailId != null && plugin.getCosmeticsCatalog() != null) {
+                var trail = plugin.getCosmeticsCatalog().trailById(trailId);
+                if (trail != null) {
+                    lore.add(plugin.msg().get("gui.team.lore-trail", "trail", plugin.msg().get(trail.messageKey())));
+                }
+            }
+            String checkpointId = plugin.getPlayerPrefsManager().getCheckpointEffect(memberId);
+            if (checkpointId != null) {
+                var checkpoint = es.jaie55.boatracing.cosmetics.CheckpointEffectType.byId(checkpointId);
+                if (checkpoint != null) {
+                    lore.add(plugin.msg().get("gui.team.lore-checkpoint", "effect", plugin.msg().get(checkpoint.messageKey())));
+                }
+            }
+        }
+    }
+
     private void openMemberProfile(Player p, Team team) {
         int size = 27;
     Inventory inv = Bukkit.createInventory(null, size, TITLE_MEMBER);
@@ -812,6 +842,7 @@ public class TeamGUI implements Listener {
             lore.add(plugin.msg().get("gui.team.lore-team-label", "team", teamName));
             lore.add(plugin.msg().get("gui.team.lore-racer-number", "num", team.getRacerNumber(p.getUniqueId()) == 0 ? plugin.msg().get("gui.common.unset") : String.valueOf(team.getRacerNumber(p.getUniqueId()))));
             lore.add(plugin.msg().get("gui.team.lore-boat", "boat", team.getBoatType(p.getUniqueId())));
+            appendCosmeticsLore(lore, p.getUniqueId());
             pim.lore(Text.lore(lore));
             profile.setItemMeta(pim);
         }
@@ -852,6 +883,19 @@ public class TeamGUI implements Listener {
             boat.setItemMeta(bim2);
         }
         inv.setItem(15, boat);
+
+        // Cosmetics shortcut (trails, titles, victory effects, checkpoint effects)
+        ItemStack cosmeticsBtn = new ItemStack(Material.NETHER_STAR);
+        ItemMeta cim = cosmeticsBtn.getItemMeta();
+        if (cim != null) {
+            cim.displayName(Text.item(plugin.msg().get("gui.team.btn-cosmetics")));
+            List<String> clore = new ArrayList<>();
+            clore.add(plugin.msg().get("gui.team.lore-cosmetics"));
+            cim.lore(Text.lore(clore));
+            cim.getPersistentDataContainer().set(KEY_TEAM_ID, PersistentDataType.STRING, team.getId().toString());
+            cosmeticsBtn.setItemMeta(cim);
+        }
+        inv.setItem(13, cosmeticsBtn);
 
         // Back
     ItemStack backBtn = button(Material.ARROW, Text.item(plugin.msg().get("gui.common.back")));

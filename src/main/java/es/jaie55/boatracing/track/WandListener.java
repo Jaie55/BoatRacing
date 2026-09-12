@@ -60,6 +60,18 @@ public class WandListener implements Listener {
             e.setCancelled(true);
             return;
         }
+        if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (e.getClickedBlock() != null && plugin.getAutoTraceManager() != null) {
+                boolean handled = plugin.getAutoTraceManager().handleWandClick(
+                        e.getPlayer(),
+                        e.getAction() == Action.LEFT_CLICK_BLOCK,
+                        e.getClickedBlock().getLocation().add(0.5, 0.5, 0.5));
+                if (handled) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+        }
         if (e.getAction() == Action.LEFT_CLICK_BLOCK && e.getClickedBlock() != null) {
             SelectionManager.setPos1(e.getPlayer(), e.getClickedBlock().getLocation());
             e.getPlayer().sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.selection-corner-a",
