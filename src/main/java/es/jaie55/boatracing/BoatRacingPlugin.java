@@ -55,6 +55,22 @@ public class BoatRacingPlugin extends JavaPlugin {
     private String mapVoteCommandLabel = "boatracing";
     private RewardManager rewardManager;
     private SetupWizard setupWizard;
+    private es.jaie55.boatracing.setup.AutoTraceManager autoTraceManager;
+    private es.jaie55.boatracing.util.DiscordWebhook discordWebhook;
+    private es.jaie55.boatracing.util.PlayerPrefsManager playerPrefsManager;
+    private es.jaie55.boatracing.cosmetics.CosmeticsCatalog cosmeticsCatalog;
+    private es.jaie55.boatracing.cosmetics.CosmeticPurchaseManager purchaseManager;
+    private es.jaie55.boatracing.integrations.VaultEconomy vaultEconomy;
+    private es.jaie55.boatracing.api.internal.BoatRacingAPIImpl apiImpl;
+    private final java.util.List<es.jaie55.boatracing.api.HudProvider> hudProviders =
+            new java.util.concurrent.CopyOnWriteArrayList<>();
+    private boolean apiEnabled = true;
+    private boolean apiLogExtensions = false;
+    private es.jaie55.boatracing.extension.ExtensionManager extensionManager;
+    private es.jaie55.boatracing.cosmetics.TitleManager titleManager;
+    private es.jaie55.boatracing.cosmetics.TrailManager trailManager;
+    private es.jaie55.boatracing.ui.CosmeticsGUI cosmeticsGUI;
+    private es.jaie55.boatracing.ui.StatsGUI statsGUI;
     private MessageManager messageManager;
     private DocumentStore documentStore;
     private StatsManager statsManager;
@@ -70,8 +86,10 @@ public class BoatRacingPlugin extends JavaPlugin {
     private final java.util.Set<java.util.UUID> pendingDisband = new java.util.HashSet<>();
     private final java.util.Map<java.util.UUID, java.util.UUID> pendingTransfer = new java.util.HashMap<>();
     private final java.util.Map<java.util.UUID, java.util.UUID> pendingKick = new java.util.HashMap<>();
-        private static final java.util.List<String> BUNDLED_LANGUAGE_CODES = java.util.Arrays.asList(
-            "en", "es", "es_419", "fr", "pt_BR", "pt_PT", "de", "it", "pl", "tr", "ja", "ko", "sv", "zh_TW", "zh_CN", "ru",
+        /** Fixed GitHub Issues URL shown to admins by /boatracing debug. */
+    private static final String BUG_REPORT_URL = "https://github.com/Jaie55/BoatRacing/issues";
+
+    private static final java.util.List<String> BUNDLED_LANGUAGE_CODES = java.util.Arrays.asList(            "en", "es", "es_419", "fr", "pt_BR", "pt_PT", "de", "it", "pl", "tr", "ja", "ko", "sv", "zh_TW", "zh_CN", "ru",
             "uk", "id", "ar", "nl", "cs", "vi", "th", "tl", "da", "no", "fi"
         );
 
@@ -86,6 +104,25 @@ public class BoatRacingPlugin extends JavaPlugin {
     public TrackConfig getTrackConfig() { return trackConfig; }
     public TrackLibrary getTrackLibrary() { return trackLibrary; }
     public SetupWizard getSetupWizard() { return setupWizard; }
+    public es.jaie55.boatracing.setup.AutoTraceManager getAutoTraceManager() { return autoTraceManager; }
+    public es.jaie55.boatracing.util.DiscordWebhook getDiscordWebhook() { return discordWebhook; }
+    public es.jaie55.boatracing.util.PlayerPrefsManager getPlayerPrefsManager() { return playerPrefsManager; }
+    public es.jaie55.boatracing.cosmetics.CosmeticsCatalog getCosmeticsCatalog() { return cosmeticsCatalog; }
+    public es.jaie55.boatracing.cosmetics.CosmeticPurchaseManager getPurchaseManager() { return purchaseManager; }
+    public es.jaie55.boatracing.integrations.VaultEconomy getVaultEconomy() { return vaultEconomy; }
+    public boolean isApiEnabled() { return apiEnabled; }
+    public java.util.List<es.jaie55.boatracing.api.HudProvider> getHudProviders() { return hudProviders; }
+    public es.jaie55.boatracing.extension.ExtensionManager getExtensionManager() { return extensionManager; }
+
+    /** Extension API instance, created on demand even when the Bukkit service is disabled. */
+    public es.jaie55.boatracing.api.BoatRacingAPI getExtensionApi() {
+        if (apiImpl == null) apiImpl = new es.jaie55.boatracing.api.internal.BoatRacingAPIImpl(this);
+        return apiImpl;
+    }
+    public es.jaie55.boatracing.cosmetics.TitleManager getTitleManager() { return titleManager; }
+    public es.jaie55.boatracing.cosmetics.TrailManager getTrailManager() { return trailManager; }
+    public es.jaie55.boatracing.ui.CosmeticsGUI getCosmeticsGUI() { return cosmeticsGUI; }
+    public es.jaie55.boatracing.ui.StatsGUI getStatsGUI() { return statsGUI; }
     public es.jaie55.boatracing.ui.AdminTracksGUI getTracksGUI() { return tracksGUI; }
     public es.jaie55.boatracing.ui.VoteGUI getVoteGUI() { return voteGUI; }
     public MessageManager msg() { return messageManager; }
@@ -290,7 +327,7 @@ public class BoatRacingPlugin extends JavaPlugin {
         return id != null ? id.toString() : msg().get("general.none");
     }
 
-    private void sendStatsReport(Player viewer, org.bukkit.OfflinePlayer target) {
+    private void sendStatsReport(CommandSender viewer, org.bukkit.OfflinePlayer target) {
         if (viewer == null || target == null) return;
         java.util.UUID targetId = target.getUniqueId();
         if (targetId == null) return;
@@ -299,9 +336,34 @@ public class BoatRacingPlugin extends JavaPlugin {
         if (practiceStatsManager == null) practiceStatsManager = new PracticeStatsManager(this);
 
         String targetName = displayName(target);
-        boolean self = viewer.getUniqueId().equals(targetId);
+        boolean self = viewer instanceof org.bukkit.entity.Player viewerPlayer
+                && viewerPlayer.getUniqueId().equals(targetId);
         viewer.sendMessage(Text.colorize(prefix + msg().get(self ? "stats.header-self" : "stats.header-other", "player", targetName)));
         viewer.sendMessage(Text.colorize(msg().get("stats.line-player", "player", targetName)));
+        if (titleManager != null) {
+            String titleId = titleManager.resolvedTitle(targetId);
+            if (titleId != null) {
+                viewer.sendMessage(Text.colorize(msg().get("stats.line-title", "title", titleManager.displayName(titleId))));
+            }
+        }
+        if (playerPrefsManager != null) {
+            String trailId = playerPrefsManager.getTrail(targetId);
+            if (trailId != null) {
+                String name = trailId;
+                if (cosmeticsCatalog != null) {
+                    var trail = cosmeticsCatalog.trailById(trailId);
+                    if (trail != null) name = msg().get(trail.messageKey());
+                }
+                viewer.sendMessage(Text.colorize(msg().get("stats.line-trail", "trail", name)));
+            }
+            String checkpointId = playerPrefsManager.getCheckpointEffect(targetId);
+            if (checkpointId != null) {
+                var checkpoint = es.jaie55.boatracing.cosmetics.CheckpointEffectType.byId(checkpointId);
+                if (checkpoint != null) {
+                    viewer.sendMessage(Text.colorize(msg().get("stats.line-checkpoint", "effect", msg().get(checkpoint.messageKey()))));
+                }
+            }
+        }
 
         java.util.Optional<es.jaie55.boatracing.team.Team> teamOpt = teamManager.getTeamByMember(targetId);
         String teamName = teamOpt.map(es.jaie55.boatracing.team.Team::getName).orElse(msg().get("general.none"));
@@ -378,7 +440,8 @@ public class BoatRacingPlugin extends JavaPlugin {
 
     private java.util.Set<String> getAvailableLanguageCodes() {
         java.util.LinkedHashSet<String> codes = new java.util.LinkedHashSet<>(BUNDLED_LANGUAGE_CODES);
-        java.io.File[] localBundles = getDataFolder().listFiles((dir, name) -> name != null && name.startsWith("messages_") && name.endsWith(".yml"));
+        java.io.File langFolder = es.jaie55.boatracing.util.MessageManager.languageFolder(this);
+        java.io.File[] localBundles = langFolder.listFiles((dir, name) -> name != null && name.startsWith("messages_") && name.endsWith(".yml"));
         if (localBundles != null) {
             for (java.io.File file : localBundles) {
                 String name = file.getName();
@@ -392,9 +455,9 @@ public class BoatRacingPlugin extends JavaPlugin {
     private boolean hasLanguageBundle(String code) {
         if (!isValidLanguageCode(code)) return false;
         String filename = "messages_" + code + ".yml";
-        java.io.File customBundle = new java.io.File(getDataFolder(), filename);
+        java.io.File customBundle = new java.io.File(es.jaie55.boatracing.util.MessageManager.languageFolder(this), filename);
         if (customBundle.exists() && customBundle.isFile()) return true;
-        try (InputStream bundled = getResource(filename)) {
+        try (InputStream bundled = getResource("lang/" + filename)) {
             return bundled != null;
         } catch (Exception ignored) {
             return false;
@@ -671,6 +734,30 @@ public class BoatRacingPlugin extends JavaPlugin {
     this.raceManager = new RaceManager(this, trackConfig);
     this.rewardManager = new RewardManager(this);
     this.setupWizard = new SetupWizard(this);
+    this.autoTraceManager = new es.jaie55.boatracing.setup.AutoTraceManager(this);
+    this.discordWebhook = new es.jaie55.boatracing.util.DiscordWebhook(this);
+    this.playerPrefsManager = new es.jaie55.boatracing.util.PlayerPrefsManager(this);
+    this.purchaseManager = new es.jaie55.boatracing.cosmetics.CosmeticPurchaseManager(this);
+    if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+        try {
+            this.vaultEconomy = new es.jaie55.boatracing.integrations.VaultEconomy(this);
+        } catch (Throwable vaultError) {
+            this.vaultEconomy = null;
+            getLogger().warning("Failed to hook into Vault: " + vaultError.getMessage());
+        }
+    }
+    SchedulerCompat.runTimer(this, () -> {
+        if (purchaseManager != null) purchaseManager.cleanupExpired();
+    }, 6000L, 6000L);
+    this.cosmeticsCatalog = new es.jaie55.boatracing.cosmetics.CosmeticsCatalog(this);
+    this.titleManager = new es.jaie55.boatracing.cosmetics.TitleManager(this);
+    this.trailManager = new es.jaie55.boatracing.cosmetics.TrailManager(this);
+    this.trailManager.startOrReload();
+    this.cosmeticsGUI = new es.jaie55.boatracing.ui.CosmeticsGUI(this);
+    Bukkit.getPluginManager().registerEvents(cosmeticsGUI, this);
+    this.statsGUI = new es.jaie55.boatracing.ui.StatsGUI(this);
+    Bukkit.getPluginManager().registerEvents(statsGUI, this);
+    applyApiSettings();
     this.tracksGUI = new es.jaie55.boatracing.ui.AdminTracksGUI(this, trackLibrary);
     this.voteGUI = new es.jaie55.boatracing.ui.VoteGUI(this);
     Bukkit.getPluginManager().registerEvents(teamGUI, this);
@@ -699,11 +786,13 @@ public class BoatRacingPlugin extends JavaPlugin {
             @org.bukkit.event.EventHandler
             public void onQuit(org.bukkit.event.player.PlayerQuitEvent e) {
                 handlePracticeExitOnDisconnect(e.getPlayer());
+                for (RaceManager rm : getAllRaceManagers()) rm.onPlayerQuit(e.getPlayer().getUniqueId());
             }
 
             @org.bukkit.event.EventHandler
             public void onKick(org.bukkit.event.player.PlayerKickEvent e) {
                 handlePracticeExitOnDisconnect(e.getPlayer());
+                for (RaceManager rm : getAllRaceManagers()) rm.onPlayerQuit(e.getPlayer().getUniqueId());
             }
 
             @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST, ignoreCancelled = true)
@@ -822,7 +911,401 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
         }
 
-    getLogger().info("BoatRacing enabled");
+    // Base-managed extension system (plugins/BoatRacing/extensions/*.jar)
+    this.extensionManager = new es.jaie55.boatracing.extension.ExtensionManager(this);
+    try {
+        extensionManager.loadAll();
+    } catch (Throwable extensionError) {
+        getLogger().warning("Failed to initialise the extension manager: " + extensionError.getMessage());
+    }
+
+    getLogger().info("BoatRacing " + getDescription().getVersion() + " enabled. Admins can use /boatracing debug and report bugs at " + BUG_REPORT_URL + " (include logs/latest.log).");
+    }
+
+    // Prints safe diagnostic information plus where/how to report bugs.
+    private void sendDebugReport(CommandSender sender) {
+        if (sender == null) return;
+        String storage = getConfig().getString("database.mode", "SQLITE");
+        if ("MYSQL".equalsIgnoreCase(storage)) {
+            storage = storage + " (" + getConfig().getString("database.mysql.database", "boatracing") + ")";
+        }
+        int tracks = trackLibrary != null ? trackLibrary.list().size() : 0;
+        int teams = teamManager != null ? teamManager.getTeams().size() : 0;
+        int sessions = 0;
+        for (RaceManager rm : getAllRaceManagers()) {
+            if (rm.isRunning() || rm.isRegistering() || rm.isCountdownActive()) sessions++;
+        }
+
+        sender.sendMessage(Text.colorize(prefix + msg().get("plugin.debug-header")));
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-plugin", "plugin", getName() + " " + getDescription().getVersion())));
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-server", "server", Bukkit.getName() + " " + Bukkit.getVersion())));
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-api", "api", Bukkit.getBukkitVersion())));
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-java", "java", System.getProperty("java.version", "unknown"))));
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-storage", "storage", storage)));
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-language",
+                "lang", getConfig().getString("language", "en"),
+                "debug", getConfig().getString("debug", "off"))));
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-state",
+                "tracks", tracks, "teams", teams, "sessions", sessions)));
+        String loadedExtensions = "none";
+        if (extensionManager != null && extensionManager.hasExtensions()) {
+            java.util.List<String> summary = new java.util.ArrayList<>();
+            for (es.jaie55.boatracing.extension.LoadedExtension loaded : extensionManager.loadedExtensions()) {
+                summary.add(loaded.descriptor().name() + " v" + loaded.descriptor().version());
+            }
+            loadedExtensions = String.join(", ", summary);
+        }
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-extensions", "extensions", loadedExtensions)));
+        sender.sendMessage(Text.colorize(msg().get("plugin.debug-report", "issues", BUG_REPORT_URL)));
+        getLogger().fine("Diagnostic report requested by " + sender.getName() + ".");
+    }
+
+    private void handleCosmeticDensity(CommandSender sender, Player player, String rawLevel, String label) {
+        if (player == null) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("general.players-only")));
+            return;
+        }
+        if (!getConfig().getBoolean("cosmetics.density.enabled", true)) {
+            player.sendMessage(Text.colorize(prefix + msg().get("cosmetics.density-disabled")));
+            return;
+        }
+        String level = rawLevel == null ? "" : rawLevel.toLowerCase();
+        if (!level.equals("low") && !level.equals("normal") && !level.equals("high")) {
+            player.sendMessage(Text.colorize(prefix + msg().get("cosmetics.usage", "label", label)));
+            return;
+        }
+        playerPrefsManager.setParticleDensity(player.getUniqueId(), level);
+        player.sendMessage(Text.colorize(prefix + msg().get("cosmetics.density-set",
+                "level", msg().get("gui.cosmetics.density-" + level))));
+        player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.2f);
+    }
+
+    private void handleCosmeticAdminCommand(CommandSender sender, String sub, String[] args, String label) {
+        if (purchaseManager == null) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.unavailable")));
+            return;
+        }
+        if (args.length < 3) {
+            String usageKey = sub.equals("revoke") ? "cosmetics.error.usage-revoke"
+                    : sub.equals("unlocks") ? "cosmetics.error.usage-unlocks" : "cosmetics.error.usage-unlock";
+            sender.sendMessage(Text.colorize(prefix + msg().get(usageKey, "label", label)));
+            return;
+        }
+        org.bukkit.OfflinePlayer target = resolveOffline(args[2]);
+        if (target == null || target.getUniqueId() == null) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("stats.player-not-found", "player", args[2])));
+            return;
+        }
+        String targetName = displayName(target);
+
+        if (sub.equals("unlocks")) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.unlocks-header", "player", targetName)));
+            java.util.List<es.jaie55.boatracing.cosmetics.CosmeticPurchaseManager.GrantEntry> entries =
+                    purchaseManager.list(target.getUniqueId());
+            if (entries.isEmpty()) {
+                sender.sendMessage(Text.colorize(msg().get("cosmetics.unlocks-none")));
+                return;
+            }
+            for (es.jaie55.boatracing.cosmetics.CosmeticPurchaseManager.GrantEntry entry : entries) {
+                String categoryName = entry.categoryId().equals("*")
+                        ? msg().get("cosmetics.category-all")
+                        : msg().get("cosmetics.category." + entry.categoryId());
+                String cosmetic = entry.cosmeticId().equals("*")
+                        ? msg().get("cosmetics.all-label")
+                        : cosmeticNameById(entry.categoryId(), entry.cosmeticId());
+                sender.sendMessage(Text.colorize(msg().get("cosmetics.unlocks-line",
+                        "category", categoryName,
+                        "cosmetic", cosmetic,
+                        "expires", es.jaie55.boatracing.util.TimeFormat.formatRemaining(entry.expiresAt()))));
+            }
+            return;
+        }
+
+        if (sub.equals("revoke")) {
+            if (args.length < 4) {
+                sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.usage-revoke", "label", label)));
+                return;
+            }
+            String categoryArg = args[3].toLowerCase();
+            if (categoryArg.equals("all")) {
+                int count = purchaseManager.revokeAll(target.getUniqueId());
+                sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.revoke-all",
+                        "player", targetName, "count", String.valueOf(count))));
+                return;
+            }
+            es.jaie55.boatracing.cosmetics.CosmeticCategory category =
+                    es.jaie55.boatracing.cosmetics.CosmeticCategory.byId(categoryArg);
+            if (category == null) {
+                sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.unknown-category", "category", args[3])));
+                return;
+            }
+            if (args.length < 5) {
+                sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.usage-revoke", "label", label)));
+                return;
+            }
+            String id = args[4];
+            if (id.equals("*")) {
+                int count = purchaseManager.revokeCategory(target.getUniqueId(), category);
+                sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.revoke-category",
+                        "player", targetName,
+                        "category", msg().get("cosmetics.category." + category.id()),
+                        "count", String.valueOf(count))));
+            } else {
+                boolean removed = purchaseManager.revoke(target.getUniqueId(), category, id);
+                sender.sendMessage(Text.colorize(prefix + msg().get(removed ? "cosmetics.revoke-done" : "cosmetics.revoke-none",
+                        "player", targetName,
+                        "cosmetic", cosmeticNameById(category.id(), id))));
+            }
+            return;
+        }
+
+        // unlock
+        if (args.length < 4) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.usage-unlock", "label", label)));
+            return;
+        }
+        String categoryArg = args[3].toLowerCase();
+        long durationSeconds = args.length >= 6
+                ? es.jaie55.boatracing.util.TimeFormat.parseDurationSeconds(args[5]) : 0L;
+        if (durationSeconds < 0L) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.invalid-duration")));
+            return;
+        }
+        long expiresAt = es.jaie55.boatracing.util.TimeFormat.expiresAtFromSeconds(durationSeconds);
+        String expiryLabel = expiresAt <= 0L
+                ? msg().get("cosmetics.duration-permanent")
+                : msg().get("cosmetics.duration-expires",
+                        "time", es.jaie55.boatracing.util.TimeFormat.formatRemaining(expiresAt));
+
+        if (categoryArg.equals("all")) {
+            purchaseManager.grantAll(target.getUniqueId(), expiresAt);
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.unlock-all",
+                    "player", targetName, "duration", expiryLabel)));
+            return;
+        }
+        es.jaie55.boatracing.cosmetics.CosmeticCategory category =
+                es.jaie55.boatracing.cosmetics.CosmeticCategory.byId(categoryArg);
+        if (category == null) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.unknown-category", "category", args[3])));
+            return;
+        }
+        if (args.length < 5) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.usage-unlock", "label", label)));
+            return;
+        }
+        String id = args[4];
+        if (id.equals("*")) {
+            purchaseManager.grantCategory(target.getUniqueId(), category, expiresAt);
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.unlock-category",
+                    "player", targetName,
+                    "category", msg().get("cosmetics.category." + category.id()),
+                    "duration", expiryLabel)));
+            return;
+        }
+        if (!isKnownCosmetic(category, id)) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.error.unknown-cosmetic", "id", id)));
+            return;
+        }
+        purchaseManager.grant(target.getUniqueId(), category, id, expiresAt);
+        sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.unlock-single",
+                "player", targetName,
+                "cosmetic", cosmeticNameById(category.id(), id),
+                "duration", expiryLabel)));
+    }
+
+    private boolean isKnownCosmetic(es.jaie55.boatracing.cosmetics.CosmeticCategory category, String id) {
+        if (id == null || id.isBlank()) return false;
+        return switch (category) {
+            case TRAIL -> cosmeticsCatalog != null
+                    && cosmeticsCatalog.knownTrailIds().stream().anyMatch(t -> t.equalsIgnoreCase(id));
+            case TITLE -> titleManager != null
+                    && titleManager.orderedTitleIds().stream().anyMatch(t -> t.equalsIgnoreCase(id));
+            case EFFECT -> es.jaie55.boatracing.cosmetics.VictoryEffectType.byId(id) != null;
+            case SOUND -> es.jaie55.boatracing.cosmetics.VictorySoundType.byId(id) != null;
+            case CHECKPOINT -> es.jaie55.boatracing.cosmetics.CheckpointEffectType.byId(id) != null;
+        };
+    }
+
+    private String cosmeticNameById(String categoryId, String id) {
+        es.jaie55.boatracing.cosmetics.CosmeticCategory category =
+                es.jaie55.boatracing.cosmetics.CosmeticCategory.byId(categoryId);
+        if (category == null) return id;
+        return switch (category) {
+            case TRAIL -> {
+                var trail = cosmeticsCatalog != null ? cosmeticsCatalog.trailById(id) : null;
+                yield trail != null ? msg().get(trail.messageKey()) : id;
+            }
+            case TITLE -> titleManager != null ? titleManager.displayName(id) : id;
+            case EFFECT -> {
+                var effect = es.jaie55.boatracing.cosmetics.VictoryEffectType.byId(id);
+                yield effect != null ? msg().get(effect.messageKey()) : id;
+            }
+            case SOUND -> {
+                var sound = es.jaie55.boatracing.cosmetics.VictorySoundType.byId(id);
+                yield sound != null ? msg().get(sound.messageKey()) : id;
+            }
+            case CHECKPOINT -> {
+                var effect = es.jaie55.boatracing.cosmetics.CheckpointEffectType.byId(id);
+                yield effect != null ? msg().get(effect.messageKey()) : id;
+            }
+        };
+    }
+
+    /** Tab completion for /boatracing cosmetics [...]. */
+    private List<String> tabCompleteCosmetics(CommandSender sender, String[] args) {
+        boolean admin = sender.hasPermission("boatracing.cosmetics.admin");
+        String pref = args[args.length - 1] == null ? "" : args[args.length - 1].toLowerCase();
+        if (args.length == 2) {
+            java.util.List<String> subs = new java.util.ArrayList<>();
+            subs.add("density");
+            if (admin) {
+                subs.add("unlock");
+                subs.add("revoke");
+                subs.add("unlocks");
+            }
+            return subs.stream().filter(s -> s.startsWith(pref)).toList();
+        }
+        String sub = args[1].toLowerCase();
+        if (args.length == 3 && sub.equals("density")) {
+            return java.util.Arrays.asList("low", "normal", "high")
+                    .stream().filter(s -> s.startsWith(pref)).toList();
+        }
+        if (!admin) return java.util.Collections.emptyList();
+        if (args.length == 3 && (sub.equals("unlock") || sub.equals("revoke") || sub.equals("unlocks"))) {
+            java.util.List<String> names = new java.util.ArrayList<>();
+            for (org.bukkit.entity.Player online : Bukkit.getOnlinePlayers()) {
+                if (online.getName() != null && online.getName().toLowerCase().startsWith(pref)) names.add(online.getName());
+            }
+            for (org.bukkit.OfflinePlayer offline : Bukkit.getOfflinePlayers()) {
+                String name = safeOfflineName(offline);
+                if (name != null && name.toLowerCase().startsWith(pref)) names.add(name);
+            }
+            java.util.LinkedHashSet<String> unique = new java.util.LinkedHashSet<>(names);
+            return new java.util.ArrayList<>(unique);
+        }
+        if (args.length == 4 && sub.equals("unlock")) {
+            java.util.List<String> options = new java.util.ArrayList<>(java.util.Arrays.asList(
+                    "trail", "title", "effect", "sound", "checkpoint", "all"));
+            return options.stream().filter(s -> s.startsWith(pref)).toList();
+        }
+        if (args.length == 4 && sub.equals("revoke")) {
+            java.util.List<String> options = new java.util.ArrayList<>(java.util.Arrays.asList(
+                    "trail", "title", "effect", "sound", "checkpoint", "all"));
+            return options.stream().filter(s -> s.startsWith(pref)).toList();
+        }
+        if (args.length == 5 && (sub.equals("unlock") || sub.equals("revoke"))) {
+            es.jaie55.boatracing.cosmetics.CosmeticCategory category =
+                    es.jaie55.boatracing.cosmetics.CosmeticCategory.byId(args[3]);
+            java.util.List<String> options = new java.util.ArrayList<>();
+            options.add("*");
+            if (category != null) options.addAll(cosmeticIdsFor(category));
+            return options.stream().filter(s -> s.toLowerCase().startsWith(pref)).toList();
+        }
+        if (args.length == 6 && sub.equals("unlock")) {
+            return java.util.Arrays.asList("30m", "12h", "7d", "0")
+                    .stream().filter(s -> s.startsWith(pref)).toList();
+        }
+        return java.util.Collections.emptyList();
+    }
+
+    private List<String> cosmeticIdsFor(es.jaie55.boatracing.cosmetics.CosmeticCategory category) {
+        return switch (category) {
+            case TRAIL -> cosmeticsCatalog != null
+                    ? new java.util.ArrayList<>(cosmeticsCatalog.knownTrailIds())
+                    : java.util.Collections.emptyList();
+            case TITLE -> titleManager != null ? titleManager.orderedTitleIds() : java.util.Collections.emptyList();
+            case EFFECT -> java.util.Arrays.stream(es.jaie55.boatracing.cosmetics.VictoryEffectType.values())
+                    .map(es.jaie55.boatracing.cosmetics.VictoryEffectType::id).toList();
+            case SOUND -> java.util.Arrays.stream(es.jaie55.boatracing.cosmetics.VictorySoundType.values())
+                    .map(es.jaie55.boatracing.cosmetics.VictorySoundType::id).toList();
+            case CHECKPOINT -> java.util.Arrays.stream(es.jaie55.boatracing.cosmetics.CheckpointEffectType.values())
+                    .map(es.jaie55.boatracing.cosmetics.CheckpointEffectType::id).toList();
+        };
+    }
+
+    /** Registers or unregisters the extension API according to config. */
+    private void applyApiSettings() {
+        boolean newEnabled = getConfig().getBoolean("api.enabled", true);
+        this.apiLogExtensions = getConfig().getBoolean("api.log-extensions", false);
+        if (newEnabled == apiEnabled && (newEnabled ? apiImpl != null : apiImpl == null)) return;
+        this.apiEnabled = newEnabled;
+        if (apiEnabled) {
+            if (apiImpl == null) apiImpl = new es.jaie55.boatracing.api.internal.BoatRacingAPIImpl(this);
+            getServer().getServicesManager().register(
+                    es.jaie55.boatracing.api.BoatRacingAPI.class, apiImpl, this,
+                    org.bukkit.plugin.ServicePriority.Normal);
+            getLogger().fine("BoatRacingAPI registered (v" + es.jaie55.boatracing.api.BoatRacingAPI.API_VERSION + ").");
+            if (apiLogExtensions) logExtensionPlugins();
+        } else {
+            unregisterApiService();
+        }
+    }
+
+    private void unregisterApiService() {
+        if (apiImpl == null) return;
+        try {
+            getServer().getServicesManager().unregister(es.jaie55.boatracing.api.BoatRacingAPI.class, apiImpl);
+        } catch (Throwable ignored) {
+            getLogger().finer("Failed to unregister BoatRacingAPI: " + ignored.getMessage());
+        }
+        apiImpl = null;
+    }
+
+    private void logExtensionPlugins() {
+        try {
+            java.util.List<String> extensions = new java.util.ArrayList<>();
+            for (org.bukkit.plugin.Plugin other : getServer().getPluginManager().getPlugins()) {
+                if (other == null || other == this) continue;
+                org.bukkit.plugin.PluginDescriptionFile description = other.getDescription();
+                if (description.getDepend().contains(getName()) || description.getSoftDepend().contains(getName())) {
+                    extensions.add(other.getName() + " v" + description.getVersion());
+                }
+            }
+            if (!extensions.isEmpty()) {
+                getLogger().info("BoatRacing extension plugins detected: " + String.join(", ", extensions));
+            }
+        } catch (Throwable ignored) {
+            getLogger().finer("Could not scan extension plugins: " + ignored.getMessage());
+        }
+    }
+
+    private void handleExtensionsCommand(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("boatracing.extensions")) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+            return;
+        }
+        if (args.length >= 2 && args[1].equalsIgnoreCase("reload")) {
+            if (!sender.hasPermission("boatracing.reload")) {
+                sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                return;
+            }
+            if (extensionManager != null) extensionManager.reloadAll();
+            sender.sendMessage(Text.colorize(prefix + msg().get("plugin.extensions-reloaded",
+                    "count", extensionManager == null ? 0 : extensionManager.loadedExtensions().size())));
+            return;
+        }
+        if (args.length > 1) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("plugin.extensions-usage", "label", label)));
+            return;
+        }
+        if (extensionManager == null || !extensionManager.hasExtensions()) {
+            sender.sendMessage(Text.colorize(prefix + msg().get("plugin.extensions-none", "folder",
+                    extensionManager != null ? extensionManager.extensionsDirectory().getPath() : "plugins/BoatRacing/extensions")));
+            return;
+        }
+        sender.sendMessage(Text.colorize(prefix + msg().get("plugin.extensions-header")));
+        for (es.jaie55.boatracing.extension.LoadedExtension loaded : extensionManager.loadedExtensions()) {
+            StringBuilder commandList = new StringBuilder();
+            for (es.jaie55.boatracing.api.extension.ExtensionCommand extensionCommand : loaded.commands()) {
+                if (commandList.length() > 0) commandList.append("&7, &f");
+                commandList.append('/').append(label).append(' ').append(extensionCommand.name());
+            }
+            sender.sendMessage(Text.colorize(msg().get("plugin.extensions-line",
+                    "name", loaded.descriptor().name(),
+                    "version", loaded.descriptor().version(),
+                    "api", loaded.descriptor().apiVersion(),
+                    "commands", commandList.length() == 0 ? "" : commandList.toString())));
+        }
     }
 
     private void applyDebugLevel() {
@@ -875,11 +1358,17 @@ public class BoatRacingPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (extensionManager != null) extensionManager.disableAll();
+        unregisterApiService();
         if (teamManager != null) teamManager.save();
         if (statsManager != null) statsManager.save();
         if (practiceStatsManager != null) practiceStatsManager.save();
         if (practiceGhostManager != null) practiceGhostManager.save();
+        if (playerPrefsManager != null) playerPrefsManager.save();
+        if (purchaseManager != null) purchaseManager.save();
+        if (trailManager != null) trailManager.stop();
         if (selectionVisualizer != null) selectionVisualizer.stop();
+        if (autoTraceManager != null) autoTraceManager.shutdown();
         if (placeholderExpansion != null) placeholderExpansion.unregister();
         if (documentStore != null) { try { documentStore.close(); } catch (Exception ignored) { getLogger().finer("Failed to close persistent storage: " + ignored.getMessage()); } }
     }
@@ -903,18 +1392,43 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
         }
 
+        // Allow console for the admin cosmetics commands even without a targeted player.
+        boolean consoleCosmeticsAdmin = !(sender instanceof Player) && args.length >= 2
+                && args[0].equalsIgnoreCase("cosmetics")
+                && (args[1].equalsIgnoreCase("unlock") || args[1].equalsIgnoreCase("revoke")
+                    || args[1].equalsIgnoreCase("unlocks"));
+
+        // Allow console for base-managed extension subcommands that opt in.
+        boolean consoleExtensionCommand = !(sender instanceof Player) && args.length >= 1
+                && extensionManager != null && extensionManager.isConsoleAllowed(args[0]);
+
+        // Allow console for diagnostic commands that answer to the sender directly.
+        boolean consoleFriendly = !(sender instanceof Player) && args.length >= 1
+                && (args[0].equalsIgnoreCase("debug") || args[0].equalsIgnoreCase("extensions"));
+
         // Allow other senders if there's a targeted player.
-        if (other==null && !(sender instanceof Player)) {
+        if (other==null && !(sender instanceof Player) && !consoleCosmeticsAdmin && !consoleExtensionCommand
+                && !consoleFriendly) {
             sender.sendMessage(Text.colorize(prefix + msg().get("general.players-only")));
             return true;
         }
 
         // Set the player to either the sender or target.
-        Player p = (other==null) ? (Player) sender : other;
+        Player p = (other==null) ? (sender instanceof Player ? (Player) sender : null) : other;
 
         if (command.getName().equalsIgnoreCase("boatracing")) {
             if (args.length == 0) {
                 p.sendMessage(Text.colorize(prefix + msg().get("race.usage.main", "label", label)));
+                return true;
+            }
+            // /boatracing extensions
+            if (args[0].equalsIgnoreCase("extensions")) {
+                handleExtensionsCommand(sender, label, args);
+                return true;
+            }
+            // Base-managed extension subcommands (e.g. /boatracing party ...)
+            if (extensionManager != null && extensionManager.isCommandName(args[0])) {
+                extensionManager.handleCommand(sender, label, args);
                 return true;
             }
             // /boatracing version
@@ -968,7 +1482,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                 this.prefix = Text.colorize(getConfig().getString("prefix", "&6[BoatRacing] "));
                 // Reconfigure debug logging on reload
                 applyDebugLevel();
+                applyApiSettings();
                 this.messageManager.reload();
+                if (extensionManager != null) extensionManager.reloadAll();
                 // Recreate team manager to re-read data and settings
                 this.teamManager = new TeamManager(this);
                 if (this.statsManager == null) this.statsManager = new StatsManager(this);
@@ -977,6 +1493,22 @@ public class BoatRacingPlugin extends JavaPlugin {
                 else this.practiceStatsManager.reload();
                 if (this.practiceGhostManager == null) this.practiceGhostManager = new PracticeGhostManager(this);
                 else this.practiceGhostManager.reload();
+                if (this.playerPrefsManager == null) this.playerPrefsManager = new es.jaie55.boatracing.util.PlayerPrefsManager(this);
+                else this.playerPrefsManager.reload();
+                if (this.purchaseManager == null) this.purchaseManager = new es.jaie55.boatracing.cosmetics.CosmeticPurchaseManager(this);
+                else this.purchaseManager.reload();
+                this.vaultEconomy = null;
+                if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+                    try {
+                        this.vaultEconomy = new es.jaie55.boatracing.integrations.VaultEconomy(this);
+                    } catch (Throwable vaultError) {
+                        getLogger().warning("Failed to hook into Vault: " + vaultError.getMessage());
+                    }
+                }
+                this.cosmeticsCatalog = new es.jaie55.boatracing.cosmetics.CosmeticsCatalog(this);
+                if (this.titleManager == null) this.titleManager = new es.jaie55.boatracing.cosmetics.TitleManager(this);
+                if (this.trailManager == null) this.trailManager = new es.jaie55.boatracing.cosmetics.TrailManager(this);
+                this.trailManager.startOrReload();
                 if (this.selectionVisualizer == null) this.selectionVisualizer = new es.jaie55.boatracing.track.SelectionVisualizer(this);
                 this.selectionVisualizer.startOrReload();
                 p.sendMessage(Text.colorize(prefix + msg().get("plugin.reloaded")));
@@ -1015,8 +1547,55 @@ public class BoatRacingPlugin extends JavaPlugin {
                     }
                 }
 
-                sendStatsReport(p, target);
+                if (sender instanceof org.bukkit.entity.Player statsViewer) {
+                    if (statsGUI != null) statsGUI.open(statsViewer, target);
+                    else sendStatsReport(sender, target);
+                } else {
+                    sendStatsReport(sender, target);
+                }
                 p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.6f, 1.2f);
+                return true;
+            }
+            // /boatracing cosmetics [density|unlock|revoke|unlocks]
+            if (args[0].equalsIgnoreCase("cosmetics")) {
+                boolean basePermission = sender.hasPermission("boatracing.cosmetics")
+                        || sender.hasPermission(es.jaie55.boatracing.cosmetics.CosmeticsCatalog.UNLOCK_ALL_PERMISSION);
+                if (args.length >= 2 && args[1].equalsIgnoreCase("density")) {
+                    if (!basePermission) {
+                        sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                        return true;
+                    }
+                    handleCosmeticDensity(sender, p, args.length >= 3 ? args[2] : null, label);
+                    return true;
+                }
+                if (args.length >= 2 && (args[1].equalsIgnoreCase("unlock")
+                        || args[1].equalsIgnoreCase("revoke") || args[1].equalsIgnoreCase("unlocks"))) {
+                    if (!sender.hasPermission("boatracing.cosmetics.admin")) {
+                        sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                        return true;
+                    }
+                    handleCosmeticAdminCommand(sender, args[1].toLowerCase(), args, label);
+                    return true;
+                }
+                if (!basePermission) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                    if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                    return true;
+                }
+                if (args.length >= 2) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("cosmetics.usage", "label", label)));
+                    return true;
+                }
+                cosmeticsGUI.open(p);
+                return true;
+            }
+            // /boatracing debug
+            if (args[0].equalsIgnoreCase("debug")) {
+                if (!sender.hasPermission("boatracing.debug")) {
+                    sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                    return true;
+                }
+                sendDebugReport(sender);
                 return true;
             }
             // /boatracing race
@@ -1029,6 +1608,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                     p.sendMessage(Text.colorize(msg().get("race.help.vote", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("race.help.voteui", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("race.help.votestatus", "label", label)));
+                    if (sender.hasPermission("boatracing.race.spectate")) {
+                        sender.sendMessage(Text.colorize(msg().get("race.help.spectate", "label", label)));
+                    }
                     if (sender.hasPermission("boatracing.race.back")) {
                         sender.sendMessage(Text.colorize(msg().get("race.help.back", "label", label)));
                     }
@@ -1162,6 +1744,51 @@ public class BoatRacingPlugin extends JavaPlugin {
                                 : "race.registration.lobby-no-previous";
                         p.sendMessage(Text.colorize(prefix + msg().get(key)));
                         p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                        return true;
+                    }
+                    case "spectate" -> {
+                        if (!sender.hasPermission("boatracing.race.spectate")) {
+                            sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
+                            if (sender == p) p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                            return true;
+                        }
+                        String spectateArg = args.length >= 3 ? args[2].toLowerCase() : null;
+                        if ("leave".equals(spectateArg) || "exit".equals(spectateArg) || "stop".equals(spectateArg)) {
+                            boolean stopped = false;
+                            for (RaceManager rm : getAllRaceManagers()) {
+                                if (rm.isSpectating(p)) { rm.stopSpectating(p, true); stopped = true; break; }
+                            }
+                            if (!stopped) p.sendMessage(Text.colorize(prefix + msg().get("race.spectate.not-spectating")));
+                            return true;
+                        }
+                        for (RaceManager rm : getAllRaceManagers()) {
+                            if (rm.isParticipant(p.getUniqueId()) && rm.isRunning() && !rm.isLiveFinished(p.getUniqueId())) {
+                                p.sendMessage(Text.colorize(prefix + msg().get("race.spectate.while-racing")));
+                                p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                                return true;
+                            }
+                        }
+                        RaceManager spectateTarget = null;
+                        if (args.length >= 3) {
+                            spectateTarget = getRaceManagerByTrack(args[2]);
+                            if (spectateTarget == null) {
+                                p.sendMessage(Text.colorize(prefix + msg().get("race.track-not-found", "track", args[2])));
+                                p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                                return true;
+                            }
+                        } else {
+                            RaceManager own = getRaceManagerForPlayer(p.getUniqueId());
+                            if (own != null && own.isRunning()) spectateTarget = own;
+                            if (spectateTarget == null) {
+                                for (RaceManager rm : getAllRaceManagers()) {
+                                    if (rm.isRunning()) { spectateTarget = rm; break; }
+                                }
+                            }
+                        }
+                        if (spectateTarget == null || !spectateTarget.isRunning() || !spectateTarget.spectate(p)) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("race.spectate.unavailable")));
+                            p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                        }
                         return true;
                     }
                     case "force" -> {
@@ -1508,11 +2135,14 @@ public class BoatRacingPlugin extends JavaPlugin {
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-setpit", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-clearpit", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-addcheckpoint", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-addalt", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-clearalt", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-addlight", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-removelight", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-clearlights", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-setlaps", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-setpitstops", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-setcosmetics", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-setlobby", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-setpos", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-clearpos", "label", label)));
@@ -1520,6 +2150,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-show", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-selinfo", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-wand", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-autotrace", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-wizard", "label", label)));
                     return true;
                 }
@@ -1661,6 +2292,97 @@ public class BoatRacingPlugin extends JavaPlugin {
                         p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.2f);
                         if (setupWizard != null) setupWizard.afterAction(p);
                     }
+                    case "autotrace" -> {
+                        if (args.length < 3) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.autotrace.usage", "label", label)));
+                            return true;
+                        }
+                        String atAction = args[2].toLowerCase();
+                        switch (atAction) {
+                            case "help" -> autoTraceManager.sendHelp(p);
+                            case "start" -> autoTraceManager.start(p);
+                            case "stop" -> autoTraceManager.stop(p);
+                            case "preview" -> autoTraceManager.togglePreview(p);
+                            case "accept" -> autoTraceManager.accept(p);
+                            case "cancel" -> autoTraceManager.cancel(p, true);
+                            case "status" -> autoTraceManager.status(p);
+                            case "delete" -> {
+                                if (args.length >= 4 && args[3].equalsIgnoreCase("selected")) {
+                                    autoTraceManager.deleteSelected(p);
+                                    return true;
+                                }
+                                if (args.length < 4 || !args[3].matches("\\d+")) {
+                                    p.sendMessage(Text.colorize(prefix + msg().get("setup.autotrace.delete-usage", "label", label)));
+                                    return true;
+                                }
+                                autoTraceManager.deleteGate(p, Integer.parseInt(args[3]));
+                            }
+                            case "resize" -> {
+                                if (args.length >= 4 && args[3].equalsIgnoreCase("selected")) {
+                                    if (args.length < 6) {
+                                        p.sendMessage(Text.colorize(prefix + msg().get("setup.autotrace.resize-usage", "label", label)));
+                                        return true;
+                                    }
+                                    try {
+                                        double width = Double.parseDouble(args[4]);
+                                        double height = Double.parseDouble(args[5]);
+                                        autoTraceManager.resizeSelected(p, width / 2.0, height / 2.0);
+                                    } catch (NumberFormatException ex) {
+                                        p.sendMessage(Text.colorize(prefix + msg().get("setup.autotrace.resize-usage", "label", label)));
+                                    }
+                                    return true;
+                                }
+                                if (args.length < 6 || !args[3].matches("\\d+")) {
+                                    p.sendMessage(Text.colorize(prefix + msg().get("setup.autotrace.resize-usage", "label", label)));
+                                    return true;
+                                }
+                                try {
+                                    double width = Double.parseDouble(args[4]);
+                                    double height = Double.parseDouble(args[5]);
+                                    autoTraceManager.resizeGate(p, Integer.parseInt(args[3]), width / 2.0, height / 2.0);
+                                } catch (NumberFormatException ex) {
+                                    p.sendMessage(Text.colorize(prefix + msg().get("setup.autotrace.resize-usage", "label", label)));
+                                }
+                            }
+                            default -> p.sendMessage(Text.colorize(prefix + msg().get("setup.autotrace.usage", "label", label)));
+                        }
+                        return true;
+                    }
+                    case "addalt" -> {
+                        if (args.length < 3 || !args[2].matches("\\d+")) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.error.addalt", "label", label)));
+                            return true;
+                        }
+                        var altSel = SelectionUtils.getSelectionDetailed(p);
+                        if (altSel == null) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.no-selection")));
+                            p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                            return true;
+                        }
+                        int altIndex = Integer.parseInt(args[2]) - 1;
+                        Region altRegion = new Region(altSel.worldName, altSel.box);
+                        if (!trackConfig.addAlternate(altIndex, altRegion)) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.alternate-invalid", "max", trackConfig.getCheckpoints().size())));
+                            p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                            return true;
+                        }
+                        p.sendMessage(Text.colorize(prefix + msg().get("setup.alternate-added", "num", args[2], "box", fmtBox(altSel.box))));
+                        p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.2f);
+                        if (setupWizard != null) setupWizard.afterAction(p);
+                    }
+                    case "clearalt" -> {
+                        if (args.length < 3 || !args[2].matches("\\d+")) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.error.clearalt", "label", label)));
+                            return true;
+                        }
+                        int altIndex = Integer.parseInt(args[2]) - 1;
+                        if (!trackConfig.clearAlternates(altIndex)) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.alternate-none")));
+                        } else {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.alternate-cleared", "num", args[2])));
+                            p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.1f);
+                        }
+                    }
                     case "addlight" -> {
                         org.bukkit.block.Block target = p.getTargetBlockExact(6);
                         if (target == null) {
@@ -1763,6 +2485,26 @@ public class BoatRacingPlugin extends JavaPlugin {
                             if (activeSession != null) activeSession.loadSettings();
                         }
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.regtime-set", "seconds", secs, "track_info", (tlNameRt != null ? msg().get("setup.track-info", "track", tlNameRt) : ""))));
+                        p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.2f);
+                        if (setupWizard != null) setupWizard.afterAction(p);
+                        return true;
+                    }
+                    case "setcosmetics" -> {
+                        if (args.length < 3 || !(args[2].equalsIgnoreCase("true") || args[2].equalsIgnoreCase("false"))) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.error.setcosmetics", "label", label)));
+                            return true;
+                        }
+                        boolean enabled = Boolean.parseBoolean(args[2]);
+                        trackConfig.setRacingOverride("cosmetics-enabled", enabled);
+                        raceManager.loadSettings();
+                        String tlNameCos = trackLibrary != null ? trackLibrary.getCurrent() : null;
+                        if (tlNameCos != null && !tlNameCos.isBlank()) {
+                            RaceManager activeSession = findRaceSessionByKey(normalizeTrackKey(tlNameCos));
+                            if (activeSession != null) activeSession.loadSettings();
+                        }
+                        p.sendMessage(Text.colorize(prefix + msg().get("setup.cosmetics-set",
+                                "state", msg().get(enabled ? "setup.status-yes" : "setup.status-no"),
+                                "track_info", (tlNameCos != null ? msg().get("setup.track-info", "track", tlNameCos) : ""))));
                         p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.2f);
                         if (setupWizard != null) setupWizard.afterAction(p);
                         return true;
@@ -1929,6 +2671,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                     getConfig().set("language", requestedLang);
                     saveConfig();
                     this.messageManager.reload();
+                    if (extensionManager != null) extensionManager.reloadMessages();
                     p.sendMessage(Text.colorize(prefix + msg().get("admin.language-updated", "old", currentLang, "new", requestedLang)));
                     p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.1f);
                     return true;
@@ -2399,6 +3142,18 @@ public class BoatRacingPlugin extends JavaPlugin {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("boatracing")) {
+            // Extension subcommands own everything after their name.
+            if (args.length >= 2 && extensionManager != null && extensionManager.isCommandName(args[0])) {
+                return extensionManager.tabComplete(sender, args);
+            }
+            if (args.length >= 2 && args[0].equalsIgnoreCase("extensions")) {
+                if (!sender.hasPermission("boatracing.extensions")) return java.util.Collections.emptyList();
+                if (sender.hasPermission("boatracing.reload")) {
+                    String pref = args[1] == null ? "" : args[1].toLowerCase();
+                    return java.util.List.of("reload").stream().filter(s -> s.startsWith(pref)).toList();
+                }
+                return java.util.Collections.emptyList();
+            }
             // Root suggestions (handle no-arg and first arg prefix)
             if (args.length == 0 || (args.length == 1 && (args[0] == null || args[0].isEmpty()))) {
                 java.util.List<String> root = new java.util.ArrayList<>();
@@ -2410,6 +3165,10 @@ public class BoatRacingPlugin extends JavaPlugin {
                     if (sender.hasPermission("boatracing.admin") || sender.hasPermission("boatracing.admin.language")) root.add("admin");
                 if (sender.hasPermission("boatracing.reload")) root.add("reload");
                 if (sender.hasPermission("boatracing.version")) root.add("version");
+                if (sender.hasPermission("boatracing.cosmetics")) root.add("cosmetics");
+                if (sender.hasPermission("boatracing.debug")) root.add("debug");
+                if (sender.hasPermission("boatracing.extensions")) root.add("extensions");
+                if (extensionManager != null) root.addAll(extensionManager.commandNames(sender));
                 return root;
             }
             if (args.length == 1) {
@@ -2422,7 +3181,14 @@ public class BoatRacingPlugin extends JavaPlugin {
                     if (sender.hasPermission("boatracing.admin") || sender.hasPermission("boatracing.admin.language")) root.add("admin");
                 if (sender.hasPermission("boatracing.reload")) root.add("reload");
                 if (sender.hasPermission("boatracing.version")) root.add("version");
+                if (sender.hasPermission("boatracing.cosmetics")) root.add("cosmetics");
+                if (sender.hasPermission("boatracing.debug")) root.add("debug");
+                if (sender.hasPermission("boatracing.extensions")) root.add("extensions");
+                if (extensionManager != null) root.addAll(extensionManager.commandNames(sender));
                 return root.stream().filter(s -> s.startsWith(pref)).toList();
+            }
+            if (args.length >= 2 && args[0].equalsIgnoreCase("cosmetics")) {
+                return tabCompleteCosmetics(sender, args);
             }
             if (args.length >= 2 && args[0].equalsIgnoreCase("stats")) {
                 if (!sender.hasPermission("boatracing.stats")) return java.util.Collections.emptyList();
@@ -2485,6 +3251,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                     subs.add("help");
                     subs.add("join"); subs.add("leave"); subs.add("forfeit"); subs.add("status");
                     subs.add("vote"); subs.add("voteui"); subs.add("votestatus");
+                    if (sender.hasPermission("boatracing.race.spectate")) subs.add("spectate");
                     if (sender.hasPermission("boatracing.race.back")) subs.add("back");
                     if (sender.hasPermission("boatracing.race.practice")) subs.add("practice");
                     if (sender.hasPermission("boatracing.race.admin") || sender.hasPermission("boatracing.setup")
@@ -2523,6 +3290,15 @@ public class BoatRacingPlugin extends JavaPlugin {
                     if ("unsaved".startsWith(prefix)) names.add("unsaved");
                     return names;
                 }
+                if (args.length == 3 && raceSub.equals("spectate")) {
+                    java.util.List<String> options = new java.util.ArrayList<>();
+                    options.add("leave");
+                    if (trackLibrary != null) {
+                        for (String n : trackLibrary.list()) if (n.toLowerCase().startsWith(args[2].toLowerCase())) options.add(n);
+                    }
+                    if ("unsaved".startsWith(args[2].toLowerCase())) options.add("unsaved");
+                    return options;
+                }
                 if (args.length == 3 && java.util.Arrays.asList("open","join","leave","force","start","stop","status","vote").contains(raceSub)) {
                     String prefix = args[2] == null ? "" : args[2].toLowerCase();
                     java.util.List<String> names = new java.util.ArrayList<>();
@@ -2555,7 +3331,23 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
             if (args.length >= 2 && args[0].equalsIgnoreCase("setup")) {
                 if (!sender.hasPermission("boatracing.setup")) return Collections.emptyList();
-                if (args.length == 2) return Arrays.asList("help","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setregtime","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","wizard");
+                if (args.length == 2) return Arrays.asList("help","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","addalt","clearalt","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setregtime","setcosmetics","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","autotrace","wizard");
+                if (args.length == 3 && args[1].equalsIgnoreCase("autotrace")) {
+                    String pref = args[2] == null ? "" : args[2].toLowerCase();
+                    return java.util.Arrays.asList("help", "start", "stop", "preview", "accept", "cancel", "status", "delete", "resize")
+                            .stream().filter(s -> s.startsWith(pref)).toList();
+                }
+                if (args.length == 4 && args[1].equalsIgnoreCase("autotrace")
+                        && (args[2].equalsIgnoreCase("delete") || args[2].equalsIgnoreCase("resize"))) {
+                    String pref = args[3] == null ? "" : args[3].toLowerCase();
+                    java.util.List<String> opts = new java.util.ArrayList<>();
+                    opts.add("selected");
+                    if (sender instanceof Player tabPlayer && autoTraceManager != null) {
+                        int count = autoTraceManager.gateCount(tabPlayer);
+                        for (int i = 1; i <= Math.min(count, 30); i++) opts.add(String.valueOf(i));
+                    }
+                    return opts.stream().filter(s -> s.startsWith(pref)).toList();
+                }
                 if (args.length >= 3 && args[1].equalsIgnoreCase("setpit")) {
                     // Build current partial input (join tokens from index 2)
                     String partial = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length)).toLowerCase();
@@ -2570,10 +3362,21 @@ public class BoatRacingPlugin extends JavaPlugin {
                     }
                     return names;
                 }
+                if (args.length == 3 && args[1].equalsIgnoreCase("setcosmetics")) {
+                    String pref = args[2] == null ? "" : args[2].toLowerCase();
+                    return java.util.Arrays.asList("true", "false").stream().filter(s -> s.startsWith(pref)).toList();
+                }
                 if (args.length == 3 && args[1].equalsIgnoreCase("removestart")) {
                     String pref = args[2] == null ? "" : args[2].toLowerCase();
                     java.util.List<String> opts = new java.util.ArrayList<>();
                     int max = trackConfig.getStarts().size();
+                    for (int i = 1; i <= Math.min(max, 30); i++) opts.add(String.valueOf(i));
+                    return opts.stream().filter(s -> s.startsWith(pref)).toList();
+                }
+                if (args.length == 3 && (args[1].equalsIgnoreCase("addalt") || args[1].equalsIgnoreCase("clearalt"))) {
+                    String pref = args[2] == null ? "" : args[2].toLowerCase();
+                    java.util.List<String> opts = new java.util.ArrayList<>();
+                    int max = trackConfig.getCheckpoints().size();
                     for (int i = 1; i <= Math.min(max, 30); i++) opts.add(String.valueOf(i));
                     return opts.stream().filter(s -> s.startsWith(pref)).toList();
                 }

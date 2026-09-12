@@ -86,6 +86,53 @@ public class BoatRacingPlaceholderExpansion extends PlaceholderExpansion {
         if (key.equals("teams_count")) return String.valueOf(plugin.getTeamManager().getTeams().size());
         if (key.equals("teams_list")) return plugin.getTeamManager().getTeams().stream().map(Team::getName).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.joining(", "));
 
+        if (key.equals("title")) {
+            if (player == null || plugin.getTitleManager() == null) return "";
+            String titleId = plugin.getTitleManager().resolvedTitle(player.getUniqueId());
+            return titleId == null ? "" : plugin.getTitleManager().displayName(titleId);
+        }
+        if (key.equals("title_id")) {
+            if (player == null || plugin.getTitleManager() == null) return "";
+            String titleId = plugin.getTitleManager().resolvedTitle(player.getUniqueId());
+            return titleId == null ? "" : titleId;
+        }
+        if (key.equals("title_wins")) {
+            if (player == null || plugin.getStatsManager() == null) return "0";
+            return String.valueOf(plugin.getStatsManager().getPlayerWins(player.getUniqueId()));
+        }
+        if (key.equals("trail")) {
+            if (player == null || plugin.getPlayerPrefsManager() == null) return "";
+            String trailId = plugin.getPlayerPrefsManager().getTrail(player.getUniqueId());
+            return trailId == null ? "" : trailId;
+        }
+        if (key.equals("particle_density")) {
+            if (player == null || plugin.getPlayerPrefsManager() == null) return "";
+            String density = plugin.getPlayerPrefsManager().getParticleDensity(player.getUniqueId());
+            if (density == null) density = plugin.getConfig().getString("cosmetics.density.default", "normal");
+            return density == null ? "normal" : density;
+        }
+        if (key.startsWith("cosmetic_owned_") || key.startsWith("cosmetic_expires_")) {
+            boolean expires = key.startsWith("cosmetic_expires_");
+            String suffix = params.substring(expires ? "cosmetic_expires_".length() : "cosmetic_owned_".length());
+            int split = suffix.indexOf('_');
+            if (split <= 0 || player == null) return expires ? "-1" : "false";
+            es.jaie55.boatracing.cosmetics.CosmeticCategory category =
+                    es.jaie55.boatracing.cosmetics.CosmeticCategory.byId(suffix.substring(0, split));
+            String cosmeticId = suffix.substring(split + 1);
+            if (category == null) return expires ? "-1" : "false";
+            if (!expires) {
+                boolean accessible = plugin.getCosmeticsCatalog() != null
+                        && plugin.getCosmeticsCatalog().hasAccess(player, category, cosmeticId,
+                                "boatracing.cosmetics." + category.id() + "." + cosmeticId);
+                return String.valueOf(accessible);
+            }
+            long expiresAt = plugin.getPurchaseManager() != null
+                    ? plugin.getPurchaseManager().expiresAt(player.getUniqueId(), category, cosmeticId)
+                    : -1L;
+            if (expiresAt < 0L) return "-1";
+            return String.valueOf(expiresAt);
+        }
+
         if (key.equals("top_player_wins_name")) return plugin.getStatsManager().topPlayerByWins().map(e -> safePlayerName(e.getKey())).orElse("-");
         if (key.equals("top_player_wins")) return plugin.getStatsManager().topPlayerByWins().map(e -> String.valueOf(e.getValue())).orElse("0");
         if (key.equals("top_team_wins_name")) return plugin.getStatsManager().topTeamByWins().map(e -> plugin.getTeamManager().getTeams().stream().filter(t -> t.getId().equals(e.getKey())).findFirst().map(Team::getName).orElse("-")).orElse("-");
@@ -545,6 +592,11 @@ public class BoatRacingPlaceholderExpansion extends PlaceholderExpansion {
         if (key.equals("player_current_pitstops")) return String.valueOf(playerRace != null ? playerRace.getLivePitstops(pid) : 0);
         if (key.equals("player_finished")) return String.valueOf(playerRace != null && playerRace.isLiveFinished(pid));
 
+        if (plugin.getExtensionManager() != null) {
+            Player online = player != null ? player.getPlayer() : null;
+            String extensionValue = plugin.getExtensionManager().resolvePlaceholder(online, key);
+            if (extensionValue != null) return extensionValue;
+        }
         return null;
     }
 
