@@ -12,6 +12,9 @@
 # Allow source code
 !/src/**
 
+# Allow extension API docs
+!/API.md
+
 # Explicitly allow source/resource parent directories so nested new files are visible to Git
 !/src/
 !/src/main/
@@ -19,7 +22,8 @@
 !/src/main/java/**
 !/src/main/resources/
 !/src/main/resources/**
-!/src/main/resources/messages_*.yml
+!/src/main/resources/lang/
+!/src/main/resources/lang/**
 
 # Ignore Maven wrapper (incl. properties)
 
@@ -33,6 +37,8 @@
 /mvnw
 /mvnw.cmd
 /target/
+/party/
+/scripts/
 /dependency-reduced-pom.xml
 /.classpath
 /.project
