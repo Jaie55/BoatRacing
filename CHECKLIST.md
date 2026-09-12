@@ -1,5 +1,221 @@
 README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 
+## What to verify for 26.3
+- Backward compatibility (critical):
+	- Load an existing track whose `checkpoints:` entries have no `type` field and verify it loads unchanged, `/boatracing setup show` shows the same checkpoint count, and a race on it behaves exactly as before.
+	- Cross a legacy AABB checkpoint at full ice-boat speed and verify it still registers (no skip).
+	- Verify legacy AABB entries are still written in the old shape when the track is saved from the GUI (no forced `type` added unless the checkpoint is a plane gate).
+- Oriented gates (PLANE):
+	- Manually add a `type: plane` checkpoint (`center`, `normal`, `right`, `up`, `halfWidth`, `halfHeight`) to a track YAML, restart/reload, and verify it appears in the Admin Race checkpoint editor with its size description.
+	- Start a race and verify the gate triggers only when actually crossing the rectangle (walking parallel to the gate plane must not trigger it).
+	- Cross a plane gate at maximum boat speed from both directions and verify it counts without skipping.
+	- Stand next to (but not through) a plane gate and verify it does not trigger.
+	- Save an AutoTrace-generated track, restart the server and verify the plane gates load back with readable `center/normal/right/up` values (`x,y,z` strings) and trigger identically.
+- AutoTrace:
+	- Run `/boatracing setup autotrace start` while in a boat, drive one full lap, and verify it auto-stops near the start (or run `/boatracing setup autotrace stop` manually).
+	- Verify the start message shows the exact coordinates and clickable `[Help] [Stop] [Preview] [Accept] [Cancel]` buttons; an `AUTOTRACE` title appears, a particle marker stays at the start, the action bar shows time/samples/distance and the periodic chat reminder (every `reminder-seconds`) shows points/time/distance while recording.
+	- Run `/boatracing setup autotrace help` and verify the 6-step guide plus buttons; tab-complete of `autotrace` suggests `help`.
+	- After `/boatracing setup autotrace accept`, verify the selection wand is given automatically when missing and the `[Setup wizard]`, `[Open registration]`, `[Get wand]`, `[Add start]` and `[Set finish]` helpers work; verify the corner-marking instructions (left-click A, right-click B).
+	- While previewing, left-click a gate with the wand to select it (turns into the selection particle, green by default) and right-click to deselect; verify `/boatracing setup autotrace status` reports the selected count.
+	- Run `/boatracing setup autotrace resize selected <width> <height>` and `/boatracing setup autotrace delete selected` and verify every selected gate changes together; verify `selected` is suggested in tab-complete and `wand-select: false` disables gate selection.
+	- After stopping, run `/boatracing setup autotrace start` again and verify it discards the stopped run and records a fresh lap (no "already running" lock); run `/boatracing setup autotrace stop` on a stopped run and verify it reports the generated gates and next steps.
+	- Run `/boatracing setup autotrace cancel` and verify the session is removed, the action bar is cleared and no gates/particles remain.
+	- Verify gates are generated and the particle preview is visible; toggle with `/boatracing setup autotrace preview`.
+	- `/boatracing setup autotrace status` shows samples/gates/length/preview state.
+	- `/boatracing setup autotrace delete <#>` and `/boatracing setup autotrace resize <#> <width> <height>` modify the generated gates.
+	- `/boatracing setup autotrace accept` replaces the active track checkpoints and the track YAML now contains `type: plane` entries; `/boatracing setup autotrace cancel` discards the session without touching the track.
+	- Disconnect mid-trace and verify no orphan preview/task remains and no console errors appear; re-running start works.
+	- Run `/boatracing reload` mid-trace and verify no console errors.
+	- Set `setup.auto-trace.enabled: false` and verify start is blocked with the translated message.
+	- With `recenter-ice: false`, gate heights follow the driven line; with `true`, they snap to the nearest ice block.
+- Wizard and GUI:
+	- Wizard CHECKPOINTS step shows the `[AutoTrace]` button and launches the trace.
+	- Admin Race → Checkpoints editor shows the AutoTrace button (slot 51) and closes the GUI when starting the trace.
+	- Running `/boatracing setup wizard` shows an on-screen title/subtitle for every step (starts, finish, lights, pit, checkpoints, pitstops, laps, regtime) and a completion title when finishing; advancing, skipping and going back update the title accordingly.
+- Config and i18n (lang folder):
+	- On first start with the new build, verify every `plugins/BoatRacing/messages_*.yml` is moved into `plugins/BoatRacing/lang/` (legacy copies renamed to `.migrated` when both exist) and that the plugin still loads the active language without raw keys.
+	- Verify `plugins/BoatRacing/lang/messages_en.yml` is created if missing and that custom bundles placed in `lang/` are selectable with `language: "<code>"`.
+	- Verify `tools/check_locales.py` reads `src/main/resources/lang/` and reports 0 errors for every bundled language.
+	- Verify the extension folder keeps `config.yml` at its root and extracts every bundled language into `plugins/BoatRacing/extensions/<name>/lang/`; legacy root message files are moved into `lang/`.
+	- On update/reload, every new 26.3 config section is merged into an existing `config.yml` without overwriting user edits: `setup.auto-trace.*`, `discord.*`, `racing.victory-effects.*`, `racing.spectate-on-finish.*`, `cosmetics.*`, `diagnostics.*` and `replay.capture-race`.
+	- Set `language: es` and verify AutoTrace, alternates, spectator, victory, cosmetics and debug messages are in Spanish. Other bundled languages fall back to English without showing raw keys.
+	- Note: all bundled languages now include the 26.3 keys; `tools/check_locales.py` must report 0 errors across every `lang/messages_*.yml`.
+- Regression checks (26.3 touched existing behavior):
+	- Track files: create a track with starts, finish, default pit, team pit, lights, checkpoints, custom start slots and racing overrides; reload and verify `/boatracing setup show` lists everything and the YAML keeps its values.
+	- Legacy track compatibility: open an old track (no `type`, no `alternates`) and save it without editing checkpoints; verify the `checkpoints:` entries are still written in the old AABB shape and the file keeps its data.
+	- Checkpoint crossing: with an AABB track, cross each checkpoint at full speed in order and verify laps, sector gaps, lap broadcasts, best lap/race stats and finish detection behave exactly as before.
+	- Admin Race checkpoint editor: with mixed AABB/plane/alternate checkpoints, verify add from selection, replace, remove, move up/down and page navigation still work; item lore shows the region (and alternate count when present).
+	- Setup commands: `addcheckpoint`, `clearcheckpoints`, `setfinish`, `setpit`, `addlight`, `setlaps`, `setpitstops`, `setregtime`, `setlobby`, `setpos` and the wizard still work and auto-advance as before.
+	- Race lifecycle: open -> join -> start/force -> countdown/lights -> laps/pit stops -> finish -> results/rewards; then `/boatracing race restart`, `stop`, `forfeit` and `back` still work with no console errors.
+	- Practice ghost: with `practice.ghost.enabled: true` and `replay.capture-race: false`, complete a practice run and verify the ghost records and replays exactly as before; with `replay.capture-race: true`, verify the race ghost is stored and the practice ghost still updates independently.
+	- HUD/scoreboard: in-race sidebar, action bar, position tie-break and SimpleScore/TAB sidebars still restore correctly after the race.
+	- Reload: run `/boatracing reload` and verify players, teams, tracks and messages reload; verify only one trail task runs (no duplicated particles) and no spectator/follow tasks are left behind.
+	- Disable/enable: stop the server with a race, a spectator and a practice session active; verify preferences save, no orphan entities/tasks remain and the next startup is clean.
+	- Permissions: verify `boatracing.*` still grants everything (including the new leaves) and that per-trail nodes are NOT granted by `boatracing.*` or `boatracing.admin`.
+	- PlaceholderAPI: existing `%boatracing_*%` placeholders keep resolving, and the new title/trail ones return values with a player context and empty/`0` without one, without throwing.
+	- Commands/permissions coverage: `/boatracing` usage text and root tab-complete list `cosmetics` and `debug`; `boatracing.setup` gates autotrace/addalt/clearalt; `boatracing.race.spectate` gates spectate; `/boatracing debug` works from console and player with no exceptions.
+	- Existing command trees: `teams`, `admin`, `stats`, `version` and `reload` still behave as before (GUI clicks, tab-complete, permissions).
+	- Console hygiene: startup/shutdown with the new features produces no warnings or stack traces, and `debug: "off"` keeps the new `fine`/`finer` traces silent.
+- Extension API:
+	- With `api.enabled: true`, verify `BoatRacingProvider.get()` returns a non-null API in another test plugin and that `apiVersion()` matches `BoatRacingAPI.API_VERSION`.
+	- Verify events fire in order during a race: open -> join -> start -> checkpoint -> lap -> pit -> finish -> stop; and forfeit/practice variants.
+	- Verify the live views report correct lap, checkpoint, position, elapsed/finish time and status.
+	- Throw an exception inside a test listener and verify the race continues and the error is only logged at `debug: "fine"`.
+	- Set `api.enabled: false`, reload and verify the service is unregistered and `BoatRacingProvider.get()` returns null.
+	- Set `api.log-extensions: true` and verify installed plugins that depend on BoatRacing are logged at startup.
+	- Register a test `HudProvider`, run a race and verify its sidebar lines and action bar suffix appear next to the base HUD; make it throw and verify the race HUD keeps updating.
+	- Without any extension installed, verify races behave exactly as before (no performance or behavior change).
+- Base-managed extensions:
+	- Drop a test extension jar with a valid `extension.yml` in `plugins/BoatRacing/extensions/`; verify it loads at startup, its folder is created with `config.yml` and `lang/messages_en.yml`, and `/boatracing extensions` lists name, version, API and commands.
+	- Declare a permission in `extension.yml` (`permissions:` with `default: true`) and verify a non-op player receives it after load and loses it after the extension is removed/disabled.
+	- Try a jar registering a reserved name (`reload`) or a duplicate name from two extensions: verify it is ignored with a console warning and the built-in command still works.
+	- Make a test extension throw during `onEnable` and verify no listener, HUD line, command or placeholder stays registered and the server keeps running.
+	- Run `/boatracing party <subcommand>` (or the test extension command) and verify permissions, tab completion and the generic extension-error message when the command throws.
+	- Verify the extension config/messages are read from `plugins/BoatRacing/extensions/<name>/` and that `/boatracing extensions reload`, `/boatracing reload` and `/boatracing admin language` refresh them.
+	- Verify extension `%boatracing_<id>%` placeholders resolve with player context and return empty without one.
+	- Verify extension storage follows `database.mode`: YAML documents under the extension folder, SQLite/MySQL documents in the shared table.
+	- Delete the extension jar and restart: the base plugin loads with no errors, the command disappears and the folder is left untouched.
+	- Ship a jar with `api-version` newer than `BoatRacingAPI.API_VERSION` and verify it is skipped with a warning.
+- BoatRacing-PartyExtension addon (private, untracked `party/`):
+	- Build with `scripts/build-all.ps1` and verify `target\BoatRacing-26.3.jar` and `party\target\BoatRacing-PartyExtension-26.3.jar` are produced.
+	- Put the extension jar in `plugins/BoatRacing/extensions/` and verify the console logs the load plus "Party mode ready", and that `plugins/BoatRacing/extensions/BoatRacing-PartyExtension/` contains config and language files.
+	- Verify `/boatracing party help|points|top` work with `boatracing.party.use` and that `/brparty` no longer exists.
+	- Run a race with 2+ racers: starting items are granted, checkpoints can grant items, and right-click/drop uses the ability once (item consumed, global cooldown respected).
+	- Test each ability: Mushroom boost, Banana trap slows rivals, Green Shell projectile slows the hit racer, Lightning slows everyone else, Star blocks rival abilities while active, Blooper blinds rivals, Coin adds points, Bob-omb explodes without breaking blocks.
+	- `/boatracing party box add` at a track position, `box list`, collect the box while racing, verify respawn cooldown and that boxes survive a restart (extension storage document).
+	- Verify party points increase from Coins and finish positions, persist after restart, and appear in the scoreboard HUD; `%boatracing_party_points%`, `%boatracing_party_item%` and the top-1 placeholders resolve.
+	- `/boatracing party reload` re-reads config/messages/boxes; set `language: es` and verify addon messages switch with English fallback.
+	- Run the private QA pass in `party/CHECKLIST.md` for the full addon matrix.
+- Docs and discovery:
+	- README shows `Status: Public release (26.3)`, a "What's New (26.3)" block, compatibility 1.19–26.3, and documents every new command, permission, config key and placeholder.
+	- README includes a table of contents, an AutoTrace quick guide and checkpoint YAML format examples (axis-aligned, oriented and alternates).
+	- `plugin.yml` command usage lists `cosmetics|debug|extensions` and the new permission leaves (including `boatracing.extensions`) are children of the wildcard/meta nodes.
+	- `plugin.yml` includes `Vault` in `softdepend` and `boatracing.cosmetics.admin`/`boatracing.cosmetics.unlock.all` leaf nodes.
+	- `plugin.yml` declares `folia-supported: true` and the README states Vault compatibility (badge, requirements, platform notes) plus the storage backend explanation.
+	- `API.md` documents the extension API contract, events, views, HUD hook and the base-managed extension loader (`extension.yml`, `BoatRacingExtension`, `ExtensionContext`, commands, storage, placeholders), and README/CHANGELOG link to it.
+	- README includes a "Developing Extensions" guide (project setup with Maven, `extension.yml`, lifecycle, commands, config/messages, storage, scheduler, HUD, placeholders, external plugin model and best practices) and the table of contents links to it.
+	- `CHANGELOG.md` 26.3 section lists all added features plus the compatibility and docs notes; this CHECKLIST block exists.
+	- `/boatracing` root suggests `cosmetics`, `debug` and `extensions`, plus loaded extension subcommands (for example `party`); `/boatracing setup` suggests `autotrace`, `addalt` and `clearalt`; `/boatracing race` suggests `spectate` with `leave` and track names.
+	- `/boatracing race help` lists the spectate command; `/boatracing setup help` lists autotrace/addalt/clearalt.
+- Discord webhook:
+	- Set `discord.enabled: true` with a test webhook URL, open registration and start a race; verify a "Race started" embed arrives with track, laps and racer names.
+	- Complete a race and verify the results embed lists positions, times and DNF entries.
+	- Set a new track record and verify the record embed arrives exactly once.
+	- Disable individual `discord.events.*` entries and verify that event is no longer posted.
+	- Put an invalid URL and verify the server logs a warning without breaking races.
+	- Verify practice mode does not post anything.
+- Victory effects:
+	- With `racing.victory-effects.enabled: true`, finish a race in 1st/2nd/3rd and verify screen title, fireworks and sound; finish 4th or lower and verify nothing plays (`top-n: 3`).
+	- Disable `fireworks`, `screen-title` and `sounds` individually and verify each toggle is respected.
+- Spectator:
+	- As a non-participant, run `/boatracing race spectate` during a race; verify spectator gamemode, teleport to the leader and the joined message.
+	- Run `/boatracing race spectate leave` and verify gamemode and previous location are restored.
+	- Try to spectate while still racing and verify the `while-racing` message blocks it.
+	- Set `racing.spectate-on-finish.mode: free` and verify finishers stay in spectator mode until the race ends; with `follow`, verify they follow the leader and stop when the race ends.
+	- Disconnect while spectating and verify no leftover follow tasks or console errors; reconnecting works normally.
+	- Stop the race with spectators present and verify everyone is restored to their previous location/gamemode.
+- Cosmetics (trails):
+	- Run `/boatracing cosmetics` with `boatracing.cosmetics` and verify the trails page opens with the 24 built-in trails and that the Trails tab icon mirrors the equipped trail (and returns to gunpowder when none).
+	- Equip a trail with permission and verify particles follow the boat/player while racing/practicing (per `cosmetics.trails.show-in`).
+	- Without the per-trail permission, verify the item shows the locked lore and clicking does not equip it.
+	- Revoke the permission while equipped and verify the trail stops rendering; re-grant and verify it resumes.
+	- Set `cosmetics.trails.enabled: false` and verify the page shows the disabled message and no particles render.
+	- Add a custom trail under `cosmetics.trails.custom.<id>` and verify it appears after `/boatracing reload`; add a built-in id to `cosmetics.trails.disabled` and verify it disappears.
+	- Verify preferences persist across `/boatracing reload` and a server restart (document `player-prefs.yml`).
+	- Manually edit `player-prefs.yml` with an unknown trail id and a non-UUID key; verify the plugin loads without errors and ignores them.
+- Cosmetics (titles):
+	- Verify `%boatracing_title%` shows the automatic title for the player's wins and `%boatracing_title_wins%` matches `/boatracing stats`.
+	- Unlock a title (win races or lower a threshold in `cosmetics.titles.thresholds`), equip it from the Titles page and verify `%boatracing_title%` reflects it.
+	- Try to equip a locked title and verify the locked message.
+	- Set `cosmetics.titles.enabled: false` and verify the page shows the disabled message and `%boatracing_title%` returns empty.
+- Cosmetics (victory effects):
+	- Open the Victory effects tab and verify the tab icon mirrors the equipped effect; equip `heart`, `rainbow` and `none` and verify each changes the finish effects (fireworks/title/sound), with `none` playing nothing.
+	- Verify the selection persists across `/boatracing reload` and a restart, and that clearing resets it to `default`.
+	- Set `cosmetics.effects.enabled: false` and verify the page shows the disabled message and the default effect is always used.
+	- Add an effect id to `cosmetics.effects.locked` without granting `boatracing.cosmetics.effect.<id>` and verify it shows locked and falls back to `default` at race finish; grant the permission and verify it can be equipped.
+- Cosmetics (checkpoint effects):
+	- Open the Checkpoint effects tab and verify the tab icon mirrors the equipped effect; equip `spark`, `heart` and `none` and cross a checkpoint in a race/practice and verify the particle/sound plays (and nothing plays with `none`).
+	- Verify the selection persists across `/boatracing reload` and a restart, and that clearing resets it.
+	- Set `cosmetics.checkpoints.enabled: false` and verify the page shows the disabled message and no checkpoint particles/sounds play.
+	- Add an id to `cosmetics.checkpoints.locked` without granting `boatracing.cosmetics.checkpoint.<id>` and verify it shows locked and plays nothing; grant the permission and verify it works.
+- Cosmetics (victory sounds):
+	- Open the Victory sounds tab and verify the tab icon mirrors the equipped sound; equip `bell`, `dragon` and `none` and finish a race in the podium and verify the matching sound plays (and nothing plays with `none`).
+	- Verify `default` plays the sound defined by the selected victory effect, and that muting the global `racing.victory-effects.sounds` disables all of them.
+	- Verify the selection persists across `/boatracing reload` and a restart, and that clearing resets it to `default`.
+	- Set `cosmetics.victory-sounds.enabled: false` and verify the page shows the disabled message and the effect's default sound is used.
+	- Add an id to `cosmetics.victory-sounds.locked` without granting `boatracing.cosmetics.sound.<id>` and verify it shows locked and falls back to `default`; grant the permission (or `boatracing.cosmetics.unlock.all`) and verify it plays.
+- Cosmetics (version-safe particles and icons):
+	- Run the plugin on 1.19.4 and on 1.21+/26.x and equip `happy`, `enchant`, `witch` and `enchanted`: with aliases they must render the real particle on both versions.
+	- On 1.19, verify `snow` and `cherry` are hidden from the menu (particle does not exist) and do not render; with `cosmetics.unsupported: "fallback"` they must appear using the fallback particle instead.
+	- Add a custom trail with a data-requiring particle (e.g. `DUST`) and verify it is hidden and logged (no exception when rendering).
+	- Verify every cosmetic list entry has a distinct icon and that each tab icon mirrors the equipped cosmetic.
+- Cosmetics (particle density):
+	- Open the Settings tab and select Low/Normal/High; cross a checkpoint and use a trail and verify the particle count matches 1/2/4 (`cosmetics.density.*`).
+	- Verify victory fireworks respect the density with `cosmetics.density.max-victory-rockets` as cap.
+	- Run `/boatracing cosmetics density high` (permission `boatracing.cosmetics`) and verify it persists across reload/restart; `/boatracing cosmetics density bogus` shows usage.
+	- Set `cosmetics.density.enabled: false` and verify the menu shows the disabled message and always uses `normal`.
+- Cosmetics (shop / Vault):
+	- With Vault installed and prices configured, verify locked items show the price and `[Buy]`; buying withdraws the money and unlocks the item immediately.
+	- Try to buy without enough money and verify the "not enough" message; remove Vault and verify locked items show the permissions-only lore.
+	- Verify `cosmetics.shop.prices.<category>.<id>: 0` makes an item free and `gated-by-default: false` restores the previous opt-in behavior.
+	- Verify purchases persist across `/boatracing reload` and a restart in `cosmetic-unlocks.yml`.
+- Cosmetics (admin unlock commands):
+	- `/boatracing cosmetics unlock <player> flame` (category omitted) shows usage; use `/boatracing cosmetics unlock <player> trail flame` and verify the trail unlocks for that player.
+	- `/boatracing cosmetics unlock <player> trail * 30m` unlocks the whole category and `/boatracing cosmetics unlock <player> all 7d` unlocks everything; verify expiry in `unlocks` and that expired grants stop working after the cleanup task.
+	- `/boatracing cosmetics revoke <player> trail *` and `/boatracing cosmetics revoke <player> all` remove the grants; `/boatracing cosmetics unlocks <player>` lists active grants with their expiry.
+	- Works from console and for offline players; tab-complete suggests categories, ids, `*`, `all` and durations.
+	- Verify `boatracing.cosmetics.admin` (default op) gates these commands and that `boatracing.cosmetics.unlock.all` is NOT granted by `boatracing.*` but IS granted by `boatracing.admin`.
+- Cosmetics (buying / permissions):
+	- Grant a single trail permission from a shop/economy command and verify only that trail unlocks.
+	- Grant `boatracing.cosmetics.unlock.all` and verify every trail, title, victory effect, victory sound and checkpoint effect shows as unlocked and can be equipped without individual nodes.
+	- Verify a non-op player with no permissions sees everything locked with `gated-by-default: true`, while `boatracing.admin` holders see everything unlocked.
+- Cosmetics scope (global + per-track):
+	- Set `cosmetics.enabled: false` and verify no trails, victory choices or checkpoint effects play, while players can still browse the menu.
+	- Run `/boatracing setup setcosmetics false` on a track, start a race/practice there and verify trails, selected victory effects and checkpoint effects are disabled; with `true` they work again.
+	- Verify `setup show` lists the `cosmetics-enabled` override and that `/boatracing setup help` + tab-complete include `setcosmetics` with `true`/`false` suggestions.
+- Team profile and menu integration:
+	- Open `/boatracing teams` → your profile and verify your title and trail are shown, and that the Cosmetics button opens the cosmetics menu.
+	- Open the team view and verify each member head lore shows title/trail/checkpoint effect when equipped.
+- Stats GUI (title/trail):
+	- Run `/boatracing stats` and verify the summary page shows team, racer number, boat, title, trail, effect, wins, positions and best race/lap.
+	- Verify the console chat report (`/boatracing stats -p:<player>`) also lists the title, trail and checkpoint effect.
+	- Run `/boatracing stats <player>` (with `boatracing.stats.others`) and verify the menu shows that player's data; verify the head is their profile.
+	- Open the Practice tab, verify per-track best/last run and lap rows and that pagination works with many tracks.
+	- Run `/boatracing stats -p:<player>` from console and verify the text report is still printed.
+- Debug and bug reports:
+	- Run `/boatracing debug` as an operator and verify it prints plugin/server/API/Java/storage/language/tracks/teams/sessions plus the fixed GitHub Issues URL under `https://github.com/Jaie55/BoatRacing/issues`, without secrets (no MySQL password, no webhook URL).
+	- Verify a non-operator without `boatracing.debug` cannot run `/boatracing debug`, and that the permission is NOT granted by `boatracing.use` but is granted by `boatracing.admin`/`boatracing.*`.
+	- Verify there is no `diagnostics.*` config section and that old `diagnostics.*` keys from a previous config are ignored without errors.
+	- Verify the startup console line includes the version and the GitHub Issues URL.
+	- Set `debug: "fine"` (or `"finer"`) and verify cosmetics, Discord, spectator, AutoTrace and replay activity appears in the console; then set it back to `"off"`.
+- Race replay (discoverability):
+	- Complete a race with `replay.capture-race: true` and verify participants receive the `race.replay.stored` chat notice naming the winner and track.
+	- Start a practice run on that track and verify the ghost shows the winner's name with the race record suffix; forfeit-only races must not produce a notice.
+- Backward compatibility (critical):
+	- Start with a `config.yml` from a previous version (no `cosmetics.*`, `discord.*`, `racing.victory-effects.*` or `racing.spectate-on-finish.*`) and verify defaults are merged without touching existing values.
+	- Start with a config that still contains the removed `diagnostics.*` keys and verify they are ignored without errors (the report URL is fixed).
+	- Use a `messages_*.yml` from a previous version without the new keys and verify English fallback (no raw keys shown).
+	- Delete `player-prefs.yml`, start the server and verify it is created on first change without errors.
+	- Delete `cosmetic-unlocks.yml`, start the server and verify it is created on first purchase/grant without errors.
+	- Verify existing teams, racers, stats and practice data load unchanged (YAML/SQLite/MySQL).
+	- Verify old AABB tracks and their races behave exactly as before.
+- Checkpoint alternate routes (A3):
+	- Add a checkpoint, select a second region and run `/boatracing setup addalt <#>`; verify the Admin Race checkpoint editor shows `Alternate gates: 1` and the track YAML stores `alternates` inside that checkpoint entry.
+	- Drive through the primary gate and through the alternate gate: both must advance the checkpoint, including at full ice-boat speed.
+	- Run `/boatracing setup clearalt <#>` and verify `alternates` is removed and only the primary gate works.
+	- Reorder and remove checkpoints from the editor and verify alternates stay attached to the correct checkpoint.
+	- Verify old tracks without `alternates` load and run unchanged.
+- Race replay v1 (B5):
+	- With `replay.capture-race: true`, complete a race and verify a fine-level console line about the race replay ghost (set `debug: "fine"`).
+	- Start practice on that track with `practice.ghost.enabled: true` and verify the ghost shows the winner's name plus the `race.practice.ghost-suffix-race` suffix.
+	- Complete a faster practice run and verify it replaces the race ghost; then run a faster race and verify it replaces the practice ghost.
+	- With `replay.capture-race: false`, verify no race ghost is stored and existing ghosts are untouched.
+	- Forfeit mid-race, then run several races and verify no errors or memory leaks and that only real finishers can store the ghost.
+	- Verify old `practice-ghosts.yml` entries without `source` still load as practice ghosts.
+- Versioning:
+	- Project version is `26.3` in `pom.xml` and the built jar is `BoatRacing-26.3.jar`.
+- Folia (if available): run an AutoTrace recording and verify no scheduler errors.
+
 ## What to verify for 26.2.1
 - Versioning and docs:
 	- Project version is 26.2.1 in `pom.xml`.
@@ -399,7 +615,7 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 	- In `messages_en.yml` and `messages_es.yml`, header comments indicate official translations.
 	- In `messages_es_419.yml`, `messages_fr.yml`, `messages_pt_BR.yml`, `messages_pt_PT.yml`, `messages_de.yml`, `messages_it.yml`, `messages_pl.yml`, `messages_tr.yml`, `messages_ja.yml`, `messages_ko.yml`, `messages_sv.yml`, `messages_zh_TW.yml`, `messages_zh_CN.yml`, and `messages_ru.yml`, header comments indicate unofficial community translations and recommend review.
 	- Bundled language files exist in the data folder after first run. `/boatracing reload` switches language without restart.
-	- Custom language bundles work: set `language: "eo"` (or another code), create `messages_eo.yml` in the plugin folder, reload, and messages are read from that file.
+	- Custom language bundles work: set `language: "eo"` (or another code), create `messages_eo.yml` in the `plugins/BoatRacing/lang/` folder, reload, and messages are read from that file.
 	- Invalid language values fall back to English.
 	- If the configured language file does not exist in plugin folder and is not bundled, the plugin falls back to English cleanly.
 	- Setup Wizard navigation/help lines must never show raw keys (e.g. `setup.wizard.nav-label`); labels render localized text correctly.
