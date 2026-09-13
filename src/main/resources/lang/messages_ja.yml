@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&c使用法: /{label} teams|setup|reload|version"
-    open: "&c使用法: /{label} race open <track>"
+    open: "&c使用法: /{label} race open <track> [party|normal]"
     join: "&c使用法: /{label} race join <track>"
     leave: "&c使用法: /{label} race leave <track>"
     back: "&c使用法: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&c使用法: /{label} race voteopen [all|<track1> <track2> ...] [秒]"
     vote: "&c使用法: /{label} race vote <track>"
     spectate: "&c使用法: /{label} race spectate [leave|<track>]"
+  party-open: "&dこのレースで &f{track}&d のパーティーモードが有効になりました!"
 
   scoreboard:
     practice-label: "練習"
@@ -207,6 +208,7 @@ race:
     registration-open: "&e参加受付中 &7(登録者: &f{count}&7)"
     registration-closed: "&7参加受付は終了しています。"
     laps: "&7周回: &f{count}"
+    party: "&7パーティーモード: &f{state}"
     starts-lights: "&7スタート枠: &f{starts} &8\u2022 &7スタートライト: &f{lights}/5 &8\u2022 &7フィニッシュ: &f{finish} &8\u2022 &7ピットエリア: &f{pit}"
     checkpoints: "&7チェックポイント: &f{count}"
     mandatory-pitstops: "&7必須ピットストップ: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eセットアップコマンド:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(設定するアクティブトラックを選択します)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(現在位置をスタート枠として追加します。複数追加するには繰り返してください)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(すべてのスタート枠を削除します)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(番号指定でスタート枠を1つ削除します。1始まり)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(現在のトラック設定の概要を表示します)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(選択デバッグ: 現在の BoatRacing 選択範囲)"
     cmd-wand: "&7 - &f/{label} setup wand &7(BoatRacing 選択ツールを付与します)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(青い染料でチェックポイントを設置し、黄色い染料でフィニッシュを設定します。スニーク+右クリックで元に戻します)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(1周走ってチェックポイントを自動生成します)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(ガイド付きセットアップアシスタントを起動します)"
     wand-name: "&6BoatRacing 選択ツール"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&c使用法: /{label} setup setcosmetics <true|false>"
     addalt: "&c使用法: /{label} setup addalt <checkpoint #>"
     clearalt: "&c使用法: /{label} setup clearalt <checkpoint #>"
+    select: "&cトラックが見つかりません: &f{track}&c。/{label} admin tracks または /{label} setup select <track> を使用してください。"
     unknown-subcommand: "&c不明な setup サブコマンドです。/{label} setup help を使用してください。"
   wand-ready: "&aセレクター準備完了。&7左クリックで &fコーナーA&7、右クリックで &fコーナーB&7 を設定します。"
+  track-selected: "&aアクティブトラック: &f{track}&a。"
+  gates:
+    given: "&aゲートツールを準備しました: &f青い染料 &7= チェックポイント、&e黄色い染料 &7= フィニッシュ。右クリックで設置、スニーク+右クリックで元に戻します。"
+    tools-removed: "&7ゲートツールを削除しました。"
+    tool-checkpoint: "&bチェックポイントゲート"
+    tool-checkpoint-lore-1: "&7右クリック: 対象の位置にチェックポイントゲートを追加し、"
+    tool-checkpoint-lore-2: "&7視線の方向を向きます。スニーク+右クリック: 最後のものを削除します。"
+    tool-finish: "&eフィニッシュゲート"
+    tool-finish-lore-1: "&7右クリック: 対象の位置にフィニッシュゲートを設定し、"
+    tool-finish-lore-2: "&7視線の方向を向きます。スニーク+右クリック: フィニッシュをクリアします。"
+    checkpoint-added: "&bチェックポイントゲート &f#{index} &bを追加しました。&7(合計: &f{total}&7)"
+    checkpoint-removed: "&7最後のチェックポイントゲートを削除しました。&7(合計: &f{total}&7)"
+    checkpoint-none: "&c削除できるチェックポイントがありません。"
+    finish-set: "&eフィニッシュゲートを設定しました。"
+    finish-cleared: "&7フィニッシュゲートをクリアしました。"
+    finish-none: "&cクリアできるフィニッシュゲートがありません。"
   start-added: "&aスタート枠を追加しました: &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7ヒント: スタート枠は複数追加できます。さらに追加するにはコマンドを再実行してください。"
   starts-cleared: "&aすべてのスタート枠を削除しました。"

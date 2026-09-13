@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&c사용법: /{label} teams|setup|reload|version"
-    open: "&c사용법: /{label} race open <track>"
+    open: "&c사용법: /{label} race open <track> [party|normal]"
     join: "&c사용법: /{label} race join <track>"
     leave: "&c사용법: /{label} race leave <track>"
     back: "&c사용법: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&c사용법: /{label} race voteopen [all|<track1> <track2> ...] [초]"
     vote: "&c사용법: /{label} race vote <track>"
     spectate: "&c사용법: /{label} race spectate [leave|<track>]"
+  party-open: "&d이 레이스에서 &f{track}&d의 파티 모드가 활성화되었습니다!"
 
   scoreboard:
     practice-label: "연습"
@@ -207,6 +208,7 @@ race:
     registration-open: "&e등록 열림 &7(등록됨: &f{count}&7)"
     registration-closed: "&7등록 종료."
     laps: "&7랩: &f{count}"
+    party: "&7파티 모드: &f{state}"
     starts-lights: "&7스타트: &f{starts} &8\u2022 &7스타트 조명: &f{lights}/5 &8\u2022 &7피니시: &f{finish} &8\u2022 &7피트: &f{pit}"
     checkpoints: "&7체크포인트: &f{count}"
     mandatory-pitstops: "&7필수 피트 정차: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&e설정 명령:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(설정할 활성 트랙 선택)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(현재 위치를 스타트 슬롯으로 추가, 반복하여 추가 가능)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(모든 스타트 슬롯 제거)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(번호로 스타트 슬롯 하나 제거, 1부터 시작)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(현재 트랙 설정 요약)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(선택 디버그: 현재 BoatRacing 선택)"
     cmd-wand: "&7 - &f/{label} setup wand &7(BoatRacing 선택 도구 제공)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(파란 염료는 체크포인트를 설치하고 노란 염료는 피니시를 설정합니다; 웅크리기 + 오른쪽 클릭으로 되돌립니다)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(한 바퀴 주행하여 체크포인트 자동 생성)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(안내된 설정 마법사 실행)"
     wand-name: "&6BoatRacing 선택 도구"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&c사용법: /{label} setup setcosmetics <true|false>"
     addalt: "&c사용법: /{label} setup addalt <checkpoint #>"
     clearalt: "&c사용법: /{label} setup clearalt <checkpoint #>"
+    select: "&c트랙을 찾을 수 없습니다: &f{track}&c. /{label} admin tracks 또는 /{label} setup select <track>을 사용하세요."
     unknown-subcommand: "&c알 수 없는 설정 부명령. /{label} setup help를 사용하세요."
   wand-ready: "&a선택기 준비 완료. &7왼쪽 클릭은 &f모서리 A&7를, 오른쪽 클릭은 &f모서리 B&7를 표시합니다."
+  track-selected: "&a활성 트랙: &f{track}&a."
+  gates:
+    given: "&a게이트 도구 준비 완료: &f파란 염료 &7= 체크포인트, &e노란 염료 &7= 피니시. 오른쪽 클릭으로 설치; 웅크리기 + 오른쪽 클릭으로 되돌립니다."
+    tools-removed: "&7게이트 도구가 제거되었습니다."
+    tool-checkpoint: "&b체크포인트 게이트"
+    tool-checkpoint-lore-1: "&7오른쪽 클릭: 대상 위치에 체크포인트 게이트를 추가하며,"
+    tool-checkpoint-lore-2: "&7바라보는 방향을 향합니다. 웅크리기 + 오른쪽 클릭: 마지막 항목을 제거합니다."
+    tool-finish: "&e피니시 게이트"
+    tool-finish-lore-1: "&7오른쪽 클릭: 대상 위치에 피니시 게이트를 설정하며,"
+    tool-finish-lore-2: "&7바라보는 방향을 향합니다. 웅크리기 + 오른쪽 클릭: 피니시를 제거합니다."
+    checkpoint-added: "&b체크포인트 게이트 &f#{index} &b추가됨. &7(총: &f{total}&7)"
+    checkpoint-removed: "&7마지막 체크포인트 게이트가 제거되었습니다. &7(총: &f{total}&7)"
+    checkpoint-none: "&c제거할 체크포인트가 없습니다."
+    finish-set: "&e피니시 게이트가 설정되었습니다."
+    finish-cleared: "&7피니시 게이트가 제거되었습니다."
+    finish-none: "&c제거할 피니시 게이트가 없습니다."
   start-added: "&a&f{x}, {y}, {z}&a에 스타트 슬롯 추가됨 &7({world})"
   start-added-tip: "&7팁: 여러 스타트 슬롯을 추가할 수 있습니다. 명령을 다시 실행하여 더 추가하세요."
   starts-cleared: "&a모든 스타트 슬롯이 제거되었습니다."

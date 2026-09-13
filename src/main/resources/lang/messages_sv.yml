@@ -59,7 +59,7 @@ stats:
 race:
   usage:
     main: "&cAnvändning: /{label} teams|setup|reload|version"
-    open: "&cAnvändning: /{label} race open <track>"
+    open: "&cAnvändning: /{label} race open <track> [party|normal]"
     join: "&cAnvändning: /{label} race join <track>"
     leave: "&cAnvändning: /{label} race leave <track>"
     back: "&cAnvändning: /{label} race back"
@@ -73,6 +73,7 @@ race:
     voteopen: "&cAnvändning: /{label} race voteopen [all|<track1> <track2> ...] [sekunder]"
     vote: "&cAnvändning: /{label} race vote <track>"
     spectate: "&cAnvändning: /{label} race spectate [leave|<track>]"
+  party-open: "&dPartyläge aktiverat för detta lopp på &f{track}&d!"
 
   scoreboard:
     practice-label: "TRÄNING"
@@ -208,6 +209,7 @@ race:
     registration-open: "&eAnmälan öppen &7(Anmälda: &f{count}&7)"
     registration-closed: "&7Anmälan stängd."
     laps: "&7Varv: &f{count}"
+    party: "&7Partyläge: &f{state}"
     starts-lights: "&7Starter: &f{starts} &8\u2022 &7Startljus: &f{lights}/5 &8\u2022 &7Mål: &f{finish} &8\u2022 &7Pit-område: &f{pit}"
     checkpoints: "&7Kontrollpunkter: &f{count}"
     mandatory-pitstops: "&7Obligatoriska pitstopp: &f{count}"
@@ -238,6 +240,7 @@ race:
 setup:
   usage:
     main: "&eSetup-kommandon:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Välj den aktiva banan att konfigurera)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Lägg till din nuvarande position som en startplats; upprepa för att lägga till flera)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Ta bort alla startplatser)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Ta bort en startplats med nummer, 1-baserat)"
@@ -263,6 +266,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Sammanfattning av aktuell bankonfiguration)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Markeringsdebugg: aktuell BoatRacing-markering)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Ge BoatRacing-markeringsverktyget)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Blått färgämne placerar kontrollpunkter, gult färgämne sätter målet; smyg + högerklick ångrar)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kör ett varv för att automatiskt generera kontrollpunkter)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Starta guidad setup-assistent)"
     wand-name: "&6BoatRacing Markeringsverktyg"
@@ -280,8 +284,25 @@ setup:
     setcosmetics: "&cAnvändning: /{label} setup setcosmetics <true|false>"
     addalt: "&cAnvändning: /{label} setup addalt <kontrollpunkt #>"
     clearalt: "&cAnvändning: /{label} setup clearalt <kontrollpunkt #>"
+    select: "&cBana hittades inte: &f{track}&c. Använd /{label} admin tracks eller /{label} setup select <track>."
     unknown-subcommand: "&cOkänt setup-underkommando. Använd /{label} setup help"
   wand-ready: "&aMarkeringsverktyg redo. &7Vänsterklick markerar &fHörn A&7; högerklick markerar &fHörn B&7."
+  track-selected: "&aAktiv bana: &f{track}&a."
+  gates:
+    given: "&aPortverktyg redo: &fblått färgämne &7= kontrollpunkt, &egult färgämne &7= mål. Högerklicka för att placera; smyg + högerklick för att ångra."
+    tools-removed: "&7Portverktyg borttagna."
+    tool-checkpoint: "&bKontrollpunktsport"
+    tool-checkpoint-lore-1: "&7Högerklick: lägg till en kontrollpunktsport vid ditt mål,"
+    tool-checkpoint-lore-2: "&7riktad dit du tittar. Smyg + högerklick: ta bort den sista."
+    tool-finish: "&eMålport"
+    tool-finish-lore-1: "&7Högerklick: sätt målporten vid ditt mål,"
+    tool-finish-lore-2: "&7riktad dit du tittar. Smyg + högerklick: ta bort målet."
+    checkpoint-added: "&bKontrollpunktsport &f#{index} &btillagd. &7(totalt: &f{total}&7)"
+    checkpoint-removed: "&7Sista kontrollpunktsporten borttagen. &7(totalt: &f{total}&7)"
+    checkpoint-none: "&cDet finns inga kontrollpunkter att ta bort."
+    finish-set: "&eMålport satt."
+    finish-cleared: "&7Målport borttagen."
+    finish-none: "&cDet finns ingen målport att ta bort."
   start-added: "&aLade till startplats vid &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Tips: Du kan lägga till flera startplatser. Kör kommandot igen för att lägga till fler."
   starts-cleared: "&aRensade alla startplatser."

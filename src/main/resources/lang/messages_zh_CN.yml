@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&c用法：/{label} teams|setup|reload|version"
-    open: "&c用法：/{label} race open <赛道>"
+    open: "&c用法：/{label} race open <赛道> [party|normal]"
     join: "&c用法：/{label} race join <赛道>"
     leave: "&c用法：/{label} race leave <赛道>"
     back: "&c用法：/{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&c用法：/{label} race voteopen [all|<track1> <track2> ...] [秒]"
     vote: "&c用法：/{label} race vote <track>"
     spectate: "&c用法：/{label} race spectate [leave|<赛道>]"
+  party-open: "&d此赛道 &f{track}&d 的派对模式已启用！"
 
   scoreboard:
     practice-label: "练习"
@@ -207,6 +208,7 @@ race:
     registration-open: "&e报名开放中 &7（已报名：&f{count}&7）"
     registration-closed: "&7报名已截止。"
     laps: "&7圈数：&f{count}"
+    party: "&7派对模式：&f{state}"
     starts-lights: "&7出发格：&f{starts} &8\u2022 &7起跑灯：&f{lights}/5 &8\u2022 &7终点：&f{finish} &8\u2022 &7维修站：&f{pit}"
     checkpoints: "&7检查点：&f{count}"
     mandatory-pitstops: "&7强制维修站停靠：&f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&e设置指令："
+    cmd-select: "&7 - &f/{label} setup select <赛道> &7（选择要设置的当前赛道）"
     cmd-addstart: "&7 - &f/{label} setup addstart &7（将目前位置新增为出发格位；重复执行以新增多个）"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7（清除所有出发格位）"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7（按编号删除一个出发格位，编号从 1 开始）"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7（显示目前赛道设定摘要）"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7（侦错选区：目前选区资讯）"
     cmd-wand: "&7 - &f/{label} setup wand &7（取得选区工具）"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7（蓝色染料放置检查点，黄色染料设置终点；潜行+右键点击可撤销）"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7（驾驶一圈以自动生成检查点）"
     cmd-wizard: "&7 - &f/{label} setup wizard &7（启动引导式设定精灵）"
     wand-name: "&6BoatRacing 选区工具"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&c用法：/{label} setup setcosmetics <true|false>"
     addalt: "&c用法：/{label} setup addalt <检查点编号>"
     clearalt: "&c用法：/{label} setup clearalt <检查点编号>"
+    select: "&c找不到赛道：&f{track}&c。请使用 /{label} admin tracks 或 /{label} setup select <赛道>。"
     unknown-subcommand: "&c未知的设置子指令。使用 /{label} setup help"
   wand-ready: "&a选区工具就绪。&7左键点击标记 &f角落 A&7；右键点击标记 &f角落 B&7。"
+  track-selected: "&a当前赛道：&f{track}&a。"
+  gates:
+    given: "&a闸门工具已就绪：&f蓝色染料 &7= 检查点，&e黄色染料 &7= 终点。右键点击放置；潜行+右键点击撤销。"
+    tools-removed: "&7闸门工具已移除。"
+    tool-checkpoint: "&b检查点闸门"
+    tool-checkpoint-lore-1: "&7右键点击：在目标位置添加检查点闸门，"
+    tool-checkpoint-lore-2: "&7朝向你的视线方向。潜行+右键点击：移除最后一个。"
+    tool-finish: "&e终点闸门"
+    tool-finish-lore-1: "&7右键点击：在目标位置设置终点闸门，"
+    tool-finish-lore-2: "&7朝向你的视线方向。潜行+右键点击：清除终点。"
+    checkpoint-added: "&b检查点闸门 &f#{index} &b已添加。&7（总计：&f{total}&7）"
+    checkpoint-removed: "&7最后一个检查点闸门已移除。&7（总计：&f{total}&7）"
+    checkpoint-none: "&c没有可移除的检查点。"
+    finish-set: "&e终点闸门已设置。"
+    finish-cleared: "&7终点闸门已清除。"
+    finish-none: "&c没有可清除的终点闸门。"
   start-added: "&a已在 &f{x}, {y}, {z} &7（{world}）新增出发格位"
   start-added-tip: "&7提示：你可以新增多个出发格位，重复执行此指令即可。"
   starts-cleared: "&a已清除所有出发格位。"

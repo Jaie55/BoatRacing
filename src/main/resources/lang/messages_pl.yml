@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cUżycie: /{label} teams|setup|reload|version"
-    open: "&cUżycie: /{label} race open <track>"
+    open: "&cUżycie: /{label} race open <track> [party|normal]"
     join: "&cUżycie: /{label} race join <track>"
     leave: "&cUżycie: /{label} race leave <track>"
     back: "&cUżycie: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cUżycie: /{label} race voteopen [all|<track1> <track2> ...] [sekundy]"
     vote: "&cUżycie: /{label} race vote <track>"
     spectate: "&cUżycie: /{label} race spectate [leave|<track>]"
+  party-open: "&dTryb party włączony dla tego wyścigu na &f{track}&d!"
 
   scoreboard:
     practice-label: "TRENING"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eRejestracja otwarta &7(Zarejestrowani: &f{count}&7)"
     registration-closed: "&7Rejestracja zamknięta."
     laps: "&7Okrążenia: &f{count}"
+    party: "&7Tryb party: &f{state}"
     starts-lights: "&7Starty: &f{starts} &8\u2022 &7Światła startowe: &f{lights}/5 &8\u2022 &7Meta: &f{finish} &8\u2022 &7Boksy: &f{pit}"
     checkpoints: "&7Punkty kontrolne: &f{count}"
     mandatory-pitstops: "&7Obowiązkowe postoje w boksach: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eKomendy konfiguracji:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Wybierz aktywny tor do konfiguracji)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Dodaj bieżącą pozycję jako stanowisko startowe; powtórz wiele razy)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Usuń wszystkie stanowiska startowe)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Usuń jedno stanowisko startowe po numerze, od 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Podsumowanie bieżącej konfiguracji toru)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Debugowanie wyboru: bieżący wybór BoatRacing)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Daj narzędzie wyboru BoatRacing)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Niebieski barwnik umieszcza punkty kontrolne, żółty barwnik ustawia metę; skradanie + prawy klik cofa)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Przejedź okrążenie, aby automatycznie wygenerować punkty kontrolne)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Uruchom asystenta konfiguracji)"
     wand-name: "&6Narzędzie Wyboru BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cUżycie: /{label} setup setcosmetics <true|false>"
     addalt: "&cUżycie: /{label} setup addalt <checkpoint #>"
     clearalt: "&cUżycie: /{label} setup clearalt <checkpoint #>"
+    select: "&cTor nie znaleziony: &f{track}&c. Użyj /{label} admin tracks lub /{label} setup select <track>."
     unknown-subcommand: "&cNieznane polecenie podrzędne konfiguracji. Użyj /{label} setup help"
   wand-ready: "&aWybór gotowy. &7Lewy klik zaznacza &fNarożnik A&7; prawy klik zaznacza &fNarożnik B&7."
+  track-selected: "&aAktywny tor: &f{track}&a."
+  gates:
+    given: "&aNarzędzia bramek gotowe: &fniebieski barwnik &7= punkt kontrolny, &eżółty barwnik &7= meta. Prawy klik, aby umieścić; skradanie + prawy klik, aby cofnąć."
+    tools-removed: "&7Narzędzia bramek usunięte."
+    tool-checkpoint: "&bBramka punktu kontrolnego"
+    tool-checkpoint-lore-1: "&7Prawy klik: dodaj bramkę punktu kontrolnego w miejscu celu,"
+    tool-checkpoint-lore-2: "&7zwróconą w stronę patrzenia. Skradanie + prawy klik: usuń ostatnią."
+    tool-finish: "&eBramka mety"
+    tool-finish-lore-1: "&7Prawy klik: ustaw bramkę mety w miejscu celu,"
+    tool-finish-lore-2: "&7zwróconą w stronę patrzenia. Skradanie + prawy klik: usuń metę."
+    checkpoint-added: "&bBramka punktu kontrolnego &f#{index} &bdodana. &7(łącznie: &f{total}&7)"
+    checkpoint-removed: "&7Usunięto ostatnią bramkę punktu kontrolnego. &7(łącznie: &f{total}&7)"
+    checkpoint-none: "&cNie ma punktów kontrolnych do usunięcia."
+    finish-set: "&eBramka mety ustawiona."
+    finish-cleared: "&7Bramka mety usunięta."
+    finish-none: "&cNie ma bramki mety do usunięcia."
   start-added: "&aDodano stanowisko startowe w &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Porada: Możesz dodać wiele stanowisk startowych. Uruchom polecenie ponownie, aby dodać więcej."
   starts-cleared: "&aWyczyszczono wszystkie stanowiska startowe."

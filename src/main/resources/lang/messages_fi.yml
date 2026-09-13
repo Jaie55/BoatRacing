@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cKäyttö: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cKäyttö: /{label} race open <track>"
+    open: "&cKäyttö: /{label} race open <track> [party|normal]"
     join: "&cKäyttö: /{label} race join <track>"
     leave: "&cKäyttö: /{label} race leave <track>"
     back: "&cKäyttö: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cKäyttö: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cKäyttö: /{label} race vote <track>"
     spectate: "&cKäyttö: /{label} race spectate [leave|<track>]"
+  party-open: "&dJuhlatila käytössä tässä kilpailussa radalla &f{track}&d!"
 
   scoreboard:
     practice-label: "HARJOITUS"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eIlmoittautuminen avoinna &7(Ilmoittautuneet: &f{count}&7)"
     registration-closed: "&7Ilmoittautuminen suljettu."
     laps: "&7Kierrokset: &f{count}"
+    party: "&7Juhlatila: &f{state}"
     starts-lights: "&7Lähdöt: &f{starts} &8\u2022 &7Lähtövalot: &f{lights}/5 &8\u2022 &7Maali: &f{finish} &8\u2022 &7Varikkoalue: &f{pit}"
     checkpoints: "&7Tarkistuspisteet: &f{count}"
     mandatory-pitstops: "&7Pakolliset varikkopysähdykset: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eAsetuskomennot:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Valitse muokattava aktiivinen rata)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Lisää nykyinen sijaintisi lähtöpaikaksi; toista lisätäksesi useita)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Poista kaikki lähtöpaikat)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Poista yksi lähtöpaikka numeron perusteella, 1-pohjainen)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Yhteenveto nykyisestä ratamäärityksestä)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Valinnan virheenkorjaus: nykyinen BoatRacing-valinta)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Anna BoatRacing-valintatyökalu)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Sininen väriaine asettaa tarkistuspisteet, keltainen väriaine asettaa maalin; kyyristy + oikea napsautus peruu)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Aja kierros luodaksesi tarkistuspisteet automaattisesti)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Käynnistä ohjattu asetusavustaja)"
     wand-name: "&6BoatRacing-valintatyökalu"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cKäyttö: /{label} setup setcosmetics <true|false>"
     addalt: "&cKäyttö: /{label} setup addalt <checkpoint #>"
     clearalt: "&cKäyttö: /{label} setup clearalt <checkpoint #>"
+    select: "&cRataa ei löytynyt: &f{track}&c. Käytä /{label} admin tracks tai /{label} setup select <track>."
     unknown-subcommand: "&cTuntematon setup-alikomento. Käytä /{label} setup help"
   wand-ready: "&aValitsin valmis. &7Vasen napsautus merkitsee &fkulma A&7; oikea napsautus merkitsee &fkulma B&7."
+  track-selected: "&aAktiivinen rata: &f{track}&a."
+  gates:
+    given: "&aPorttityökalut valmiina: &fsininen väriaine &7= tarkistuspiste, &ekeltainen väriaine &7= maali. Napsauta oikealla asettaaksesi; kyyristy + oikea napsautus peruaksesi."
+    tools-removed: "&7Porttityökalut poistettu."
+    tool-checkpoint: "&bTarkistuspisteportti"
+    tool-checkpoint-lore-1: "&7Oikea napsautus: lisää tarkistuspisteportti tähtäimesi kohdalle,"
+    tool-checkpoint-lore-2: "&7katseesi suuntaisesti. Kyyristy + oikea napsautus: poista viimeisin."
+    tool-finish: "&eMaaliportti"
+    tool-finish-lore-1: "&7Oikea napsautus: aseta maaliportti tähtäimesi kohdalle,"
+    tool-finish-lore-2: "&7katseesi suuntaisesti. Kyyristy + oikea napsautus: tyhjennä maali."
+    checkpoint-added: "&bTarkistuspisteportti &f#{index} &blisätty. &7(Yhteensä: &f{total}&7)"
+    checkpoint-removed: "&7Viimeisin tarkistuspisteportti poistettu. &7(Yhteensä: &f{total}&7)"
+    checkpoint-none: "&cEi tarkistuspisteitä poistettavaksi."
+    finish-set: "&eMaaliportti asetettu."
+    finish-cleared: "&7Maaliportti tyhjennetty."
+    finish-none: "&cEi maaliporttia tyhjennettäväksi."
   start-added: "&aLisätty lähtöpaikka kohtaan &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Vinkki: Voit lisätä useita lähtöpaikkoja. Suorita komento uudelleen lisätäksesi lisää."
   starts-cleared: "&aKaikki lähtöpaikat tyhjennetty."

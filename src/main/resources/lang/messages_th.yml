@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cวิธีใช้: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cวิธีใช้: /{label} race open <track>"
+    open: "&cวิธีใช้: /{label} race open <track> [party|normal]"
     join: "&cวิธีใช้: /{label} race join <track>"
     leave: "&cวิธีใช้: /{label} race leave <track>"
     back: "&cวิธีใช้: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cวิธีใช้: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cวิธีใช้: /{label} race vote <track>"
     spectate: "&cวิธีใช้: /{label} race spectate [leave|<track>]"
+  party-open: "&dเปิดใช้งานโหมดปาร์ตี้สำหรับการแข่งขันบน &f{track}&d แล้ว!"
 
   scoreboard:
     practice-label: "การซ้อม"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eเปิดลงทะเบียน &7(ลงทะเบียนแล้ว: &f{count}&7)"
     registration-closed: "&7ปิดการลงทะเบียนแล้ว"
     laps: "&7รอบ: &f{count}"
+    party: "&7โหมดปาร์ตี้: &f{state}"
     starts-lights: "&7การออกตัว: &f{starts} &8\u2022 &7ไฟสตาร์ท: &f{lights}/5 &8\u2022 &7เส้นชัย: &f{finish} &8\u2022 &7พื้นที่พิต: &f{pit}"
     checkpoints: "&7จุดตรวจ: &f{count}"
     mandatory-pitstops: "&7การเข้าพิตบังคับ: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eคำสั่งตั้งค่า:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(เลือกสนามที่ต้องการตั้งค่า)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(เพิ่มตำแหน่งปัจจุบันเป็นช่องสตาร์ท ทำซ้ำเพื่อเพิ่มหลายช่อง)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(ลบช่องสตาร์ททั้งหมด)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(ลบช่องสตาร์ทหนึ่งช่องตามหมายเลข เริ่มที่ 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(สรุปคอนฟิกสนามปัจจุบัน)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(ดีบักการเลือก: พื้นที่เลือกของ BoatRacing ปัจจุบัน)"
     cmd-wand: "&7 - &f/{label} setup wand &7(มอบเครื่องมือเลือกของ BoatRacing)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(สีย้อมสีน้ำเงินวางจุดตรวจ สีย้อมสีเหลืองกำหนดเส้นชัย; ย่อตัว + คลิกขวาเพื่อเลิกทำ)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(ขับหนึ่งรอบเพื่อสร้างจุดตรวจอัตโนมัติ)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(เปิดผู้ช่วยตั้งค่าแบบแนะนำทีละขั้น)"
     wand-name: "&6เครื่องมือเลือกของ BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cวิธีใช้: /{label} setup setcosmetics <true|false>"
     addalt: "&cวิธีใช้: /{label} setup addalt <checkpoint #>"
     clearalt: "&cวิธีใช้: /{label} setup clearalt <checkpoint #>"
+    select: "&cไม่พบสนาม: &f{track}&c ใช้ /{label} admin tracks หรือ /{label} setup select <track>"
     unknown-subcommand: "&cคำสั่งย่อย setup ไม่รู้จัก ใช้ /{label} setup help"
   wand-ready: "&aเครื่องมือพร้อมแล้ว &7คลิกซ้ายกำหนด &fมุม A&7; คลิกขวากำหนด &fมุม B&7"
+  track-selected: "&aสนามที่ใช้งานอยู่: &f{track}&a"
+  gates:
+    given: "&aเครื่องมือประตูพร้อมแล้ว: &fสีย้อมสีน้ำเงิน &7= จุดตรวจ, &eสีย้อมสีเหลือง &7= เส้นชัย คลิกขวาเพื่อวาง; ย่อตัว + คลิกขวาเพื่อเลิกทำ"
+    tools-removed: "&7นำเครื่องมือประตูออกแล้ว"
+    tool-checkpoint: "&bประตูจุดตรวจ"
+    tool-checkpoint-lore-1: "&7คลิกขวา: เพิ่มประตูจุดตรวจที่เป้าหมายของคุณ"
+    tool-checkpoint-lore-2: "&7หันตามทิศที่คุณมอง ย่อตัว + คลิกขวา: ลบอันล่าสุด"
+    tool-finish: "&eประตูเส้นชัย"
+    tool-finish-lore-1: "&7คลิกขวา: กำหนดประตูเส้นชัยที่เป้าหมายของคุณ"
+    tool-finish-lore-2: "&7หันตามทิศที่คุณมอง ย่อตัว + คลิกขวา: ล้างเส้นชัย"
+    checkpoint-added: "&bเพิ่มประตูจุดตรวจ &f#{index} &bแล้ว &7(ทั้งหมด: &f{total}&7)"
+    checkpoint-removed: "&7ลบประตูจุดตรวจอันล่าสุดแล้ว &7(ทั้งหมด: &f{total}&7)"
+    checkpoint-none: "&cไม่มีจุดตรวจให้ลบ"
+    finish-set: "&eกำหนดประตูเส้นชัยแล้ว"
+    finish-cleared: "&7ล้างประตูเส้นชัยแล้ว"
+    finish-none: "&cไม่มีประตูเส้นชัยให้ล้าง"
   start-added: "&aเพิ่มช่องสตาร์ทที่ &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7เคล็ดลับ: คุณสามารถเพิ่มช่องสตาร์ทหลายช่องได้ รันคำสั่งอีกครั้งเพื่อเพิ่ม"
   starts-cleared: "&aลบช่องสตาร์ททั้งหมดแล้ว"

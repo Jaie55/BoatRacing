@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cGebruik: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cGebruik: /{label} race open <track>"
+    open: "&cGebruik: /{label} race open <track> [party|normal]"
     join: "&cGebruik: /{label} race join <track>"
     leave: "&cGebruik: /{label} race leave <track>"
     back: "&cGebruik: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cGebruik: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cGebruik: /{label} race vote <track>"
     spectate: "&cGebruik: /{label} race spectate [leave|<track>]"
+  party-open: "&dPartymodus ingeschakeld voor deze race op &f{track}&d!"
 
   scoreboard:
     practice-label: "OEFENEN"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eRegistratie open &7(Ingeschreven: &f{count}&7)"
     registration-closed: "&7Registratie gesloten."
     laps: "&7Ronden: &f{count}"
+    party: "&7Partymodus: &f{state}"
     starts-lights: "&7Startplaatsen: &f{starts} &8\u2022 &7Startlichten: &f{lights}/5 &8\u2022 &7Finish: &f{finish} &8\u2022 &7Pitgebied: &f{pit}"
     checkpoints: "&7Controlepunten: &f{count}"
     mandatory-pitstops: "&7Verplichte pitstops: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eSetup-commando's:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Kies de actieve baan om te configureren)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Voeg je huidige positie toe als startplaats; herhaal om meerdere toe te voegen)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Verwijder alle startplaatsen)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Verwijder één startplaats op nummer, vanaf 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Samenvatting van de huidige baanconfiguratie)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Selectie-debug: huidige BoatRacing-selectie)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Geef het BoatRacing-selectiegereedschap)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Blauwe kleurstof plaatst checkpoints, gele kleurstof stelt de finish in; sluipen + rechtsklik maakt ongedaan)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Rijd een ronde om automatisch checkpoints te genereren)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Start de begeleide setup-assistent)"
     wand-name: "&6BoatRacing-selectiegereedschap"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cGebruik: /{label} setup setcosmetics <true|false>"
     addalt: "&cGebruik: /{label} setup addalt <checkpoint #>"
     clearalt: "&cGebruik: /{label} setup clearalt <checkpoint #>"
+    select: "&cBaan niet gevonden: &f{track}&c. Gebruik /{label} admin tracks of /{label} setup select <track>."
     unknown-subcommand: "&cOnbekend setup-subcommando. Gebruik /{label} setup help"
   wand-ready: "&aSelectiegereedschap gereed. &7Linksklik markeert &fHoek A&7; rechtsklik markeert &fHoek B&7."
+  track-selected: "&aActieve baan: &f{track}&a."
+  gates:
+    given: "&aPoortgereedschap klaar: &fblauwe kleurstof &7= checkpoint, &egele kleurstof &7= finish. Rechtsklik om te plaatsen; sluipen + rechtsklik om ongedaan te maken."
+    tools-removed: "&7Poortgereedschap verwijderd."
+    tool-checkpoint: "&bCheckpointpoort"
+    tool-checkpoint-lore-1: "&7Rechtsklik: voegt een checkpointpoort toe op je doel,"
+    tool-checkpoint-lore-2: "&7gericht waar je kijkt. Sluipen + rechtsklik: verwijdert de laatste."
+    tool-finish: "&eFinishpoort"
+    tool-finish-lore-1: "&7Rechtsklik: stelt de finishpoort in op je doel,"
+    tool-finish-lore-2: "&7gericht waar je kijkt. Sluipen + rechtsklik: wist de finish."
+    checkpoint-added: "&bCheckpointpoort &f#{index} &btoegevoegd. &7(Totaal: &f{total}&7)"
+    checkpoint-removed: "&7Laatste checkpointpoort verwijderd. &7(Totaal: &f{total}&7)"
+    checkpoint-none: "&cEr zijn geen checkpoints om te verwijderen."
+    finish-set: "&eFinishpoort ingesteld."
+    finish-cleared: "&7Finishpoort gewist."
+    finish-none: "&cEr is geen finishpoort om te wissen."
   start-added: "&aStartplaats toegevoegd op &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Tip: je kunt meerdere startplaatsen toevoegen. Voer het commando opnieuw uit om er meer toe te voegen."
   starts-cleared: "&aAlle startplaatsen gewist."

@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cPoužití: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cPoužití: /{label} race open <track>"
+    open: "&cPoužití: /{label} race open <track> [party|normal]"
     join: "&cPoužití: /{label} race join <track>"
     leave: "&cPoužití: /{label} race leave <track>"
     back: "&cPoužití: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cPoužití: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cPoužití: /{label} race vote <track>"
     spectate: "&cPoužití: /{label} race spectate [leave|<track>]"
+  party-open: "&dRežim party zapnut pro tento závod na &f{track}&d!"
 
   scoreboard:
     practice-label: "TRÉNINK"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eRegistrace otevřena &7(Registrováno: &f{count}&7)"
     registration-closed: "&7Registrace uzavřena."
     laps: "&7Kola: &f{count}"
+    party: "&7Režim party: &f{state}"
     starts-lights: "&7Startovní místa: &f{starts} &8\u2022 &7Startovní světla: &f{lights}/5 &8\u2022 &7Cíl: &f{finish} &8\u2022 &7Boxy: &f{pit}"
     checkpoints: "&7Kontrolní body: &f{count}"
     mandatory-pitstops: "&7Povinné zastávky v boxech: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&ePříkazy nastavení:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Vyberte aktivní trať ke konfiguraci)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Přidat aktuální pozici jako startovní místo; opakujte pro přidání dalších)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Odstranit všechna startovní místa)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Odstranit jedno startovní místo podle čísla, od 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Souhrn aktuální konfigurace trati)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Ladění výběru: aktuální výběr BoatRacing)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Dát nástroj pro výběr BoatRacing)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Modré barvivo umisťuje kontrolní body, žluté barvivo nastavuje cíl; plížení + pravé kliknutí vrací zpět)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Projeďte kolo pro automatické vygenerování kontrolních bodů)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Spustit průvodce nastavením)"
     wand-name: "&6Nástroj pro výběr BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cPoužití: /{label} setup setcosmetics <true|false>"
     addalt: "&cPoužití: /{label} setup addalt <checkpoint #>"
     clearalt: "&cPoužití: /{label} setup clearalt <checkpoint #>"
+    select: "&cTrať nenalezena: &f{track}&c. Použijte /{label} admin tracks nebo /{label} setup select <track>."
     unknown-subcommand: "&cNeznámý podpříkaz setup. Použijte /{label} setup help"
   wand-ready: "&aSelektor připraven. &7Levý klik označí &froh A&7; pravý klik označí &froh B&7."
+  track-selected: "&aAktivní trať: &f{track}&a."
+  gates:
+    given: "&aNástroje bran připraveny: &fmodré barvivo &7= kontrolní bod, &ežluté barvivo &7= cíl. Pravým kliknutím umístíte; plížení + pravé kliknutí vrací zpět."
+    tools-removed: "&7Nástroje bran odstraněny."
+    tool-checkpoint: "&bBrana kontrolního bodu"
+    tool-checkpoint-lore-1: "&7Pravé kliknutí: přidá branu kontrolního bodu na místo cílení,"
+    tool-checkpoint-lore-2: "&7otočenou podle vašeho pohledu. Plížení + pravé kliknutí: odeber poslední."
+    tool-finish: "&eCílová brana"
+    tool-finish-lore-1: "&7Pravé kliknutí: nastaví cílovou branu na místo cílení,"
+    tool-finish-lore-2: "&7otočenou podle vašeho pohledu. Plížení + pravé kliknutí: zruší cíl."
+    checkpoint-added: "&bBrana kontrolního bodu &f#{index} &bpřidána. &7(celkem: &f{total}&7)"
+    checkpoint-removed: "&7Poslední brana kontrolního bodu odebrána. &7(celkem: &f{total}&7)"
+    checkpoint-none: "&cNejsou žádné kontrolní body k odebrání."
+    finish-set: "&eCílová brana nastavena."
+    finish-cleared: "&7Cílová brana zrušena."
+    finish-none: "&cNení žádná cílová brana ke zrušení."
   start-added: "&aPřidáno startovní místo na &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Tip: Můžete přidat více startovních míst. Spusťte příkaz znovu pro přidání dalších."
   starts-cleared: "&aVšechna startovní místa odstraněna."

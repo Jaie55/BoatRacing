@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cUso: /{label} teams|setup|reload|version"
-    open: "&cUso: /{label} race open <track>"
+    open: "&cUso: /{label} race open <track> [party|normal]"
     join: "&cUso: /{label} race join <track>"
     leave: "&cUso: /{label} race leave <track>"
     back: "&cUso: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cUso: /{label} race voteopen [all|<track1> <track2> ...] [secondi]"
     vote: "&cUso: /{label} race vote <track>"
     spectate: "&cUso: /{label} race spectate [leave|<track>]"
+  party-open: "&dModalità party attivata per questa gara su &f{track}&d!"
 
   scoreboard:
     practice-label: "PRATICA"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eIscrizioni aperte &7(Iscritti: &f{count}&7)"
     registration-closed: "&7Iscrizioni chiuse."
     laps: "&7Giri: &f{count}"
+    party: "&7Modalità party: &f{state}"
     starts-lights: "&7Partenze: &f{starts} &8\u2022 &7Semafori partenza: &f{lights}/5 &8\u2022 &7Arrivo: &f{finish} &8\u2022 &7Area pit: &f{pit}"
     checkpoints: "&7Checkpoint: &f{count}"
     mandatory-pitstops: "&7Pit stop obbligatori: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eComandi setup:"
+    cmd-select: "&7 - &f/{label} setup select <pista> &7(Scegli la pista attiva da configurare)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Aggiungi la tua posizione corrente come slot di partenza; ripeti per aggiungerne altri)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Rimuovi tutti gli slot di partenza)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Rimuovi uno slot di partenza per numero, base 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Riepilogo configurazione pista corrente)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Debug selezione: selezione BoatRacing corrente)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Dai lo strumento di selezione BoatRacing)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Il colorante blu piazza i checkpoint, il colorante giallo imposta l'arrivo; accovacciato + clic destro annulla)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Percorri un giro per generare i checkpoint)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Avvia assistente guidato di setup)"
     wand-name: "&6Strumento di selezione BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cUso: /{label} setup setcosmetics <true|false>"
     addalt: "&cUso: /{label} setup addalt <nº checkpoint>"
     clearalt: "&cUso: /{label} setup clearalt <nº checkpoint>"
+    select: "&cPista non trovata: &f{track}&c. Usa /{label} admin tracks o /{label} setup select <pista>."
     unknown-subcommand: "&cSottocomando setup sconosciuto. Usa /{label} setup help"
   wand-ready: "&aSelettore pronto. &7Il clic sinistro segna &fAngolo A&7; il clic destro segna &fAngolo B&7."
+  track-selected: "&aPista attiva: &f{track}&a."
+  gates:
+    given: "&aStrumenti per i varchi pronti: &fcolorante blu &7= checkpoint, &ecolorante giallo &7= arrivo. Clic destro per posizionare; accovacciato + clic destro per annullare."
+    tools-removed: "&7Strumenti per i varchi rimossi."
+    tool-checkpoint: "&bVarco checkpoint"
+    tool-checkpoint-lore-1: "&7Clic destro: aggiunge un varco checkpoint sul tuo bersaglio,"
+    tool-checkpoint-lore-2: "&7orientato verso dove guardi. Accovacciato + clic destro: rimuove l'ultimo."
+    tool-finish: "&eVarco d'arrivo"
+    tool-finish-lore-1: "&7Clic destro: imposta il varco d'arrivo sul tuo bersaglio,"
+    tool-finish-lore-2: "&7orientato verso dove guardi. Accovacciato + clic destro: cancella l'arrivo."
+    checkpoint-added: "&bVarco checkpoint &f#{index} &baggiunto. &7(Total: &f{total}&7)"
+    checkpoint-removed: "&7Ultimo varco checkpoint rimosso. &7(Total: &f{total}&7)"
+    checkpoint-none: "&cNon ci sono checkpoint da rimuovere."
+    finish-set: "&eVarco d'arrivo impostato."
+    finish-cleared: "&7Varco d'arrivo cancellato."
+    finish-none: "&cNon c'e un varco d'arrivo da cancellare."
   start-added: "&aAggiunto slot di partenza a &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Suggerimento: puoi aggiungere piu slot di partenza. Esegui di nuovo il comando per aggiungerne altri."
   starts-cleared: "&aTutti gli slot di partenza rimossi."

@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cUsage: /{label} teams|race|stats|setup|admin|cosmetics|extensions|reload|version|debug"
-    open: "&cUsage: /{label} race open <track>"
+    open: "&cUsage: /{label} race open <track> [party|normal]"
     join: "&cUsage: /{label} race join <track>"
     leave: "&cUsage: /{label} race leave <track>"
     back: "&cUsage: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cUsage: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cUsage: /{label} race vote <track>"
     spectate: "&cUsage: /{label} race spectate [leave|<track>]"
+  party-open: "&dParty mode enabled for this race on &f{track}&d!"
 
   scoreboard:
     practice-label: "PRACTICE"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eRegistration open &7(Registered: &f{count}&7)"
     registration-closed: "&7Registration closed."
     laps: "&7Laps: &f{count}"
+    party: "&7Party mode: &f{state}"
     starts-lights: "&7Starts: &f{starts} &8\u2022 &7Start lights: &f{lights}/5 &8\u2022 &7Finish: &f{finish} &8\u2022 &7Pit area: &f{pit}"
     checkpoints: "&7Checkpoints: &f{count}"
     mandatory-pitstops: "&7Mandatory pit stops: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eSetup commands:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Choose the active track to configure)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Add your current position as a start slot; repeat to add multiple)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Remove all start slots)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Remove one start slot by number, 1-based)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Summary of current track config)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Selection debug: current BoatRacing selection)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Give the BoatRacing selection tool)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Blue dye places checkpoints, yellow dye sets the finish; sneak + right-click undoes)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Drive a lap to auto-generate checkpoints)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Launch guided setup assistant)"
     wand-name: "&6BoatRacing Selection Tool"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cUsage: /{label} setup setcosmetics <true|false>"
     addalt: "&cUsage: /{label} setup addalt <checkpoint #>"
     clearalt: "&cUsage: /{label} setup clearalt <checkpoint #>"
+    select: "&cTrack not found: &f{track}&c. Use /{label} admin tracks or /{label} setup select <track>."
     unknown-subcommand: "&cUnknown setup subcommand. Use /{label} setup help"
   wand-ready: "&aSelector ready. &7Left-click marks &fCorner A&7; right-click marks &fCorner B&7."
+  track-selected: "&aActive track: &f{track}&a."
+  gates:
+    given: "&aGate tools ready: &fblue dye &7= checkpoint, &eyellow dye &7= finish. Right-click to place; sneak + right-click to undo."
+    tools-removed: "&7Gate tools removed."
+    tool-checkpoint: "&bCheckpoint gate"
+    tool-checkpoint-lore-1: "&7Right-click: add a checkpoint gate at your target,"
+    tool-checkpoint-lore-2: "&7facing where you look. Sneak + right-click: remove the last one."
+    tool-finish: "&eFinish gate"
+    tool-finish-lore-1: "&7Right-click: set the finish gate at your target,"
+    tool-finish-lore-2: "&7facing where you look. Sneak + right-click: clear the finish."
+    checkpoint-added: "&bCheckpoint gate &f#{index} &badded. &7(Total: &f{total}&7)"
+    checkpoint-removed: "&7Last checkpoint gate removed. &7(Total: &f{total}&7)"
+    checkpoint-none: "&cThere are no checkpoints to remove."
+    finish-set: "&eFinish gate set."
+    finish-cleared: "&7Finish gate cleared."
+    finish-none: "&cThere is no finish gate to clear."
   start-added: "&aAdded start slot at &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Tip: You can add multiple start slots. Run the command again to add more."
   starts-cleared: "&aCleared all start slots."

@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cVerwendung: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cVerwendung: /{label} race open <track>"
+    open: "&cVerwendung: /{label} race open <track> [party|normal]"
     join: "&cVerwendung: /{label} race join <track>"
     leave: "&cVerwendung: /{label} race leave <track>"
     back: "&cVerwendung: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cVerwendung: /{label} race voteopen [all|<track1> <track2> ...] [sekunden]"
     vote: "&cVerwendung: /{label} race vote <track>"
     spectate: "&cVerwendung: /{label} race spectate [leave|<track>]"
+  party-open: "&dParty-Modus für dieses Rennen auf &f{track} &daktiviert!"
 
   scoreboard:
     practice-label: "TRAINING"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eAnmeldung offen &7(Angemeldet: &f{count}&7)"
     registration-closed: "&7Anmeldung geschlossen."
     laps: "&7Runden: &f{count}"
+    party: "&7Party-Modus: &f{state}"
     starts-lights: "&7Starts: &f{starts} &8\u2022 &7Startlichter: &f{lights}/5 &8\u2022 &7Ziel: &f{finish} &8\u2022 &7Boxenbereich: &f{pit}"
     checkpoints: "&7Kontrollpunkte: &f{count}"
     mandatory-pitstops: "&7Pflicht-Boxenstopps: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eSetup-Befehle:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Wähle die aktive Strecke zum Konfigurieren)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Füge deine aktuelle Position als Startplatz hinzu; zum Hinzufügen mehrerer wiederholen)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Entfernt alle Startplätze)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Entfernt einen Startplatz nach Nummer, 1-basiert)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Zusammenfassung der aktuellen Streckenkonfiguration)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Auswahl-Debug: aktuelle BoatRacing-Auswahl)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Gibt dir das BoatRacing-Auswahlwerkzeug)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Blauer Farbstoff platziert Checkpoints, gelber Farbstoff setzt das Ziel; Schleichen + Rechtsklick macht rückgängig)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Fahre eine Runde, um Checkpoints automatisch zu erzeugen)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Startet den geführten Setup-Assistenten)"
     wand-name: "&6BoatRacing-Auswahlwerkzeug"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cVerwendung: /{label} setup setcosmetics <true|false>"
     addalt: "&cVerwendung: /{label} setup addalt <checkpoint #>"
     clearalt: "&cVerwendung: /{label} setup clearalt <checkpoint #>"
+    select: "&cStrecke nicht gefunden: &f{track}&c. Verwende /{label} admin tracks oder /{label} setup select <track>."
     unknown-subcommand: "&cUnbekannter Setup-Unterbefehl. Verwende /{label} setup help"
   wand-ready: "&aAuswahlwerkzeug bereit. &7Linksklick markiert &fEcke A&7; Rechtsklick markiert &fEcke B&7."
+  track-selected: "&aAktive Strecke: &f{track}&a."
+  gates:
+    given: "&aTor-Werkzeuge bereit: &fblauer Farbstoff &7= Checkpoint, &egelber Farbstoff &7= Ziel. Rechtsklick zum Platzieren; Schleichen + Rechtsklick zum Rückgängigmachen."
+    tools-removed: "&7Tor-Werkzeuge entfernt."
+    tool-checkpoint: "&bCheckpoint-Tor"
+    tool-checkpoint-lore-1: "&7Rechtsklick: Fügt ein Checkpoint-Tor am anvisierten Block hinzu,"
+    tool-checkpoint-lore-2: "&7ausgerichtet in deine Blickrichtung. Schleichen + Rechtsklick: Entfernt das letzte."
+    tool-finish: "&eZiel-Tor"
+    tool-finish-lore-1: "&7Rechtsklick: Setzt das Ziel-Tor am anvisierten Block,"
+    tool-finish-lore-2: "&7ausgerichtet in deine Blickrichtung. Schleichen + Rechtsklick: Löscht das Ziel."
+    checkpoint-added: "&bCheckpoint-Tor &f#{index} &bhinzugefügt. &7(Insgesamt: &f{total}&7)"
+    checkpoint-removed: "&7Letztes Checkpoint-Tor entfernt. &7(Insgesamt: &f{total}&7)"
+    checkpoint-none: "&cEs gibt keine Checkpoints zum Entfernen."
+    finish-set: "&eZiel-Tor gesetzt."
+    finish-cleared: "&7Ziel-Tor gelöscht."
+    finish-none: "&cEs gibt kein Ziel-Tor zum Löschen."
   start-added: "&aStartplatz bei &f{x}, {y}, {z} &7({world}) hinzugefügt"
   start-added-tip: "&7Tipp: Du kannst mehrere Startplätze hinzufügen. Führe den Befehl erneut aus, um weitere hinzuzufügen."
   starts-cleared: "&aAlle Startplätze entfernt."

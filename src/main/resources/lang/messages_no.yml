@@ -59,7 +59,7 @@ stats:
 race:
   usage:
     main: "&cBruk: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cBruk: /{label} race open <bane>"
+    open: "&cBruk: /{label} race open <bane> [party|normal]"
     join: "&cBruk: /{label} race join <bane>"
     leave: "&cBruk: /{label} race leave <bane>"
     back: "&cBruk: /{label} race back"
@@ -73,6 +73,7 @@ race:
     voteopen: "&cBruk: /{label} race voteopen [all|<bane1> <bane2> ...] [sekunder]"
     vote: "&cBruk: /{label} race vote <bane>"
     spectate: "&cBruk: /{label} race spectate [leave|<bane>]"
+  party-open: "&dPartymodus aktivert for dette løpet på &f{track}&d!"
 
   scoreboard:
     practice-label: "TRENING"
@@ -208,6 +209,7 @@ race:
     registration-open: "&eRegistrering åpen &7(Påmeldt: &f{count}&7)"
     registration-closed: "&7Registreringen er stengt."
     laps: "&7Runder: &f{count}"
+    party: "&7Partymodus: &f{state}"
     starts-lights: "&7Starter: &f{starts} &8\u2022 &7Startlys: &f{lights}/5 &8\u2022 &7Mål: &f{finish} &8\u2022 &7Depotområde: &f{pit}"
     checkpoints: "&7Sjekkpunkter: &f{count}"
     mandatory-pitstops: "&7Obligatoriske depotstopp: &f{count}"
@@ -238,6 +240,7 @@ race:
 setup:
   usage:
     main: "&eOppsettkommandoer:"
+    cmd-select: "&7 - &f/{label} setup select <bane> &7(Velg den aktive banen som skal konfigureres)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Legg til din nåværende posisjon som startposisjon; gjenta for å legge til flere)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Fjern alle startposisjoner)"
     cmd-removestart: "&7 - &f/{label} setup removestart <posisjon> &7(Fjern én startposisjon etter nummer, 1-basert)"
@@ -263,6 +266,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Sammendrag av gjeldende banekonfigurasjon)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Feilsøking av utvalg: gjeldende BoatRacing-utvalg)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Gi BoatRacing-utvalgsverktøyet)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Blått fargestoff plasserer sjekkpunkter, gult fargestoff setter mål; snik + høyreklikk angrer)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kjør en runde for å automatisk generere sjekkpunkter)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Start veiledet oppsettassistent)"
     wand-name: "&6BoatRacing-utvalgsverktøy"
@@ -280,8 +284,25 @@ setup:
     setcosmetics: "&cBruk: /{label} setup setcosmetics <true|false>"
     addalt: "&cBruk: /{label} setup addalt <sjekkpunkt #>"
     clearalt: "&cBruk: /{label} setup clearalt <sjekkpunkt #>"
+    select: "&cBane ikke funnet: &f{track}&c. Bruk /{label} admin tracks eller /{label} setup select <bane>."
     unknown-subcommand: "&cUkjent setup-underkommando. Bruk /{label} setup help"
   wand-ready: "&aVelgeren er klar. &7Venstreklikk markerer &fHjørne A&7; høyreklikk markerer &fHjørne B&7."
+  track-selected: "&aAktiv bane: &f{track}&a."
+  gates:
+    given: "&aPortverktøy klare: &fblått fargestoff &7= sjekkpunkt, &egult fargestoff &7= mål. Høyreklikk for å plassere; snik + høyreklikk for å angre."
+    tools-removed: "&7Portverktøy fjernet."
+    tool-checkpoint: "&bSjekkpunktport"
+    tool-checkpoint-lore-1: "&7Høyreklikk: legg til en sjekkpunktport ved målet ditt,"
+    tool-checkpoint-lore-2: "&7rettet dit du ser. Snik + høyreklikk: fjern den siste."
+    tool-finish: "&eMålport"
+    tool-finish-lore-1: "&7Høyreklikk: sett målporten ved målet ditt,"
+    tool-finish-lore-2: "&7rettet dit du ser. Snik + høyreklikk: fjern målet."
+    checkpoint-added: "&bSjekkpunktport &f#{index} &blagt til. &7(totalt: &f{total}&7)"
+    checkpoint-removed: "&7Siste sjekkpunktport fjernet. &7(totalt: &f{total}&7)"
+    checkpoint-none: "&cDet er ingen sjekkpunkter å fjerne."
+    finish-set: "&eMålport satt."
+    finish-cleared: "&7Målport fjernet."
+    finish-none: "&cDet er ingen målport å fjerne."
   start-added: "&aLa til startposisjon på &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Tips: Du kan legge til flere startposisjoner. Kjør kommandoen igjen for å legge til flere."
   starts-cleared: "&aFjernet alle startposisjoner."

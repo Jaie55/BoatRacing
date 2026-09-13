@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cالاستخدام: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cالاستخدام: /{label} race open <track>"
+    open: "&cالاستخدام: /{label} race open <track> [party|normal]"
     join: "&cالاستخدام: /{label} race join <track>"
     leave: "&cالاستخدام: /{label} race leave <track>"
     back: "&cالاستخدام: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cالاستخدام: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cالاستخدام: /{label} race vote <track>"
     spectate: "&cالاستخدام: /{label} race spectate [leave|<track>]"
+  party-open: "&dتم تفعيل وضع الحفلة لهذا السباق على &f{track}&d!"
 
   scoreboard:
     practice-label: "تدريب"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eالتسجيل مفتوح &7(المسجّلون: &f{count}&7)"
     registration-closed: "&7التسجيل مغلق."
     laps: "&7اللفّات: &f{count}"
+    party: "&7وضع الحفلة: &f{state}"
     starts-lights: "&7البدايات: &f{starts} &8\u2022 &7أضواء البدء: &f{lights}/5 &8\u2022 &7النهاية: &f{finish} &8\u2022 &7منطقة الصيانة: &f{pit}"
     checkpoints: "&7نقاط التفتيش: &f{count}"
     mandatory-pitstops: "&7وقفات الصيانة الإلزامية: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eأوامر الإعداد:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(اختر المضمار النشط لإعداده)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(أضف موقعك الحالي كفتحة بدء؛ كرّر لإضافة المزيد)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(إزالة جميع فتحات البدء)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(إزالة فتحة بدء واحدة برقمها، بدءًا من 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(ملخص إعدادات المضمار الحالية)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(تنقيح التحديد: تحديد BoatRacing الحالي)"
     cmd-wand: "&7 - &f/{label} setup wand &7(امنح أداة تحديد BoatRacing)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(الصبغة الزرقاء تضع نقاط التفتيش، والصفراء تحدد النهاية؛ Sneak + نقر يمين للتراجع)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(قد لفّة واحدة لإنشاء نقاط التفتيش تلقائيًا)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(تشغيل مساعد الإعداد الموجّه)"
     wand-name: "&6أداة تحديد BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cالاستخدام: /{label} setup setcosmetics <true|false>"
     addalt: "&cالاستخدام: /{label} setup addalt <checkpoint #>"
     clearalt: "&cالاستخدام: /{label} setup clearalt <checkpoint #>"
+    select: "&cلم يتم العثور على المضمار: &f{track}&c. استخدم /{label} admin tracks أو /{label} setup select <track>."
     unknown-subcommand: "&cأمر فرعي غير معروف للإعداد. استخدم /{label} setup help"
   wand-ready: "&aالمحدد جاهز. &7انقر يسارًا لتحديد &fالركن A&7؛ وانقر يمينًا لتحديد &fالركن B&7."
+  track-selected: "&aالمضمار النشط: &f{track}&a."
+  gates:
+    given: "&aأدوات البوابات جاهزة: &fالصبغة الزرقاء &7= نقطة تفتيش، &eوالصفراء &7= النهاية. انقر يمينًا للوضع؛ Sneak + نقر يمين للتراجع."
+    tools-removed: "&7تمت إزالة أدوات البوابات."
+    tool-checkpoint: "&bبوابة نقطة تفتيش"
+    tool-checkpoint-lore-1: "&7نقر يمين: أضف بوابة نقطة تفتيش عند هدفك،"
+    tool-checkpoint-lore-2: "&7باتجاه نظرك. Sneak + نقر يمين: إزالة الأخيرة."
+    tool-finish: "&eبوابة النهاية"
+    tool-finish-lore-1: "&7نقر يمين: عيّن بوابة النهاية عند هدفك،"
+    tool-finish-lore-2: "&7باتجاه نظرك. Sneak + نقر يمين: مسح النهاية."
+    checkpoint-added: "&bأُضيفت بوابة نقطة تفتيش &f#{index} &b. &7(الإجمالي: &f{total}&7)"
+    checkpoint-removed: "&7أُزيلت بوابة نقطة تفتيش الأخيرة. &7(الإجمالي: &f{total}&7)"
+    checkpoint-none: "&cلا توجد نقاط تفتيش لإزالتها."
+    finish-set: "&eتم تعيين بوابة النهاية."
+    finish-cleared: "&7تم مسح بوابة النهاية."
+    finish-none: "&cلا توجد بوابة نهاية لمسحها."
   start-added: "&aأُضيفت فتحة بدء عند &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7نصيحة: يمكنك إضافة عدة فتحات بدء. نفّذ الأمر مجددًا لإضافة المزيد."
   starts-cleared: "&aتم مسح جميع فتحات البدء."

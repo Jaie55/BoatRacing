@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cUtilisation : /{label} teams|setup|reload|version"
-    open: "&cUtilisation : /{label} race open <track>"
+    open: "&cUtilisation : /{label} race open <track> [party|normal]"
     join: "&cUtilisation : /{label} race join <track>"
     leave: "&cUtilisation : /{label} race leave <track>"
     back: "&cUtilisation : /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cUtilisation : /{label} race voteopen [all|<track1> <track2> ...] [secondes]"
     vote: "&cUtilisation : /{label} race vote <track>"
     spectate: "&cUtilisation : /{label} race spectate [leave|<track>]"
+  party-open: "&dMode Party activé pour cette course sur &f{track}&d !"
 
   scoreboard:
     practice-label: "ENTRAINEMENT"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eInscriptions ouvertes &7(Inscrits : &f{count}&7)"
     registration-closed: "&7Inscriptions fermées."
     laps: "&7Tours : &f{count}"
+    party: "&7Mode Party : &f{state}"
     starts-lights: "&7Départs : &f{starts} &8\u2022 &7Feux de départ : &f{lights}/5 &8\u2022 &7Arrivée : &f{finish} &8\u2022 &7Zone des stands : &f{pit}"
     checkpoints: "&7Checkpoints : &f{count}"
     mandatory-pitstops: "&7Arrêts au stand obligatoires : &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eCommandes de configuration :"
+    cmd-select: "&7 - &f/{label} setup select <piste> &7(Choisir le circuit actif à configurer)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Ajouter votre position actuelle comme case de départ ; répétez pour en ajouter plusieurs)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Supprimer toutes les cases de départ)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Supprimer une case de départ par numéro, index 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Résumé de la configuration du circuit actuel)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Debug sélection : sélection BoatRacing actuelle)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Donner l'outil de sélection BoatRacing)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(La teinture bleue place les checkpoints, la teinture jaune définit l'arrivée ; accroupi + clic droit annule)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Pilotez un tour pour générer automatiquement les checkpoints)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Lancer l'assistant de configuration guidée)"
     wand-name: "&6Outil de sélection BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cUtilisation : /{label} setup setcosmetics <true|false>"
     addalt: "&cUtilisation : /{label} setup addalt <n° de checkpoint>"
     clearalt: "&cUtilisation : /{label} setup clearalt <n° de checkpoint>"
+    select: "&cCircuit introuvable : &f{track}&c. Utilisez /{label} admin tracks ou /{label} setup select <piste>."
     unknown-subcommand: "&cSous-commande setup inconnue. Utilisez /{label} setup help"
   wand-ready: "&aSélecteur prêt. &7Le clic gauche marque &fCoin A&7 ; le clic droit marque &fCoin B&7."
+  track-selected: "&aCircuit actif : &f{track}&a."
+  gates:
+    given: "&aOutils de portes prêts : &fteinture bleue &7= checkpoint, &eteinture jaune &7= arrivée. Clic droit pour placer ; accroupi + clic droit pour annuler."
+    tools-removed: "&7Outils de portes retirés."
+    tool-checkpoint: "&bPorte de checkpoint"
+    tool-checkpoint-lore-1: "&7Clic droit : ajoute une porte de checkpoint sur votre cible,"
+    tool-checkpoint-lore-2: "&7orientée vers où vous regardez. Accroupi + clic droit : supprime la dernière."
+    tool-finish: "&ePorte d'arrivée"
+    tool-finish-lore-1: "&7Clic droit : définit la porte d'arrivée sur votre cible,"
+    tool-finish-lore-2: "&7orientée vers où vous regardez. Accroupi + clic droit : efface l'arrivée."
+    checkpoint-added: "&bPorte de checkpoint &f#{index} &bajoutée. &7(Total : &f{total}&7)"
+    checkpoint-removed: "&7Dernière porte de checkpoint supprimée. &7(Total : &f{total}&7)"
+    checkpoint-none: "&cIl n'y a aucun checkpoint à supprimer."
+    finish-set: "&ePorte d'arrivée définie."
+    finish-cleared: "&7Porte d'arrivée effacée."
+    finish-none: "&cIl n'y a aucune porte d'arrivée à effacer."
   start-added: "&aCase de départ ajoutée à &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Astuce : vous pouvez ajouter plusieurs cases de départ. Relancez la commande pour en ajouter d'autres."
   starts-cleared: "&aToutes les cases de départ ont été supprimées."

@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cBrug: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cBrug: /{label} race open <bane>"
+    open: "&cBrug: /{label} race open <bane> [party|normal]"
     join: "&cBrug: /{label} race join <bane>"
     leave: "&cBrug: /{label} race leave <bane>"
     back: "&cBrug: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cBrug: /{label} race voteopen [all|<bane1> <bane2> ...] [sekunder]"
     vote: "&cBrug: /{label} race vote <bane>"
     spectate: "&cBrug: /{label} race spectate [leave|<bane>]"
+  party-open: "&dPartytilstand aktiveret for dette løb på &f{track}&d!"
 
   scoreboard:
     practice-label: "TRÆNING"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eRegistrering åben &7(Tilmeldte: &f{count}&7)"
     registration-closed: "&7Registrering lukket."
     laps: "&7Omgange: &f{count}"
+    party: "&7Partytilstand: &f{state}"
     starts-lights: "&7Startpladser: &f{starts} &8\u2022 &7Startlys: &f{lights}/5 &8\u2022 &7Mål: &f{finish} &8\u2022 &7Pitområde: &f{pit}"
     checkpoints: "&7Kontrolpunkter: &f{count}"
     mandatory-pitstops: "&7Obligatoriske pitstops: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eOpsætningskommandoer:"
+    cmd-select: "&7 - &f/{label} setup select <bane> &7(Vælg den aktive bane, der skal konfigureres)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Tilføj din nuværende position som startplads; gentag for at tilføje flere)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Fjern alle startpladser)"
     cmd-removestart: "&7 - &f/{label} setup removestart <plads> &7(Fjern én startplads efter nummer, 1-baseret)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Oversigt over den aktuelle banekonfiguration)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Markeringsdebug: aktuel BoatRacing-markering)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Giv BoatRacing-markeringsværktøjet)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Blåt farvestof placerer kontrolpunkter, gult farvestof sætter mål; snig + højreklik fortryder)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kør en omgang for automatisk at generere kontrolpunkter)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Start guidet opsætningsassistent)"
     wand-name: "&6BoatRacing-markeringsværktøj"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cBrug: /{label} setup setcosmetics <true|false>"
     addalt: "&cBrug: /{label} setup addalt <checkpoint #>"
     clearalt: "&cBrug: /{label} setup clearalt <checkpoint #>"
+    select: "&cBane ikke fundet: &f{track}&c. Brug /{label} admin tracks eller /{label} setup select <bane>."
     unknown-subcommand: "&cUkendt opsætningsunderkommando. Brug /{label} setup help"
   wand-ready: "&aMarkør klar. &7Venstreklik markerer &fHjørne A&7; højreklik markerer &fHjørne B&7."
+  track-selected: "&aAktiv bane: &f{track}&a."
+  gates:
+    given: "&aPortværktøjer klar: &fblåt farvestof &7= kontrolpunkt, &egult farvestof &7= mål. Højreklik for at placere; snig + højreklik for at fortryde."
+    tools-removed: "&7Portværktøjer fjernet."
+    tool-checkpoint: "&bKontrolpunktsport"
+    tool-checkpoint-lore-1: "&7Højreklik: tilføj en kontrolpunktsport ved dit mål,"
+    tool-checkpoint-lore-2: "&7vendt mod den retning, du kigger. Snig + højreklik: fjern den sidste."
+    tool-finish: "&eMålport"
+    tool-finish-lore-1: "&7Højreklik: sæt målporten ved dit mål,"
+    tool-finish-lore-2: "&7vendt mod den retning, du kigger. Snig + højreklik: ryd målet."
+    checkpoint-added: "&bKontrolpunktsport &f#{index} &btilføjet. &7(i alt: &f{total}&7)"
+    checkpoint-removed: "&7Sidste kontrolpunktsport fjernet. &7(i alt: &f{total}&7)"
+    checkpoint-none: "&cDer er ingen kontrolpunkter at fjerne."
+    finish-set: "&eMålport sat."
+    finish-cleared: "&7Målport ryddet."
+    finish-none: "&cDer er ingen målport at rydde."
   start-added: "&aTilføjede startplads ved &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Tip: Du kan tilføje flere startpladser. Kør kommandoen igen for at tilføje flere."
   starts-cleared: "&aRyddede alle startpladser."

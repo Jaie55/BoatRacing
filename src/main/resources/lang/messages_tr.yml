@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cKullanım: /{label} teams|setup|reload|version"
-    open: "&cKullanım: /{label} race open <track>"
+    open: "&cKullanım: /{label} race open <track> [party|normal]"
     join: "&cKullanım: /{label} race join <track>"
     leave: "&cKullanım: /{label} race leave <track>"
     back: "&cKullanım: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cKullanım: /{label} race voteopen [all|<track1> <track2> ...] [saniye]"
     vote: "&cKullanım: /{label} race vote <track>"
     spectate: "&cKullanım: /{label} race spectate [leave|<track>]"
+  party-open: "&dBu yarış için parti modu etkin: &f{track}&d!"
 
   scoreboard:
     practice-label: "ANTRENMAN"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eKayıt açık &7(Kayıtlı: &f{count}&7)"
     registration-closed: "&7Kayıt kapalı."
     laps: "&7Turlar: &f{count}"
+    party: "&7Parti modu: &f{state}"
     starts-lights: "&7Başlangıçlar: &f{starts} &8\u2022 &7Başlangıç ışıkları: &f{lights}/5 &8\u2022 &7Bitiş: &f{finish} &8\u2022 &7Pit alanı: &f{pit}"
     checkpoints: "&7Kontrol noktaları: &f{count}"
     mandatory-pitstops: "&7Zorunlu pit stop: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eKurulum komutları:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Yapılandırılacak aktif parkuru seç)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Mevcut konumunu başlangıç slotu olarak ekler; birden fazla eklemek için tekrarla)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Tüm başlangıç slotlarını kaldırır)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Numaraya göre tek bir başlangıç slotunu kaldırır, 1 tabanlı)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Mevcut parkur yapılandırması özeti)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Seçim hata ayıklama: mevcut BoatRacing seçimi)"
     cmd-wand: "&7 - &f/{label} setup wand &7(BoatRacing seçim aracını verir)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Mavi boya kontrol noktalarını yerleştirir, sarı boya bitişi ayarlar; eğilip sağ tıklamak geri alır)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kontrol noktalarını otomatik oluşturmak için bir tur sür)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Rehberli kurulum yardımcısını başlatır)"
     wand-name: "&6BoatRacing Seçim Aracı"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cKullanım: /{label} setup setcosmetics <true|false>"
     addalt: "&cKullanım: /{label} setup addalt <checkpoint #>"
     clearalt: "&cKullanım: /{label} setup clearalt <checkpoint #>"
+    select: "&cParkur bulunamadı: &f{track}&c. /{label} admin tracks veya /{label} setup select <track> kullan."
     unknown-subcommand: "&cBilinmeyen setup alt komutu. /{label} setup help kullan"
   wand-ready: "&aSeçici hazır. &7Sol tık &fKöşe A'yı&7; sağ tık &fKöşe B'yi&7 işaretler."
+  track-selected: "&aAktif parkur: &f{track}&a."
+  gates:
+    given: "&aKapı araçları hazır: &fmavi boya &7= kontrol noktası, &esarı boya &7= bitiş. Yerleştirmek için sağ tıkla; geri almak için eğilip sağ tıkla."
+    tools-removed: "&7Kapı araçları kaldırıldı."
+    tool-checkpoint: "&bKontrol noktası kapısı"
+    tool-checkpoint-lore-1: "&7Sağ tık: hedeflediğin yere kontrol noktası kapısı ekle,"
+    tool-checkpoint-lore-2: "&7baktığın yöne bakar. Eğilip sağ tık: son ekleneni kaldır."
+    tool-finish: "&eBitiş kapısı"
+    tool-finish-lore-1: "&7Sağ tık: hedeflediğin yere bitiş kapısını ayarla,"
+    tool-finish-lore-2: "&7baktığın yöne bakar. Eğilip sağ tık: bitişi temizle."
+    checkpoint-added: "&bKontrol noktası kapısı &f#{index} &beklendi. &7(Toplam: &f{total}&7)"
+    checkpoint-removed: "&7Son kontrol noktası kapısı kaldırıldı. &7(Toplam: &f{total}&7)"
+    checkpoint-none: "&cKaldırılacak kontrol noktası yok."
+    finish-set: "&eBitiş kapısı ayarlandı."
+    finish-cleared: "&7Bitiş kapısı temizlendi."
+    finish-none: "&cTemizlenecek bitiş kapısı yok."
   start-added: "&aBaşlangıç slotu eklendi: &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7İpucu: Birden fazla başlangıç slotu ekleyebilirsin. Daha fazlası için komutu tekrar çalıştır."
   starts-cleared: "&aTüm başlangıç slotları temizlendi."

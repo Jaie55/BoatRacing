@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cPaggamit: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cPaggamit: /{label} race open <track>"
+    open: "&cPaggamit: /{label} race open <track> [party|normal]"
     join: "&cPaggamit: /{label} race join <track>"
     leave: "&cPaggamit: /{label} race leave <track>"
     back: "&cPaggamit: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cPaggamit: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cPaggamit: /{label} race vote <track>"
     spectate: "&cPaggamit: /{label} race spectate [leave|<track>]"
+  party-open: "&dNaka-enable ang party mode para sa karerang ito sa &f{track}&d!"
 
   scoreboard:
     practice-label: "PAGSASANAY"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eBukas ang pagpapatala &7(Nakatala: &f{count}&7)"
     registration-closed: "&7Sarado ang pagpapatala."
     laps: "&7Mga lap: &f{count}"
+    party: "&7Mode ng party: &f{state}"
     starts-lights: "&7Mga start: &f{starts} &8\u2022 &7Mga ilaw sa simula: &f{lights}/5 &8\u2022 &7Pagtatapos: &f{finish} &8\u2022 &7Lugar ng pit: &f{pit}"
     checkpoints: "&7Mga checkpoint: &f{count}"
     mandatory-pitstops: "&7Sapilitang pit stops: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eMga utos ng setup:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Pumili ng aktibong track na iko-configure)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Idagdag ang iyong kasalukuyang posisyon bilang start slot; ulitin para magdagdag ng marami)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Alisin ang lahat ng start slot)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Alisin ang isang start slot ayon sa numero, 1-based)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Buod ng kasalukuyang track config)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Selection debug: kasalukuyang BoatRacing selection)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Ibigay ang BoatRacing selection tool)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Ang asul na tina ay naglalagay ng checkpoint, ang dilaw na tina ay nagtatakda ng finish; sneak + right-click para i-undo)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Magmaneho ng isang lap para awtomatikong makagawa ng mga checkpoint)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Simulan ang gabay na setup wizard)"
     wand-name: "&6Kagamitan sa Pagpili ng BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cPaggamit: /{label} setup setcosmetics <true|false>"
     addalt: "&cPaggamit: /{label} setup addalt <checkpoint #>"
     clearalt: "&cPaggamit: /{label} setup clearalt <checkpoint #>"
+    select: "&cHindi mahanap ang track: &f{track}&c. Gamitin ang /{label} admin tracks o /{label} setup select <track>."
     unknown-subcommand: "&cHindi kilalang setup subcommand. Gamitin ang /{label} setup help"
   wand-ready: "&aHanda na ang selector. &7I-left-click para markahan ang &fCorner A&7; i-right-click para markahan ang &fCorner B&7."
+  track-selected: "&aAktibong track: &f{track}&a."
+  gates:
+    given: "&aHanda na ang gate tools: &fasul na tina &7= checkpoint, &edilaw na tina &7= finish. I-right-click para maglagay; sneak + right-click para i-undo."
+    tools-removed: "&7Naalis ang gate tools."
+    tool-checkpoint: "&bGate ng checkpoint"
+    tool-checkpoint-lore-1: "&7I-right-click: magdagdag ng checkpoint gate sa iyong target,"
+    tool-checkpoint-lore-2: "&7nakaharap sa iyong tinitignan. Sneak + right-click: alisin ang huli."
+    tool-finish: "&eGate ng finish"
+    tool-finish-lore-1: "&7I-right-click: itakda ang finish gate sa iyong target,"
+    tool-finish-lore-2: "&7nakaharap sa iyong tinitignan. Sneak + right-click: i-clear ang finish."
+    checkpoint-added: "&bNaidagdag ang checkpoint gate &f#{index} &b. &7(Kabuuan: &f{total}&7)"
+    checkpoint-removed: "&7Naalis ang huling checkpoint gate. &7(Kabuuan: &f{total}&7)"
+    checkpoint-none: "&cWalang checkpoint na maaaring alisin."
+    finish-set: "&eNaitakda ang finish gate."
+    finish-cleared: "&7Na-clear ang finish gate."
+    finish-none: "&cWalang finish gate na maaaring i-clear."
   start-added: "&aNagdagdag ng start slot sa &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Tip: Maaari kang magdagdag ng maraming start slot. Patakbuhin muli ang utos para magdagdag pa."
   starts-cleared: "&aNaalis ang lahat ng start slot."

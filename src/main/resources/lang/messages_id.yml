@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cPenggunaan: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cPenggunaan: /{label} race open <track>"
+    open: "&cPenggunaan: /{label} race open <track> [party|normal]"
     join: "&cPenggunaan: /{label} race join <track>"
     leave: "&cPenggunaan: /{label} race leave <track>"
     back: "&cPenggunaan: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cPenggunaan: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cPenggunaan: /{label} race vote <track>"
     spectate: "&cPenggunaan: /{label} race spectate [leave|<track>]"
+  party-open: "&dMode party diaktifkan untuk balapan ini di &f{track}&d!"
 
   scoreboard:
     practice-label: "LATIHAN"
@@ -207,6 +208,7 @@ race:
     registration-open: "&ePendaftaran dibuka &7(Terdaftar: &f{count}&7)"
     registration-closed: "&7Pendaftaran ditutup."
     laps: "&7Putaran: &f{count}"
+    party: "&7Mode party: &f{state}"
     starts-lights: "&7Start: &f{starts} &8\u2022 &7Lampu start: &f{lights}/5 &8\u2022 &7Finis: &f{finish} &8\u2022 &7Area pit: &f{pit}"
     checkpoints: "&7Checkpoint: &f{count}"
     mandatory-pitstops: "&7Pit stop wajib: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&ePerintah setup:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Pilih trek aktif untuk dikonfigurasi)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Tambahkan posisi Anda saat ini sebagai slot start; ulangi untuk menambah beberapa)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Hapus semua slot start)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Hapus satu slot start berdasarkan nomor, berbasis 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Ringkasan konfigurasi trek saat ini)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Debug pilihan: pilihan BoatRacing saat ini)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Beri alat seleksi BoatRacing)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Pewarna biru menempatkan checkpoint, pewarna kuning menetapkan finis; sneak + klik kanan membatalkan)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kemudikan satu putaran untuk membuat checkpoint secara otomatis)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Jalankan asisten setup terpandu)"
     wand-name: "&6Alat Seleksi BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cPenggunaan: /{label} setup setcosmetics <true|false>"
     addalt: "&cPenggunaan: /{label} setup addalt <checkpoint #>"
     clearalt: "&cPenggunaan: /{label} setup clearalt <checkpoint #>"
+    select: "&cTrek tidak ditemukan: &f{track}&c. Gunakan /{label} admin tracks atau /{label} setup select <track>."
     unknown-subcommand: "&cSubperintah setup tidak dikenal. Gunakan /{label} setup help"
   wand-ready: "&aAlat seleksi siap. &7Klik kiri menandai &fSudut A&7; klik kanan menandai &fSudut B&7."
+  track-selected: "&aTrek aktif: &f{track}&a."
+  gates:
+    given: "&aAlat gerbang siap: &fpewarna biru &7= checkpoint, &epewarna kuning &7= finis. Klik kanan untuk menempatkan; sneak + klik kanan untuk membatalkan."
+    tools-removed: "&7Alat gerbang dihapus."
+    tool-checkpoint: "&bGerbang checkpoint"
+    tool-checkpoint-lore-1: "&7Klik kanan: tambahkan gerbang checkpoint di target Anda,"
+    tool-checkpoint-lore-2: "&7menghadap ke arah pandangan Anda. Sneak + klik kanan: hapus yang terakhir."
+    tool-finish: "&eGerbang finis"
+    tool-finish-lore-1: "&7Klik kanan: atur gerbang finis di target Anda,"
+    tool-finish-lore-2: "&7menghadap ke arah pandangan Anda. Sneak + klik kanan: hapus finis."
+    checkpoint-added: "&bGerbang checkpoint &f#{index} &bditambahkan. &7(Total: &f{total}&7)"
+    checkpoint-removed: "&7Gerbang checkpoint terakhir dihapus. &7(Total: &f{total}&7)"
+    checkpoint-none: "&cTidak ada checkpoint untuk dihapus."
+    finish-set: "&eGerbang finis diatur."
+    finish-cleared: "&7Gerbang finis dihapus."
+    finish-none: "&cTidak ada gerbang finis untuk dihapus."
   start-added: "&aMenambahkan slot start di &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Tips: Anda dapat menambahkan beberapa slot start. Jalankan perintah lagi untuk menambah lebih banyak."
   starts-cleared: "&aSemua slot start dihapus."

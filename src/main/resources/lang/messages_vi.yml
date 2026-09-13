@@ -58,7 +58,7 @@ stats:
 race:
   usage:
     main: "&cCách dùng: /{label} teams|race|stats|setup|admin|reload|version"
-    open: "&cCách dùng: /{label} race open <track>"
+    open: "&cCách dùng: /{label} race open <track> [party|normal]"
     join: "&cCách dùng: /{label} race join <track>"
     leave: "&cCách dùng: /{label} race leave <track>"
     back: "&cCách dùng: /{label} race back"
@@ -72,6 +72,7 @@ race:
     voteopen: "&cCách dùng: /{label} race voteopen [all|<track1> <track2> ...] [seconds]"
     vote: "&cCách dùng: /{label} race vote <track>"
     spectate: "&cCách dùng: /{label} race spectate [leave|<track>]"
+  party-open: "&dĐã bật chế độ party cho cuộc đua này trên &f{track}&d!"
 
   scoreboard:
     practice-label: "LUYỆN TẬP"
@@ -207,6 +208,7 @@ race:
     registration-open: "&eĐăng ký đang mở &7(Đã đăng ký: &f{count}&7)"
     registration-closed: "&7Đăng ký đã đóng."
     laps: "&7Số vòng: &f{count}"
+    party: "&7Chế độ party: &f{state}"
     starts-lights: "&7Điểm xuất phát: &f{starts} &8\u2022 &7Đèn xuất phát: &f{lights}/5 &8\u2022 &7Đích: &f{finish} &8\u2022 &7Khu vực pit: &f{pit}"
     checkpoints: "&7Trạm kiểm soát: &f{count}"
     mandatory-pitstops: "&7Dừng pit bắt buộc: &f{count}"
@@ -237,6 +239,7 @@ race:
 setup:
   usage:
     main: "&eCác lệnh thiết lập:"
+    cmd-select: "&7 - &f/{label} setup select <track> &7(Chọn đường đua đang hoạt động để cấu hình)"
     cmd-addstart: "&7 - &f/{label} setup addstart &7(Thêm vị trí hiện tại của bạn làm vị trí xuất phát; lặp lại để thêm nhiều vị trí)"
     cmd-clearstarts: "&7 - &f/{label} setup clearstarts &7(Xóa tất cả vị trí xuất phát)"
     cmd-removestart: "&7 - &f/{label} setup removestart <slot> &7(Xóa một vị trí xuất phát theo số thứ tự, bắt đầu từ 1)"
@@ -262,6 +265,7 @@ setup:
     cmd-show: "&7 - &f/{label} setup show &7(Tóm tắt cấu hình đường đua hiện tại)"
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Gỡ lỗi vùng chọn: vùng chọn BoatRacing hiện tại)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Đưa công cụ chọn BoatRacing)"
+    cmd-gates: "&7 - &f/{label} setup gates [off] &7(Thuốc nhuộm xanh dương đặt trạm kiểm soát, thuốc nhuộm vàng đặt đích; ngồi + nhấp chuột phải để hoàn tác)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Chạy một vòng để tự động tạo trạm kiểm soát)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Khởi chạy trợ lý thiết lập có hướng dẫn)"
     wand-name: "&6Công cụ chọn BoatRacing"
@@ -279,8 +283,25 @@ setup:
     setcosmetics: "&cCách dùng: /{label} setup setcosmetics <true|false>"
     addalt: "&cCách dùng: /{label} setup addalt <checkpoint #>"
     clearalt: "&cCách dùng: /{label} setup clearalt <checkpoint #>"
+    select: "&cKhông tìm thấy đường đua: &f{track}&c. Dùng /{label} admin tracks hoặc /{label} setup select <track>."
     unknown-subcommand: "&cLệnh con setup không xác định. Dùng /{label} setup help"
   wand-ready: "&aCông cụ chọn đã sẵn sàng. &7Nhấp chuột trái để đánh dấu &fGóc A&7; nhấp chuột phải để đánh dấu &fGóc B&7."
+  track-selected: "&aĐường đua đang hoạt động: &f{track}&a."
+  gates:
+    given: "&aBộ công cụ cổng sẵn sàng: &fthuốc nhuộm xanh dương &7= trạm kiểm soát, &ethuốc nhuộm vàng &7= đích. Nhấp chuột phải để đặt; ngồi + nhấp chuột phải để hoàn tác."
+    tools-removed: "&7Đã xóa bộ công cụ cổng."
+    tool-checkpoint: "&bCổng trạm kiểm soát"
+    tool-checkpoint-lore-1: "&7Nhấp chuột phải: thêm cổng trạm kiểm soát tại mục tiêu của bạn,"
+    tool-checkpoint-lore-2: "&7hướng theo nơi bạn nhìn. Ngồi + nhấp chuột phải: xóa cổng cuối cùng."
+    tool-finish: "&eCổng đích"
+    tool-finish-lore-1: "&7Nhấp chuột phải: đặt cổng đích tại mục tiêu của bạn,"
+    tool-finish-lore-2: "&7hướng theo nơi bạn nhìn. Ngồi + nhấp chuột phải: xóa đích."
+    checkpoint-added: "&bĐã thêm cổng trạm kiểm soát &f#{index} &b. &7(Tổng: &f{total}&7)"
+    checkpoint-removed: "&7Đã xóa cổng trạm kiểm soát cuối cùng. &7(Tổng: &f{total}&7)"
+    checkpoint-none: "&cKhông có trạm kiểm soát nào để xóa."
+    finish-set: "&eĐã đặt cổng đích."
+    finish-cleared: "&7Đã xóa cổng đích."
+    finish-none: "&cKhông có cổng đích nào để xóa."
   start-added: "&aĐã thêm vị trí xuất phát tại &f{x}, {y}, {z} &7({world})"
   start-added-tip: "&7Mẹo: Bạn có thể thêm nhiều vị trí xuất phát. Chạy lại lệnh để thêm tiếp."
   starts-cleared: "&aĐã xóa tất cả vị trí xuất phát."
