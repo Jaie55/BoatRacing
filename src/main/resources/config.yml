@@ -83,6 +83,24 @@ setup:
     wand-select-radius: 4.0
     selection-particle: "VILLAGER_HAPPY"
 
+  # Manual gate tools: /boatracing setup gates gives a blue dye (checkpoints) and a
+  # yellow dye (finish). Right-click places a gate where you look, facing where you
+  # look; sneak + right-click removes the last checkpoint / clears the finish.
+  gates:
+    # Size of the checkpoint gates placed with the blue dye (actual gate = 2x these).
+    half-width: 4.5
+    half-height: 3.0
+    # Size of the finish gate placed with the yellow dye (actual region = 2x these).
+    finish-half-width: 8.0
+    finish-half-height: 4.0
+    finish-half-depth: 0.6
+    # Coloured particle preview while holding a gate tool (blue checkpoints, yellow finish).
+    preview: true
+    preview-period-ticks: 8
+    view-distance: 96.0
+    checkpoint-color: "3B82F6"
+    finish-color: "FACC15"
+
 # ------------------------------------------------------------
 # Persistent Storage
 # ------------------------------------------------------------

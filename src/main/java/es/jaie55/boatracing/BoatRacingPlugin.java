@@ -56,6 +56,7 @@ public class BoatRacingPlugin extends JavaPlugin {
     private RewardManager rewardManager;
     private SetupWizard setupWizard;
     private es.jaie55.boatracing.setup.AutoTraceManager autoTraceManager;
+    private es.jaie55.boatracing.setup.GateToolManager gateToolManager;
     private es.jaie55.boatracing.util.DiscordWebhook discordWebhook;
     private es.jaie55.boatracing.util.PlayerPrefsManager playerPrefsManager;
     private es.jaie55.boatracing.cosmetics.CosmeticsCatalog cosmeticsCatalog;
@@ -483,6 +484,52 @@ public class BoatRacingPlugin extends JavaPlugin {
         return new java.io.File(new java.io.File(getDataFolder(), "tracks"), key + ".yml");
     }
 
+    /** @return the track currently selected in setup (TrackLibrary current), or null. */
+    public String getSelectedTrackName() {
+        return trackLibrary != null ? trackLibrary.getCurrent() : null;
+    }
+
+    /**
+     * Resolves the TrackConfig instance that owns the given track, so extension data writes never
+     * clobber an active session snapshot: the shared selected instance, the session's own track
+     * config, or a temporary instance loaded from the track file.
+     */
+    public TrackConfig getTrackConfigForWrite(String trackName) {
+        String key = normalizeTrackKey(trackName);
+        if (key.equalsIgnoreCase("unsaved")) return trackConfig;
+        if (trackLibrary != null && trackLibrary.getCurrent() != null
+                && trackLibrary.getCurrent().equalsIgnoreCase(key)) {
+            return trackConfig;
+        }
+        RaceManager session = findRaceSessionByKey(key);
+        if (session != null && session.getTrack() != null) return session.getTrack();
+        if (trackLibrary != null && trackLibrary.exists(key)) {
+            TrackConfig holder = new TrackConfig(getDataFolder());
+            holder.setBackingFile(trackFileForName(key));
+            return holder;
+        }
+        return null;
+    }
+
+    public Object getExtensionTrackValue(String trackName, String extension, String key) {
+        TrackConfig track = getTrackConfigForWrite(trackName);
+        return track == null ? null : track.getExtensionValue(extension, key);
+    }
+
+    public boolean setExtensionTrackValue(String trackName, String extension, String key, Object value) {
+        TrackConfig track = getTrackConfigForWrite(trackName);
+        if (track == null) return false;
+        track.setExtensionValue(extension, key, value);
+        return true;
+    }
+
+    public boolean removeExtensionTrackValue(String trackName, String extension, String key) {
+        TrackConfig track = getTrackConfigForWrite(trackName);
+        if (track == null) return false;
+        track.removeExtensionValue(extension, key);
+        return true;
+    }
+
     private RaceManager getOrCreateRaceSession(String trackName) {
         String key = normalizeTrackKey(trackName);
         if (key.equalsIgnoreCase("unsaved")) return raceManager;
@@ -735,6 +782,9 @@ public class BoatRacingPlugin extends JavaPlugin {
     this.rewardManager = new RewardManager(this);
     this.setupWizard = new SetupWizard(this);
     this.autoTraceManager = new es.jaie55.boatracing.setup.AutoTraceManager(this);
+    this.gateToolManager = new es.jaie55.boatracing.setup.GateToolManager(this);
+    Bukkit.getPluginManager().registerEvents(gateToolManager, this);
+    gateToolManager.start();
     this.discordWebhook = new es.jaie55.boatracing.util.DiscordWebhook(this);
     this.playerPrefsManager = new es.jaie55.boatracing.util.PlayerPrefsManager(this);
     this.purchaseManager = new es.jaie55.boatracing.cosmetics.CosmeticPurchaseManager(this);
@@ -1369,6 +1419,7 @@ public class BoatRacingPlugin extends JavaPlugin {
         if (trailManager != null) trailManager.stop();
         if (selectionVisualizer != null) selectionVisualizer.stop();
         if (autoTraceManager != null) autoTraceManager.shutdown();
+        if (gateToolManager != null) gateToolManager.stop();
         if (placeholderExpansion != null) placeholderExpansion.unregister();
         if (documentStore != null) { try { documentStore.close(); } catch (Exception ignored) { getLogger().finer("Failed to close persistent storage: " + ignored.getMessage()); } }
     }
@@ -1633,6 +1684,14 @@ public class BoatRacingPlugin extends JavaPlugin {
                     case "open" -> {
                         if (args.length < 3) { p.sendMessage(Text.colorize(prefix + msg().get("race.usage.open", "label", label))); return true; }
                         String tname = args[2];
+                        boolean party = false;
+                        if (args.length >= 4) {
+                            if (args[3].equalsIgnoreCase("party")) party = true;
+                            else if (!args[3].equalsIgnoreCase("normal")) {
+                                p.sendMessage(Text.colorize(prefix + msg().get("race.usage.open", "label", label)));
+                                return true;
+                            }
+                        }
                         if (!trackExistsForRace(tname)) { p.sendMessage(Text.colorize(prefix + msg().get("race.track-not-found", "track", tname))); return true; }
                         RaceManager rm = getOrCreateRaceSession(tname);
                         if (rm == null) { p.sendMessage(Text.colorize(prefix + msg().get("race.track-load-failed", "track", tname))); return true; }
@@ -1649,7 +1708,21 @@ public class BoatRacingPlugin extends JavaPlugin {
                         rm.loadSettings();
                         int laps = rm.getTotalLaps();
                         boolean ok = rm.openRegistration(laps, null);
-                        if (!ok) p.sendMessage(Text.colorize(prefix + msg().get("race.cannot-open-registration")));
+                        if (!ok) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("race.cannot-open-registration")));
+                        } else {
+                            rm.setPartyMode(party);
+                            if (party) {
+                                java.util.Set<Player> notify = new java.util.LinkedHashSet<>(rm.apiAudience());
+                                for (java.util.UUID id : rm.getRegistered()) {
+                                    Player registered = org.bukkit.Bukkit.getPlayer(id);
+                                    if (registered != null) notify.add(registered);
+                                }
+                                for (Player member : notify) {
+                                    member.sendMessage(Text.colorize(prefix + msg().get("race.party-open", "track", rm.getTrackName())));
+                                }
+                            }
+                        }
                         return true;
                     }
                     case "join" -> {
@@ -2031,6 +2104,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                         p.sendMessage(Text.colorize(running ? msg().get("race.status.running", "count", participants) : msg().get("race.status.not-running")));
                         p.sendMessage(Text.colorize(registering ? msg().get("race.status.registration-open", "count", regs) : msg().get("race.status.registration-closed")));
                         p.sendMessage(Text.colorize(msg().get("race.status.laps", "count", laps)));
+                        p.sendMessage(Text.colorize(msg().get("race.status.party", "state", msg().get(rm.isPartyMode() ? "setup.status-yes" : "setup.status-no"))));
                         p.sendMessage(Text.colorize(msg().get("race.status.starts-lights", "starts", starts, "lights", lights, "finish", msg().get(hasFinish ? "general.yes" : "general.no"), "pit", msg().get(hasPit ? "general.yes" : "general.no"))));
                         p.sendMessage(Text.colorize(msg().get("race.status.checkpoints", "count", cps)));
                         p.sendMessage(Text.colorize(msg().get("race.status.mandatory-pitstops", "count", rm.getMandatoryPitstops())));
@@ -2127,6 +2201,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 }
                 if (args.length == 1 || args[1].equalsIgnoreCase("help")) {
                     p.sendMessage(Text.colorize(prefix + msg().get("setup.usage.main")));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-select", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-addstart", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-clearstarts", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-removestart", "label", label)));
@@ -2150,16 +2225,52 @@ public class BoatRacingPlugin extends JavaPlugin {
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-show", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-selinfo", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-wand", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-gates", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-autotrace", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-wizard", "label", label)));
+                    if (extensionManager != null) {
+                        for (String line : extensionManager.setupCommandHelp(sender, label)) {
+                            p.sendMessage(Text.colorize(line));
+                        }
+                    }
                     return true;
                 }
                 String sub = args[1].toLowerCase();
+                if (extensionManager != null && extensionManager.isSetupCommandName(sub)) {
+                    extensionManager.handleSetupCommand(sender, label, args);
+                    return true;
+                }
                 switch (sub) {
+                    case "select" -> {
+                        if (args.length < 3) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.usage.cmd-select", "label", label)));
+                            return true;
+                        }
+                        String requestedTrack = String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length));
+                        if (trackLibrary == null || !trackLibrary.exists(requestedTrack)) {
+                            p.sendMessage(Text.colorize(prefix + msg().get("setup.error.select", "track", requestedTrack)));
+                            p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
+                            return true;
+                        }
+                        trackLibrary.select(requestedTrack);
+                        p.sendMessage(Text.colorize(prefix + msg().get("setup.track-selected", "track", trackLibrary.getCurrent())));
+                        p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.2f);
+                        if (setupWizard != null) setupWizard.afterAction(p);
+                        return true;
+                    }
                     case "wand" -> {
                         es.jaie55.boatracing.track.SelectionManager.giveWand(p);
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.wand-ready")));
                         p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_ITEM_PICKUP, 0.9f, 1.2f);
+                        return true;
+                    }
+                    case "gates" -> {
+                        if (args.length >= 3 && args[2].equalsIgnoreCase("off")) {
+                            gateToolManager.removeTools(p);
+                        } else {
+                            gateToolManager.giveTools(p);
+                        }
+                        if (setupWizard != null) setupWizard.afterAction(p);
                         return true;
                     }
                     case "wizard" -> {
@@ -3299,6 +3410,10 @@ public class BoatRacingPlugin extends JavaPlugin {
                     if ("unsaved".startsWith(args[2].toLowerCase())) options.add("unsaved");
                     return options;
                 }
+                if (args.length == 4 && raceSub.equals("open")) {
+                    String pref = args[3] == null ? "" : args[3].toLowerCase();
+                    return java.util.Arrays.asList("party", "normal").stream().filter(s -> s.startsWith(pref)).toList();
+                }
                 if (args.length == 3 && java.util.Arrays.asList("open","join","leave","force","start","stop","status","vote").contains(raceSub)) {
                     String prefix = args[2] == null ? "" : args[2].toLowerCase();
                     java.util.List<String> names = new java.util.ArrayList<>();
@@ -3331,7 +3446,28 @@ public class BoatRacingPlugin extends JavaPlugin {
             }
             if (args.length >= 2 && args[0].equalsIgnoreCase("setup")) {
                 if (!sender.hasPermission("boatracing.setup")) return Collections.emptyList();
-                if (args.length == 2) return Arrays.asList("help","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","addalt","clearalt","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setregtime","setcosmetics","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","autotrace","wizard");
+                if (args.length == 2) {
+                    java.util.List<String> opts = new java.util.ArrayList<>(Arrays.asList("help","select","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","addalt","clearalt","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setregtime","setcosmetics","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","gates","autotrace","wizard"));
+                    if (extensionManager != null) opts.addAll(extensionManager.setupCommandNames(sender));
+                    return opts;
+                }
+                if (extensionManager != null && extensionManager.isSetupCommandName(args[1])) {
+                    return extensionManager.tabCompleteSetup(sender, args);
+                }
+                if (args.length == 3 && args[1].equalsIgnoreCase("select")) {
+                    String prefTrack = args[2] == null ? "" : args[2].toLowerCase();
+                    java.util.List<String> names = new java.util.ArrayList<>();
+                    if (trackLibrary != null) {
+                        for (String n : trackLibrary.list()) {
+                            if (n.toLowerCase().startsWith(prefTrack)) names.add(n);
+                        }
+                    }
+                    return names;
+                }
+                if (args.length == 3 && args[1].equalsIgnoreCase("gates")) {
+                    String pref = args[2] == null ? "" : args[2].toLowerCase();
+                    return java.util.List.of("off").stream().filter(s -> s.startsWith(pref)).toList();
+                }
                 if (args.length == 3 && args[1].equalsIgnoreCase("autotrace")) {
                     String pref = args[2] == null ? "" : args[2].toLowerCase();
                     return java.util.Arrays.asList("help", "start", "stop", "preview", "accept", "cancel", "status", "delete", "resize")
