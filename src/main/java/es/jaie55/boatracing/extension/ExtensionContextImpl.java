@@ -45,6 +45,7 @@ public final class ExtensionContextImpl implements ExtensionContext {
     private final ExtensionStorageImpl storage;
     private final ExtensionSchedulerImpl scheduler;
     private final List<ExtensionCommand> commands = new ArrayList<>();
+    private final List<ExtensionCommand> setupCommands = new ArrayList<>();
     private final List<Listener> listeners = new ArrayList<>();
     private final List<HudProvider> hudProviders = new ArrayList<>();
     private final Map<String, Function<Player, String>> placeholderResolvers = new LinkedHashMap<>();
@@ -192,6 +193,54 @@ public final class ExtensionContextImpl implements ExtensionContext {
     }
 
     @Override
+    public void registerSetupCommand(ExtensionCommand command) {
+        if (command == null || command.name() == null || command.name().isBlank()) return;
+        setupCommands.add(command);
+    }
+
+    @Override
+    public String selectedTrackName() {
+        return plugin.getSelectedTrackName();
+    }
+
+    @Override
+    public Object selectedTrackData(String key) {
+        String track = selectedTrackName();
+        return track == null ? null : plugin.getExtensionTrackValue(track, descriptor.name(), key);
+    }
+
+    @Override
+    public void setSelectedTrackData(String key, Object value) {
+        String track = selectedTrackName();
+        if (track == null) {
+            logger.warning("No track is selected; cannot store '" + key + "'. Select one in setup first.");
+            return;
+        }
+        plugin.setExtensionTrackValue(track, descriptor.name(), key, value);
+    }
+
+    @Override
+    public void removeSelectedTrackData(String key) {
+        String track = selectedTrackName();
+        if (track != null) plugin.removeExtensionTrackValue(track, descriptor.name(), key);
+    }
+
+    @Override
+    public Object trackData(String trackName, String key) {
+        return plugin.getExtensionTrackValue(trackName, descriptor.name(), key);
+    }
+
+    @Override
+    public void setTrackData(String trackName, String key, Object value) {
+        plugin.setExtensionTrackValue(trackName, descriptor.name(), key, value);
+    }
+
+    @Override
+    public void removeTrackData(String trackName, String key) {
+        plugin.removeExtensionTrackValue(trackName, descriptor.name(), key);
+    }
+
+    @Override
     public void registerListener(Listener listener) {
         if (listener == null) return;
         listeners.add(listener);
@@ -228,6 +277,7 @@ public final class ExtensionContextImpl implements ExtensionContext {
         }
         if (loadedExtension != null) {
             for (ExtensionCommand command : commands) manager.indexCommand(loadedExtension, command);
+            for (ExtensionCommand command : setupCommands) manager.indexSetupCommand(loadedExtension, command);
         }
         for (Map.Entry<String, Function<Player, String>> entry : placeholderResolvers.entrySet()) {
             if (manager.registerPlaceholder(entry.getKey(), entry.getValue())) {
@@ -248,12 +298,14 @@ public final class ExtensionContextImpl implements ExtensionContext {
         }
         plugin.getHudProviders().removeAll(hudProviders);
         for (ExtensionCommand command : commands) manager.removeCommand(command);
+        for (ExtensionCommand command : setupCommands) manager.removeSetupCommand(command);
         for (String placeholder : registeredPlaceholders) manager.unregisterPlaceholder(placeholder);
         listeners.clear();
         hudProviders.clear();
         placeholderResolvers.clear();
         registeredPlaceholders.clear();
         commands.clear();
+        setupCommands.clear();
         attached = false;
     }
 

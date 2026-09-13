@@ -53,6 +53,11 @@ public final class RaceSessionViewImpl implements RaceSessionView {
     }
 
     @Override
+    public boolean partyEnabled() {
+        return manager.isPartyMode();
+    }
+
+    @Override
     public String status() {
         if (manager.isPracticeActive()) return "practice";
         if (manager.isCountdownActive()) return "countdown";

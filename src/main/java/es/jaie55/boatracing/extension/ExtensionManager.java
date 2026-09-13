@@ -46,11 +46,17 @@ public final class ExtensionManager {
     private static final java.util.Set<String> RESERVED_COMMANDS = java.util.Set.of(
             "teams", "race", "stats", "setup", "admin", "cosmetics", "debug", "extensions",
             "reload", "version", "help");
+    private static final java.util.Set<String> RESERVED_SETUP_COMMANDS = java.util.Set.of(
+            "help", "addstart", "clearstarts", "removestart", "setfinish", "clearfinish", "setpit", "clearpit",
+            "addcheckpoint", "addalt", "clearalt", "clearcheckpoints", "addlight", "removelight", "clearlights",
+            "setlaps", "setpitstops", "setregtime", "setcosmetics", "setlobby", "clearlobby", "setpos", "clearpos",
+            "show", "selinfo", "wand", "gates", "autotrace", "wizard", "select");
 
     private final BoatRacingPlugin plugin;
     private final File extensionsDir;
     private final Map<String, LoadedExtension> extensions = new LinkedHashMap<>();
     private final Map<String, ExtensionCommand> commands = new LinkedHashMap<>();
+    private final Map<String, ExtensionCommand> setupCommands = new LinkedHashMap<>();
     private final Map<String, Function<Player, String>> placeholders = new ConcurrentHashMap<>();
 
     public ExtensionManager(BoatRacingPlugin plugin) {
@@ -258,6 +264,7 @@ public final class ExtensionManager {
         }
         extensions.clear();
         commands.clear();
+        setupCommands.clear();
         placeholders.clear();
     }
 
@@ -309,6 +316,103 @@ public final class ExtensionManager {
 
     private static boolean isReservedCommandName(String name) {
         return name == null || RESERVED_COMMANDS.contains(name.toLowerCase(Locale.ROOT));
+    }
+
+    void indexSetupCommand(LoadedExtension extension, ExtensionCommand command) {
+        String key = command.name().toLowerCase(Locale.ROOT);
+        if (RESERVED_SETUP_COMMANDS.contains(key)) {
+            plugin.getLogger().warning("Extension " + extension.descriptor().name()
+                    + " tried to register the reserved setup command '/boatracing setup " + command.name() + "'; ignoring it.");
+            return;
+        }
+        ExtensionCommand existing = setupCommands.get(key);
+        if (existing != null && existing != command) {
+            plugin.getLogger().warning("Extension " + extension.descriptor().name()
+                    + " tried to register the duplicate setup command '/boatracing setup " + command.name() + "'; ignoring it.");
+            return;
+        }
+        setupCommands.putIfAbsent(key, command);
+    }
+
+    void removeSetupCommand(ExtensionCommand command) {
+        if (command == null) return;
+        setupCommands.values().removeIf(candidate -> candidate == command);
+    }
+
+    public boolean isSetupCommandName(String token) {
+        return token != null && setupCommands.containsKey(token.toLowerCase(Locale.ROOT));
+    }
+
+    public List<String> setupCommandNames(CommandSender sender) {
+        List<String> names = new ArrayList<>();
+        for (ExtensionCommand command : setupCommands.values()) {
+            String permission = command.permission();
+            if (permission == null || permission.isBlank() || sender.hasPermission(permission)) {
+                names.add(command.name());
+            }
+        }
+        return names;
+    }
+
+    public List<String> setupCommandHelp(CommandSender sender, String label) {
+        List<String> lines = new ArrayList<>();
+        for (ExtensionCommand command : setupCommands.values()) {
+            String permission = command.permission();
+            if (permission != null && !permission.isBlank() && !sender.hasPermission(permission)) continue;
+            String usage = command.usage();
+            if (usage != null && !usage.isBlank()) {
+                lines.add(usage.replace("{label}", label == null ? "boatracing" : label));
+            } else if (command.description() != null && !command.description().isBlank()) {
+                lines.add("&7 - &f/" + (label == null ? "boatracing" : label) + " setup " + command.name()
+                        + " &7- " + command.description());
+            }
+        }
+        return lines;
+    }
+
+    public boolean handleSetupCommand(CommandSender sender, String label, String[] args) {
+        if (args == null || args.length < 2) return false;
+        ExtensionCommand command = setupCommands.get(args[1].toLowerCase(Locale.ROOT));
+        if (command == null) return false;
+        String permission = command.permission();
+        if (permission != null && !permission.isBlank() && !sender.hasPermission(permission)) {
+            sender.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("general.no-permission")));
+            return true;
+        }
+        if (!(sender instanceof Player) && !command.allowConsole()) {
+            sender.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("general.players-only")));
+            return true;
+        }
+        String[] rest = Arrays.copyOfRange(args, 2, args.length);
+        try {
+            boolean handled = command.execute(sender, rest);
+            if (!handled && command.usage() != null && !command.usage().isBlank()) {
+                sender.sendMessage(Text.colorize(plugin.pref()
+                        + command.usage().replace("{label}", label == null ? "boatracing" : label)));
+            }
+        } catch (Throwable throwable) {
+            plugin.getLogger().log(Level.WARNING, "Extension setup command '" + command.name() + "' failed: "
+                    + throwable.getMessage(), throwable);
+            sender.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("general.extension-error")));
+        }
+        return true;
+    }
+
+    public List<String> tabCompleteSetup(CommandSender sender, String[] args) {
+        if (args == null || args.length < 2) return Collections.emptyList();
+        ExtensionCommand command = setupCommands.get(args[1].toLowerCase(Locale.ROOT));
+        if (command == null) return Collections.emptyList();
+        String permission = command.permission();
+        if (permission != null && !permission.isBlank() && !sender.hasPermission(permission)) {
+            return Collections.emptyList();
+        }
+        String[] rest = Arrays.copyOfRange(args, 2, args.length);
+        try {
+            List<String> result = command.tabComplete(sender, rest);
+            return result == null ? Collections.emptyList() : result;
+        } catch (Throwable throwable) {
+            return Collections.emptyList();
+        }
     }
 
     void removeCommand(ExtensionCommand command) {

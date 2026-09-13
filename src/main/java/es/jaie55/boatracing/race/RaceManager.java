@@ -61,6 +61,7 @@ public class RaceManager {
     private boolean running = false;
     private boolean registering = false;
     private boolean practiceMode = false;
+    private boolean partyMode = false;
     private UUID practicePlayerId;
     private int totalLaps;
     private final Map<UUID, RaceState> states = new HashMap<>();
@@ -234,6 +235,11 @@ public class RaceManager {
     public boolean isCountdownActive() { return !countdownLockedParticipants.isEmpty(); }
     public boolean isPracticeMode() { return practiceMode; }
     public boolean isPracticeActive() { return practiceMode && (running || isCountdownActive()); }
+
+    /** @return true when this session was opened in party mode (party add-on gameplay enabled). */
+    public boolean isPartyMode() { return partyMode; }
+
+    public void setPartyMode(boolean partyMode) { this.partyMode = partyMode; }
     public int getTotalLaps() { return totalLaps; }
     public void setTotalLaps(int laps) { this.totalLaps = Math.max(1, laps); }
     public long getRegistrationSeconds() { return registrationSeconds; }
@@ -407,6 +413,7 @@ public class RaceManager {
         clearCountdownLock();
         if (announce) announceResults();
         fireApiEvent(new es.jaie55.boatracing.api.event.RaceStopEvent(apiView(), apiResults(), announce));
+        partyMode = false;
         stopRaceReplayCapture(true);
         cleanupRaceVehicles();
         clearSpectators(true);
@@ -417,6 +424,7 @@ public class RaceManager {
 
     public void reset() {
         running = false;
+        partyMode = false;
         closeRegistrationWindow();
         clearCountdownLock();
         cleanupRaceVehicles();

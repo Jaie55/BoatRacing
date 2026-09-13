@@ -23,6 +23,9 @@ public interface RaceSessionView {
 
     boolean practice();
 
+    /** @return true when the session was opened in party mode (used by the party add-on). */
+    boolean partyEnabled();
+
     /** @return one of: idle, registering, countdown, running, practice. */
     String status();
 

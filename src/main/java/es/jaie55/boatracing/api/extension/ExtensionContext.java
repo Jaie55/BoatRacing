@@ -59,6 +59,30 @@ public interface ExtensionContext {
     /** Registers a subcommand under {@code /boatracing <name> ...}. */
     void registerCommand(ExtensionCommand command);
 
+    /** Registers a subcommand under {@code /boatracing setup <name> ...} (requires {@code boatracing.setup}). */
+    void registerSetupCommand(ExtensionCommand command);
+
+    /** @return the track currently selected in setup, or null when none is loaded. */
+    String selectedTrackName();
+
+    /** @return this extension's stored value for the selected track. */
+    Object selectedTrackData(String key);
+
+    /** Stores a value for the selected track (persisted in the track YAML under {@code extensions.<name>}). */
+    void setSelectedTrackData(String key, Object value);
+
+    /** Removes a stored value from the selected track. */
+    void removeSelectedTrackData(String key);
+
+    /** @return this extension's stored value for any track (routes to the owning track instance). */
+    Object trackData(String trackName, String key);
+
+    /** Stores a value for any track (persisted in {@code tracks/<name>.yml}). */
+    void setTrackData(String trackName, String key, Object value);
+
+    /** Removes a stored value from any track. */
+    void removeTrackData(String trackName, String key);
+
     /** Registers a Bukkit listener owned by BoatRacing. */
     void registerListener(Listener listener);
 

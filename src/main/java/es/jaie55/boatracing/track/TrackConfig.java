@@ -490,7 +490,9 @@ public class TrackConfig {
         }
         cfg.set("starts", list);
         if (finish != null) writeRegion("finish", finish);
+        else cfg.set("finish", null);
         if (pitlane != null) writeRegion("pitlane", pitlane);
+        else cfg.set("pitlane", null);
         // Write team-specific pits
         if (!teamPits.isEmpty()) {
             // Clear first
@@ -663,5 +665,43 @@ public class TrackConfig {
 
     public Map<String, Object> getRacingOverrides() {
         return Collections.unmodifiableMap(racingOverrides);
+    }
+
+    // --- Generic per-extension data (stored in extensions.<extension>.<key> inside the track file) ---
+
+    public boolean hasExtensionValue(String extension, String key) {
+        return cfg != null && cfg.contains(extensionPath(extension, key));
+    }
+
+    public Object getExtensionValue(String extension, String key) {
+        return cfg == null ? null : cfg.get(extensionPath(extension, key));
+    }
+
+    public void setExtensionValue(String extension, String key, Object value) {
+        if (cfg == null) cfg = new YamlConfiguration();
+        cfg.set(extensionPath(extension, key), value);
+        save();
+    }
+
+    public void removeExtensionValue(String extension, String key) {
+        if (cfg == null) return;
+        String section = "extensions." + sanitizeExtension(extension);
+        cfg.set(section + "." + (key == null ? "data" : key), null);
+        ConfigurationSection ext = cfg.getConfigurationSection(section);
+        if (ext != null && ext.getKeys(false).isEmpty()) {
+            cfg.set(section, null);
+            ConfigurationSection all = cfg.getConfigurationSection("extensions");
+            if (all != null && all.getKeys(false).isEmpty()) cfg.set("extensions", null);
+        }
+        save();
+    }
+
+    private static String sanitizeExtension(String extension) {
+        if (extension == null || extension.isBlank()) return "extension";
+        return extension.replace('.', '_');
+    }
+
+    private static String extensionPath(String extension, String key) {
+        return "extensions." + sanitizeExtension(extension) + "." + (key == null ? "data" : key);
     }
 }
