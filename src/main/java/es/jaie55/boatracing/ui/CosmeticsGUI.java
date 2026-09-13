@@ -157,9 +157,6 @@ public class CosmeticsGUI implements Listener {
 
             List<String> lore = new ArrayList<>();
             lore.add(plugin.msg().get("gui.cosmetics.lore-title", "title", titles.displayName(titleId)));
-            if (!byWins && state == LockState.UNLOCKED && !isEquipped) {
-                lore.add(plugin.msg().get("gui.cosmetics.lore-click"));
-            }
             if (!byWins) {
                 lore.add(plugin.msg().get("gui.cosmetics.lore-title-locked", "wins", String.valueOf(titles.threshold(titleId))));
             }
