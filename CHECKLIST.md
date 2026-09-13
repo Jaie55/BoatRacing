@@ -32,12 +32,20 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 	- Wizard CHECKPOINTS step shows the `[AutoTrace]` button and launches the trace.
 	- Admin Race → Checkpoints editor shows the AutoTrace button (slot 51) and closes the GUI when starting the trace.
 	- Running `/boatracing setup wizard` shows an on-screen title/subtitle for every step (starts, finish, lights, pit, checkpoints, pitstops, laps, regtime) and a completion title when finishing; advancing, skipping and going back update the title accordingly.
+	- Two ways to build a track: create an empty track in `/boatracing admin tracks` and complete it from scratch with `/boatracing setup wizard` until DONE (verify each step validates and the track ends race-ready); then do a second track using only manual commands + the gate dyes + AutoTrace and verify both produce the same YAML structure (`starts`, `finish`, `lights`, `checkpoints`, `racing`).
 - Config and i18n (lang folder):
 	- On first start with the new build, verify every `plugins/BoatRacing/messages_*.yml` is moved into `plugins/BoatRacing/lang/` (legacy copies renamed to `.migrated` when both exist) and that the plugin still loads the active language without raw keys.
 	- Verify `plugins/BoatRacing/lang/messages_en.yml` is created if missing and that custom bundles placed in `lang/` are selectable with `language: "<code>"`.
 	- Verify `tools/check_locales.py` reads `src/main/resources/lang/` and reports 0 errors for every bundled language.
 	- Verify the extension folder keeps `config.yml` at its root and extracts every bundled language into `plugins/BoatRacing/extensions/<name>/lang/`; legacy root message files are moved into `lang/`.
-	- On update/reload, every new 26.3 config section is merged into an existing `config.yml` without overwriting user edits: `setup.auto-trace.*`, `discord.*`, `racing.victory-effects.*`, `racing.spectate-on-finish.*`, `cosmetics.*`, `diagnostics.*` and `replay.capture-race`.
+- Setup select, party flag and per-track extension data:
+	- Run `/boatracing setup select <track>` (or click a track in `/boatracing admin tracks`) and verify `setup show`/`setup help` operate on that track; tab-completion suggests track names.
+	- Verify `/boatracing race open <track> [party|normal]` sets the mode (message to registered players, `race status` shows `Party: ON/OFF`) and that stopping/resetting the race clears the flag.
+	- Verify extension setup subcommands appear in `/boatracing setup help` and tab-completion, and that a reserved setup name (`select`, `show`...) is rejected with a warning.
+	- Place a marker block with the party add-on: verify it registers a box only for the selected track, the block is not left in the world, and the box is stored inside `tracks/<track>.yml` under `extensions.BoatRacing-PartyExtension.boxes`.
+	- Verify per-track extension data survives normal base saves (best times, checkpoints edits) and travels when the track file is renamed/copied; verify `boxes only render/sound` during setup preview or a party race, and never in normal races or practice.
+	- Verify a track without the `extensions` section still loads and runs unchanged.
+	- On update/reload, every new 26.3 config section is merged into an existing `config.yml` without overwriting user edits: `setup.auto-trace.*`, `setup.gates.*`, `discord.*`, `racing.victory-effects.*`, `racing.spectate-on-finish.*`, `cosmetics.*`, `diagnostics.*` and `replay.capture-race`.
 	- Set `language: es` and verify AutoTrace, alternates, spectator, victory, cosmetics and debug messages are in Spanish. Other bundled languages fall back to English without showing raw keys.
 	- Note: all bundled languages now include the 26.3 keys; `tools/check_locales.py` must report 0 errors across every `lang/messages_*.yml`.
 - Regression checks (26.3 touched existing behavior):
@@ -45,6 +53,8 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 	- Legacy track compatibility: open an old track (no `type`, no `alternates`) and save it without editing checkpoints; verify the `checkpoints:` entries are still written in the old AABB shape and the file keeps its data.
 	- Checkpoint crossing: with an AABB track, cross each checkpoint at full speed in order and verify laps, sector gaps, lap broadcasts, best lap/race stats and finish detection behave exactly as before.
 	- Admin Race checkpoint editor: with mixed AABB/plane/alternate checkpoints, verify add from selection, replace, remove, move up/down and page navigation still work; item lore shows the region (and alternate count when present).
+	- Gate tools: `/boatracing setup gates` gives the blue and yellow dyes; right-click with the blue dye adds a checkpoint facing your view (saved to the track YAML), sneak + right-click removes the last one; the yellow dye sets/clears the finish; while holding a tool checkpoints render blue and the finish yellow; `/boatracing setup gates off` removes the tools.
+	- `clearfinish` and `clearpit` actually remove the finish/pit from `tracks/<track>.yml` (reload the track and verify they do not come back).
 	- Setup commands: `addcheckpoint`, `clearcheckpoints`, `setfinish`, `setpit`, `addlight`, `setlaps`, `setpitstops`, `setregtime`, `setlobby`, `setpos` and the wizard still work and auto-advance as before.
 	- Race lifecycle: open -> join -> start/force -> countdown/lights -> laps/pit stops -> finish -> results/rewards; then `/boatracing race restart`, `stop`, `forfeit` and `back` still work with no console errors.
 	- Practice ghost: with `practice.ghost.enabled: true` and `replay.capture-race: false`, complete a practice run and verify the ghost records and replays exactly as before; with `replay.capture-race: true`, verify the race ghost is stored and the practice ghost still updates independently.

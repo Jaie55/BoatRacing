@@ -134,19 +134,22 @@ Added:
 - **Discord webhook**: post race starts, results and new track records to a channel webhook (`discord.enabled`, `discord.webhook-url`, `discord.username`, `discord.avatar-url` and per-event toggles under `discord.events.*`).
 - **Race replay (v1)**: with `replay.capture-race: true`, the winner's run becomes the ghost you race in practice, tagged as a race record; participants get a chat notice when the race ghost is saved.
 - **Diagnostics and bug reporting**: `/boatracing debug` is admin-only (`boatracing.debug`, default op) and prints a safe report (plugin, server, API, Java, storage, language, tracks/teams/active sessions) plus the fixed GitHub Issues link. The startup console line also points admins to GitHub Issues.
+- **Gate tools (manual checkpoints and finish)**: `/boatracing setup gates` gives a blue dye (right-click places an oriented checkpoint facing your view, sneak + right-click removes the last one) and a yellow dye (right-click sets the finish, sneak + right-click clears it). While holding a tool, checkpoints render as blue particle gates and the finish as a yellow box (`setup.gates.*`).
+- **Setup select and per-track extension data**: `/boatracing setup select <track>` picks the active track, extensions can register their own setup subcommands, and extension data is stored inside the track YAML (`extensions.<extension>`) so it travels with the track.
 - **Extension HUD hook**: `HudProvider` lets extensions append sidebar lines and an action bar suffix while BoatRacing keeps owning the race HUD.
 - **Base-managed extensions**: BoatRacing loads extension jars from `plugins/BoatRacing/extensions/` (own `extension.yml` descriptor, per-extension config and language folder, BoatRacing-backed storage, scheduler, commands, placeholders) and lists them with `/boatracing extensions`.
-- **BoatRacing-PartyExtension (private addon)**: party-style extension loaded by BoatRacing (eight abilities, admin-placed item boxes, party points, HUD and placeholders), living in the untracked `party/` project, commanded through `/boatracing party ...` and built with `scripts/build-all.ps1`.
+- **BoatRacing-PartyExtension (private addon)**: party-style extension loaded by BoatRacing (eight abilities, per-track item boxes, party points, HUD and placeholders), living in the untracked `party/` project, activated with `/boatracing race open <track> party` and built with `scripts/build-all.ps1`.
 - **Debug logging**: set `debug: "fine"` (or `"finer"`) to trace AutoTrace, cosmetics, Discord, spectator, victory effects and replay activity.
 
 Changed:
-- `/boatracing setup help` and tab-completion now include `autotrace`, `addalt` and `clearalt`; `/boatracing race help` includes `spectate`; the root usage line includes `cosmetics|debug`.
+- `/boatracing setup help` and tab-completion now include `select`, `gates`, `autotrace`, `addalt` and `clearalt`; `/boatracing race help` includes `spectate`; the root usage line includes `cosmetics|extensions|debug`; `/boatracing race open <track>` accepts the optional `party|normal` mode.
 - Checkpoint handling now uses a shared shape abstraction, so oriented gates, axis-aligned gates and groups with alternates coexist in one ordered list.
 - `/boatracing debug` is now **admin-only** (`boatracing.debug` default op) and always points to the fixed GitHub Issues URL; the `diagnostics.*` config options were removed so server owners cannot change the report destination.
 - The cosmetics Trails/Effects tab icons now mirror the currently equipped trail or victory effect.
 - Project version is `26.3` (`pom.xml`) and compatibility is Minecraft 1.19–26.3.
 
 Fixed:
+- `clearfinish` and `clearpit` now actually remove the finish/pit entries from the track YAML.
 - Spectators are restored to their previous gamemode and location when the race ends, and follow tasks are cancelled on exit, disconnect or kick.
 - Race replay capture is stopped and cleared between races, preventing leftover tasks or stale samples.
 - AutoTrace cleans up sessions from disconnected players and disposes the preview task when idle.
@@ -628,6 +631,14 @@ Root command groups:
 - `/boatracing debug` (admins) prints a diagnostic report with the fixed GitHub Issues link to report bugs.
 
 ## Track Setup
+
+There are **two ways** to build a track, and both save to the same `tracks/<name>.yml` file:
+
+1. **Guided Setup Wizard** — `/boatracing setup wizard`. It walks you step by step (starts → finish → lights → pit → checkpoints → pitstops → laps → regtime) with on-screen titles, `[Next] [Skip] [Back]` buttons and validation per step. Best when you start from scratch and want the plugin to tell you what is missing. The finish/checkpoint steps still use the selection wand.
+2. **Manual setup commands** — `/boatracing setup ...` with the tools below (selection wand, gate dyes, AutoTrace). Fastest when you already know the layout, want to tweak an existing track or prefer placing gates by hand.
+
+In both cases the track itself is created/selected first with `/boatracing admin tracks` (create, select, rename, delete) or `/boatracing setup select <track>`; everything is stored in `plugins/BoatRacing/tracks/<name>.yml`.
+
 Use the built-in BoatRacing selection wand to define cuboid regions.
 
 - Left-click a block with the wand: set Corner A.
@@ -636,7 +647,10 @@ Use the built-in BoatRacing selection wand to define cuboid regions.
 
 Setup commands:
 - `/boatracing setup help` shows the setup command list.
+- `/boatracing setup select <track>` selects the active track to configure (tab-completes track names).
+- `/boatracing setup wizard` starts the guided wizard (also `wizard next|skip|back|status|finish|cancel`).
 - `/boatracing setup wand` gives the selection wand.
+- `/boatracing setup gates [off]` gives the gate tools (blue dye = checkpoints, yellow dye = finish) or removes them.
 - `/boatracing setup addstart` adds your current position as a start slot.
 - `/boatracing setup clearstarts` removes all start slots.
 - `/boatracing setup removestart <slot>` removes one start slot by number (1-based).
@@ -736,7 +750,8 @@ checkpoints:
 - `alternates` may contain any mix of axis-aligned and oriented gates.
 
 ### Guided Setup Wizard
-Start it with `/boatracing setup wizard`.
+Start it with `/boatracing setup wizard`. This is the guided way to build a track; the manual
+command alternative is described in [Track Setup](#track-setup).
 
 Wizard flow:
 - Starts
@@ -746,6 +761,7 @@ Wizard flow:
 - Checkpoints
 - Mandatory pit stops
 - Laps
+- Registration time
 
 Wizard behavior:
 - The wizard is chat-driven and uses clickable buttons for the next action, and shows an on-screen title/subtitle for every step so admins always know where they are.
@@ -753,6 +769,7 @@ Wizard behavior:
 - Optional steps support skip.
 - Sub-actions like `back`, `status`, `cancel`, `skip`, `next`, and `finish` exist, but are intentionally not shown in tab-completion to keep the entrypoint simple.
 - The Starts step also exposes quick buttons for custom start-slot management.
+- Once the wizard finishes (DONE) the track keeps every value saved in `tracks/<name>.yml`; you can keep tweaking it later with the manual commands or the gate dyes.
 
 ### AutoTrace quick guide
 1. Stand on the track (a boat works best) and run `/boatracing setup autotrace start`. You get an on-screen `AUTOTRACE` title, the exact start coordinates, a particle marker at the start, an action bar with time/samples/distance and a periodic chat reminder with your points. Clickable `[Help] [Stop] [Preview] [Accept] [Cancel]` buttons are shown in chat.
@@ -763,10 +780,29 @@ Wizard behavior:
 
 AutoTrace settings live under `setup.auto-trace.*` in `config.yml` (sampling, simplification, gate size, auto-stop, ice re-centering and preview).
 
+### Gate tools (manual checkpoints and finish)
+
+If you prefer to place gates by hand (or want to fine-tune an AutoTrace result), run
+`/boatracing setup gates`. Two tools appear in your hotbar:
+
+- **Blue dye** — right-click where you look to add an oriented checkpoint gate facing your view;
+  sneak + right-click removes the last checkpoint.
+- **Yellow dye** — right-click to set the finish gate; sneak + right-click clears it.
+
+While holding a tool, every checkpoint renders as a **blue** particle gate and the finish as a
+**yellow** box. Gates and the finish are saved into the track YAML immediately. Sizes, colors,
+preview period and view distance live under `setup.gates.*`; `/boatracing setup gates off` removes
+the tools.
+
+A complete race needs starts, a finish, 5 start lights and laps (`/boatracing setup` or the wizard),
+plus checkpoints (manual gates or AutoTrace); then open it with `/boatracing race open <track>`.
+AutoTrace only generates the checkpoint gates from a recorded lap — it does not create starts,
+lights or the finish.
+
 ## Racing and Registration
 Race commands:
 - `/boatracing race help`
-- `/boatracing race open <track>`
+- `/boatracing race open <track> [party|normal]`
 - `/boatracing race join <track>`
 - `/boatracing race leave <track>`
 - `/boatracing race back`
@@ -1022,6 +1058,10 @@ public final class MyExtension implements BoatRacingExtension {
 | `scheduler()` | `runNow`, `runLater`, `runTimer`, `runAsync`, `runAsyncTimer` (Folia-aware), returning a cancellable handle. |
 | `api()` | The regular `BoatRacingAPI` (events, live views, HUD registration). |
 | `registerCommand(...)` | Subcommand under `/boatracing <name> ...`. |
+| `registerSetupCommand(...)` | Subcommand under `/boatracing setup <name> ...` (shows up in `setup help` and tab-completion, permission `boatracing.setup`). |
+| `selectedTrackName()` | Name of the track currently selected in setup. |
+| `selectedTrackData(key)` / `setSelectedTrackData(key, value)` | Per-track data for the selected track, stored in its YAML under `extensions.<extension>`. |
+| `trackData(track, key)` / `setTrackData(...)` / `removeTrackData(...)` | Same for any named track. |
 | `registerListener(...)` | Bukkit listener registered by BoatRacing. |
 | `registerHudProvider(...)` | Extra sidebar lines / action bar suffix during races. |
 | `registerPlaceholder(...)` | A `%boatracing_<identifier>%` value for PlaceholderAPI. |
@@ -1155,10 +1195,12 @@ multi-language messages); see `party/README.md` locally.
 
 The private, paid party-style addon lives in the untracked `party/` folder (excluded from git) and is built as a **base-managed extension**, not a separate plugin. It ships as `BoatRacing-PartyExtension-26.3.jar` and is installed in `plugins/BoatRacing/extensions/`.
 
-- Abilities: Mushroom (boost), Banana (trap), Green Shell (projectile), Lightning (slows everyone), Super Star (temporary invincibility + boost), Blooper (blinds rivals), Coin (party points) and Bob-omb (fuse + knockback).
-- Item sources: right after the race start, by chance when crossing checkpoints, and from admin-placed item boxes (`/boatracing party box add` at your position, persisted through BoatRacing storage).
+- Abilities: Mushroom (boost), Banana (trap), Green Shell (projectile), Lightning (slows everyone), Super Star (temporary invincibility + boost), Blooper (blinds rivals), Coin (party points) and Bob-omb (fuse + knockback). Everything is active only in races opened in party mode.
+- Item sources: right after the race start, by chance when crossing checkpoints, and from per-track item boxes.
+- Item boxes: select the track in setup (`/boatracing setup select <track>`), run `/boatracing setup boxmarker` and place the marker block where you want a box; boxes are stored inside `tracks/<track>.yml` (`extensions.BoatRacing-PartyExtension.boxes`) and can be listed/removed with `/boatracing setup boxes|delbox|clearboxes`; `/boatracing setup previewboxes <on|off>` shows them while configuring.
+- Party mode is chosen when opening the race: `/boatracing race open <track> [party|normal]`; `/boatracing race status` shows the mode and non-party races ignore the add-on completely (no boxes, particles or sounds).
 - Party points: earned from Coins and finishing positions, stored by BoatRacing (`party-stats.yml` in YAML mode, database documents in SQLite/MySQL) and shown in the sidebar through the extension HUD hook.
-- Commands: `/boatracing party help|points [player]|top|box add|remove|list|reload`; permissions `boatracing.party.use` (default true) and `boatracing.party.admin` (default op).
+- Commands: `/boatracing party help|points [player]|top|reload` plus the setup subcommands above; permissions `boatracing.setup` (box configuration), `boatracing.party.use` (default true) and `boatracing.party.admin` (default op).
 - Placeholders: `%boatracing_party_points%`, `%boatracing_party_item%`, `%boatracing_party_top1_name%`, `%boatracing_party_top1_points%`.
 - Config and messages: `plugins/BoatRacing/extensions/BoatRacing-PartyExtension/` (`config.yml` and `lang/messages_*.yml`; the active language follows `language`).
 - Build: run `scripts/build-all.ps1` and copy the extension jar into `plugins/BoatRacing/extensions/`.
@@ -1191,10 +1233,11 @@ Race suggestions:
 - Players with `boatracing.race.practice` also see `practice`.
 - Players with `boatracing.race.voteopen` (or admin-capable users) also see `voteopen`.
 - Admin-capable users also see `open`, `start`, `force`, `stop`, `voteclose`.
-- Track-taking subcommands (`open`, `join`, `leave`, `force`, `start`, `practice`, `stop`, `status`, `vote`) suggest existing named tracks.
+- Track-taking subcommands (`open`, `join`, `leave`, `force`, `start`, `practice`, `stop`, `status`, `vote`) suggest existing named tracks; `open` also suggests `party` and `normal` for the optional party-mode argument (`/boatracing race open <track> [party|normal]`).
 
 Setup suggestions:
-- `help`, `addstart`, `clearstarts`, `removestart`, `setfinish`, `clearfinish`, `setpit`, `clearpit`, `addcheckpoint`, `addalt`, `clearalt`, `clearcheckpoints`, `addlight`, `removelight`, `clearlights`, `setlaps`, `setpitstops`, `setregtime`, `setcosmetics`, `setlobby`, `clearlobby`, `setpos`, `clearpos`, `show`, `selinfo`, `wand`, `autotrace`, `wizard`
+- `help`, `select`, `addstart`, `clearstarts`, `removestart`, `setfinish`, `clearfinish`, `setpit`, `clearpit`, `addcheckpoint`, `addalt`, `clearalt`, `clearcheckpoints`, `addlight`, `removelight`, `clearlights`, `setlaps`, `setpitstops`, `setregtime`, `setcosmetics`, `setlobby`, `clearlobby`, `setpos`, `clearpos`, `show`, `selinfo`, `wand`, `gates`, `autotrace`, `wizard`, plus every setup subcommand registered by loaded extensions (for example `boxmarker`, `addbox`, `boxes`, `delbox`, `clearboxes`, `previewboxes`, `boxinfo` from the party add-on).
+- `select` suggests existing track names, so admins can pick the track to configure without opening the admin tracks GUI.
 - `setpit` suggests team names, quoting names with spaces when needed.
 - `setpos` and `clearpos` suggest online and known offline player names.
 - `setpos` also suggests `auto` and available slot numbers.

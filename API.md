@@ -126,6 +126,10 @@ public final class PartyExtension implements BoatRacingExtension {
 | `storage()`, `read/write(document)` | BoatRacing-managed persistence (respects `database.mode`). |
 | `scheduler()` | Folia-aware `runNow/runLater/runTimer/runAsync/runAsyncTimer`. |
 | `registerCommand(ExtensionCommand)` | Subcommand under `/boatracing <name> ...` with permissions and tab completion. |
+| `registerSetupCommand(ExtensionCommand)` | Subcommand under `/boatracing setup <name> ...` (listed in `setup help`, tab-completed, requires `boatracing.setup`). |
+| `selectedTrackName()` | Name of the track currently selected in setup, or null. |
+| `selectedTrackData(key)` / `setSelectedTrackData(key, value)` / `removeSelectedTrackData(key)` | Per-track data for the selected track. |
+| `trackData(track, key)` / `setTrackData(...)` / `removeTrackData(...)` | Per-track data for any named track. |
 | `registerListener(Listener)` | Bukkit listener owned/registered by BoatRacing. |
 | `registerHudProvider(HudProvider)` | Sidebar/action bar additions. |
 | `registerPlaceholder(String, Function<Player, String>)` | `%boatracing_<identifier>%` value. |
@@ -173,6 +177,17 @@ context.storage().write("party-stats.yml", cfg.saveToString());
 String content = context.storage().read("party-stats.yml"); // null when missing
 ```
 
+Per-track data example (saved inside `tracks/<track>.yml` under `extensions.<your extension>`,
+so it travels with the track file and is never touched by the base plugin):
+
+```java
+context.setSelectedTrackData("boxes", List.of(Map.of("world", "world", "x", 12.5, "y", 64.0, "z", -3.5)));
+Object raw = context.selectedTrackData("boxes");
+
+// Any named track (works even while a race runs on it):
+context.setTrackData("my_track", "boxes", boxes);
+```
+
 Lifecycle notes:
 
 - `onEnable` runs during BoatRacing startup; throwing aborts that extension only (no listener, HUD,
@@ -208,8 +223,8 @@ All events extend `BoatRacingRaceEvent` (`session()`, `player()` nullable, `trac
 ## Views
 
 `RaceSessionView` (live): `trackName()`, `totalLaps()`, `status()` (`idle|registering|countdown|running|practice`),
-`running()`, `registering()`, `countdown()`, `practice()`, `participants()`, `registered()`,
-`playerView(uuid)`, `audience()` (participants + admins).
+`running()`, `registering()`, `countdown()`, `practice()`, `partyEnabled()` (true when the race was
+opened with party mode), `participants()`, `registered()`, `playerView(uuid)`, `audience()` (participants + admins).
 
 `PlayerRaceView` (live): `lap()`, `totalLaps()`, `checkpoint()`, `totalCheckpoints()`,
 `position()`, `elapsedMillis()`, `finished()`, `forfeited()`, `finishTimeMillis()`.
