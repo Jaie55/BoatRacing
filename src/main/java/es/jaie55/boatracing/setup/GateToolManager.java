@@ -14,6 +14,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -66,7 +67,7 @@ public final class GateToolManager implements Listener {
     // ----------------------------------------------------------------- items
 
     public void giveTools(Player player) {
-        removeTools(player);
+        clearToolItems(player);
         give(player, checkpointTool());
         give(player, finishTool());
         player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.given")));
@@ -74,6 +75,13 @@ public final class GateToolManager implements Listener {
     }
 
     public void removeTools(Player player) {
+        if (clearToolItems(player)) {
+            player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.tools-removed")));
+        }
+    }
+
+    /** Removes any gate tool from the inventory without messaging. */
+    private boolean clearToolItems(Player player) {
         ItemStack[] contents = player.getInventory().getContents();
         boolean removed = false;
         for (int i = 0; i < contents.length; i++) {
@@ -86,9 +94,7 @@ public final class GateToolManager implements Listener {
             player.getInventory().setItemInOffHand(null);
             removed = true;
         }
-        if (removed) {
-            player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.tools-removed")));
-        }
+        return removed;
     }
 
     private void give(Player player, ItemStack stack) {
@@ -161,17 +167,15 @@ public final class GateToolManager implements Listener {
 
     private void addCheckpoint(Player player, Location anchor) {
         TrackConfig track = plugin.getTrackConfig();
-        double halfWidth = plugin.getConfig().getDouble("setup.gates.half-width", 4.5);
-        double halfHeight = plugin.getConfig().getDouble("setup.gates.half-height", 3.0);
         Vector center = new Vector(anchor.getBlockX() + 0.5, anchor.getBlockY() + 1.0, anchor.getBlockZ() + 0.5);
         PlaneCheckpoint gate = PlaneCheckpoint.facing(anchor.getWorld().getName(), center,
-                player.getLocation().getDirection(), halfWidth, halfHeight);
+                player.getLocation().getDirection(), gateHalfWidth(), gateHalfHeight());
         track.addCheckpoint(gate);
         int index = track.getCheckpoints().size();
         player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.checkpoint-added",
                 "index", index, "total", index)));
         player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING, 0.9f, 1.4f);
-        renderAround(player, new Vector(anchor.getBlockX() + 0.5, anchor.getBlockY() + 1.0, anchor.getBlockZ() + 0.5));
+        ParticleWireframe.drawGateEffect(player, gate, checkpointParticle(), checkpointColor());
     }
 
     private void removeLastCheckpoint(Player player) {
@@ -189,8 +193,8 @@ public final class GateToolManager implements Listener {
 
     private void setFinish(Player player, Location anchor) {
         TrackConfig track = plugin.getTrackConfig();
-        double halfWidth = plugin.getConfig().getDouble("setup.gates.finish-half-width", 8.0);
-        double halfHeight = plugin.getConfig().getDouble("setup.gates.finish-half-height", 4.0);
+        double halfWidth = gateHalfWidth();
+        double halfHeight = gateHalfHeight();
         double halfDepth = plugin.getConfig().getDouble("setup.gates.finish-half-depth", 0.6);
         Vector direction = player.getLocation().getDirection();
         direction.setY(0);
@@ -201,6 +205,11 @@ public final class GateToolManager implements Listener {
         track.setFinish(new Region(anchor.getWorld().getName(), box));
         player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.finish-set")));
         player.playSound(player.getLocation(), org.bukkit.Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1.3f);
+        ParticleWireframe.drawBoxEffect(player, box, finishParticle(), finishColor(), 4);
+        // The finish marks the end of the lap: stop an active AutoTrace recording here.
+        if (plugin.getAutoTraceManager() != null && plugin.getAutoTraceManager().isRecording(player)) {
+            plugin.getAutoTraceManager().stop(player);
+        }
     }
 
     private void clearFinish(Player player) {
@@ -218,10 +227,10 @@ public final class GateToolManager implements Listener {
 
     private void renderTick() {
         TrackConfig track = plugin.getTrackConfig();
-        Color checkpointColor = parseColor(plugin.getConfig().getString("setup.gates.checkpoint-color", "3B82F6"),
-                Color.fromRGB(0x3B82F6));
-        Color finishColor = parseColor(plugin.getConfig().getString("setup.gates.finish-color", "FACC15"),
-                Color.fromRGB(0xFACC15));
+        Particle checkpointParticle = checkpointParticle();
+        Color checkpointColor = checkpointColor();
+        Particle finishParticle = finishParticle();
+        Color finishColor = finishColor();
         double viewDistance = plugin.getConfig().getDouble("setup.gates.view-distance", 96.0);
         double viewSquared = viewDistance * viewDistance;
 
@@ -238,7 +247,7 @@ public final class GateToolManager implements Listener {
 
             if (holdCheckpoint) {
                 for (CheckpointShape shape : track.getCheckpoints()) {
-                    renderShape(player, shape, checkpointColor, viewSquared);
+                    renderShape(player, shape, checkpointParticle, checkpointColor, viewSquared);
                 }
             }
             if (holdFinish) {
@@ -246,39 +255,71 @@ public final class GateToolManager implements Listener {
                 if (finish != null && finish.world() != null && finish.world().equals(player.getWorld())) {
                     Vector center = finish.getBox().getCenter();
                     if (player.getLocation().toVector().distanceSquared(center) <= viewSquared) {
-                        ParticleWireframe.drawBoxColored(player, finish.getBox(), finishColor, 4);
+                        ParticleWireframe.drawBoxEffect(player, finish.getBox(), finishParticle, finishColor, 4);
                     }
                 }
             }
         }
     }
 
-    private void renderShape(Player player, CheckpointShape shape, Color color, double viewSquared) {
+    private void renderShape(Player player, CheckpointShape shape, Particle particle, Color color, double viewSquared) {
         if (shape instanceof CheckpointGroup group) {
-            renderShape(player, group.getPrimary(), color, viewSquared);
+            renderShape(player, group.getPrimary(), particle, color, viewSquared);
             for (CheckpointShape alternate : group.getAlternates()) {
-                renderShape(player, alternate, color, viewSquared);
+                renderShape(player, alternate, particle, color, viewSquared);
             }
             return;
         }
         if (shape instanceof PlaneCheckpoint plane) {
             if (!player.getWorld().getName().equals(plane.worldName())) return;
             if (player.getLocation().toVector().distanceSquared(plane.getCenter()) > viewSquared) return;
-            ParticleWireframe.drawGateColored(player, plane, color);
+            ParticleWireframe.drawGateEffect(player, plane, particle, color);
         } else if (shape instanceof Region region) {
             if (region.world() == null || !region.world().equals(player.getWorld())) return;
             if (player.getLocation().toVector().distanceSquared(region.getBox().getCenter()) > viewSquared) return;
-            ParticleWireframe.drawBoxColored(player, region.getBox(), color, 3);
+            ParticleWireframe.drawBoxEffect(player, region.getBox(), particle, color, 3);
         }
     }
 
-    private void renderAround(Player player, Vector center) {
-        TrackConfig track = plugin.getTrackConfig();
-        Color color = parseColor(plugin.getConfig().getString("setup.gates.checkpoint-color", "3B82F6"),
+    // -------------------------------------------------------------- helpers
+
+    /** Checkpoint gate size, falling back to the AutoTrace size so manual gates match. */
+    private double gateHalfWidth() {
+        return plugin.getConfig().getDouble("setup.gates.half-width",
+                plugin.getConfig().getDouble("setup.auto-trace.half-width", 4.5));
+    }
+
+    private double gateHalfHeight() {
+        return plugin.getConfig().getDouble("setup.gates.half-height",
+                plugin.getConfig().getDouble("setup.auto-trace.half-height", 3.0));
+    }
+
+    private Particle checkpointParticle() {
+        String raw = plugin.getConfig().getString("setup.gates.checkpoint-particle", "DUST");
+        if (raw != null && ("DUST".equalsIgnoreCase(raw) || "REDSTONE".equalsIgnoreCase(raw))) {
+            Particle dust = ParticleWireframe.dustParticle();
+            if (dust != null) return dust;
+        }
+        return ParticleWireframe.resolve(raw);
+    }
+
+    private Particle finishParticle() {
+        String raw = plugin.getConfig().getString("setup.gates.finish-particle", "FLAME");
+        if (raw != null && ("DUST".equalsIgnoreCase(raw) || "REDSTONE".equalsIgnoreCase(raw))) {
+            Particle dust = ParticleWireframe.dustParticle();
+            if (dust != null) return dust;
+        }
+        return ParticleWireframe.resolve(raw);
+    }
+
+    private Color checkpointColor() {
+        return parseColor(plugin.getConfig().getString("setup.gates.checkpoint-color", "3B82F6"),
                 Color.fromRGB(0x3B82F6));
-        CheckpointShape last = track.getCheckpoints().isEmpty() ? null
-                : track.getCheckpoints().get(track.getCheckpoints().size() - 1);
-        if (last != null) renderShape(player, last, color, 256.0);
+    }
+
+    private Color finishColor() {
+        return parseColor(plugin.getConfig().getString("setup.gates.finish-color", "FACC15"),
+                Color.fromRGB(0xFACC15));
     }
 
     private static Color parseColor(String raw, Color fallback) {

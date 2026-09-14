@@ -137,9 +137,19 @@ public class AutoTraceManager {
                         java.time.Duration.ofMillis(1400),
                         java.time.Duration.ofMillis(300))));
         sendControls(player, false);
+        if (plugin.getGateToolManager() != null) {
+            plugin.getGateToolManager().giveTools(player);
+        }
         plugin.getLogger().fine("AutoTrace started for " + player.getName() + " at "
                 + startLoc.getBlockX() + "," + startLoc.getBlockY() + "," + startLoc.getBlockZ()
                 + " (spacing=" + s.spacing + ", auto-close=" + s.closeDistance + ").");
+    }
+
+    /** @return true when the player has an AutoTrace session actively recording. */
+    public boolean isRecording(Player player) {
+        if (player == null) return false;
+        Session session = sessions.get(player.getUniqueId());
+        return session != null && session.recording;
     }
 
     public void stop(Player player) {

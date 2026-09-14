@@ -87,13 +87,15 @@ setup:
   # yellow dye (finish). Right-click places a gate where you look, facing where you
   # look; sneak + right-click removes the last checkpoint / clears the finish.
   gates:
-    # Size of the checkpoint gates placed with the blue dye (actual gate = 2x these).
+    # Size of the placed gates; when unset it falls back to setup.auto-trace.half-width/half-height.
+    # The finish uses the same width/height (only finish-half-depth differs).
     half-width: 4.5
     half-height: 3.0
-    # Size of the finish gate placed with the yellow dye (actual region = 2x these).
-    finish-half-width: 8.0
-    finish-half-height: 4.0
     finish-half-depth: 0.6
+    # Particle shown per gate type. DUST/REDSTONE use the colour below; any other
+    # particle name is shown as-is (so checkpoint and finish look different).
+    checkpoint-particle: "DUST"
+    finish-particle: "FLAME"
     # Coloured particle preview while holding a gate tool (blue checkpoints, yellow finish).
     preview: true
     preview-period-ticks: 8

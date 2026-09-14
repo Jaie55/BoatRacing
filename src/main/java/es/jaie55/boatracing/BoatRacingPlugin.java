@@ -114,6 +114,7 @@ public class BoatRacingPlugin extends JavaPlugin {
     public boolean isApiEnabled() { return apiEnabled; }
     public java.util.List<es.jaie55.boatracing.api.HudProvider> getHudProviders() { return hudProviders; }
     public es.jaie55.boatracing.extension.ExtensionManager getExtensionManager() { return extensionManager; }
+    public es.jaie55.boatracing.setup.GateToolManager getGateToolManager() { return gateToolManager; }
 
     /** Extension API instance, created on demand even when the Bukkit service is disabled. */
     public es.jaie55.boatracing.api.BoatRacingAPI getExtensionApi() {
