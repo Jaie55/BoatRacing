@@ -80,6 +80,7 @@ Locale files are validated with `python tools/check_locales.py` (Python 3.8+), w
 - [Guided Setup Wizard](#guided-setup-wizard)
 - [AutoTrace quick guide](#autotrace-quick-guide)
 - [Checkpoint formats](#checkpoint-formats)
+- [How checkpoints, finish and pit areas work](#how-checkpoints-finish-and-pit-areas-work)
 - [Racing and Registration](#racing-and-registration)
 - [Cosmetics and Titles](#cosmetics-and-titles)
 - [Diagnostics and Bug Reporting](#diagnostics-and-bug-reporting)
@@ -692,6 +693,7 @@ Setup rules:
 - Start lights are optional for track validity, but if used the system expects exactly 5.
 - Team-specific pit regions are supported alongside the default pit region.
 - Checkpoints can be axis-aligned regions (legacy `type: aabb`) or oriented gates (`type: plane`), both in the same ordered list.
+- Checkpoints are crossing planes/lines, not zones you must stay in; see [How checkpoints, finish and pit areas work](#how-checkpoints-finish-and-pit-areas-work).
 - Any checkpoint can have alternate gates (`alternates` in its entry); crossing any of them counts.
 - Existing tracks with AABB checkpoints keep working unchanged; entries without `type` are loaded as AABB.
 
@@ -749,6 +751,29 @@ checkpoints:
 - Files without `type` are loaded as axis-aligned regions and are only rewritten when you edit the track.
 - `alternates` may contain any mix of axis-aligned and oriented gates.
 
+### How checkpoints, finish and pit areas work
+- **A checkpoint is a line you cross, not a zone you must stay inside.** It is a thin oriented plane
+  (or an axis-aligned box for legacy gates) and the particles only draw its outline. It has no
+  collision, so you can drive anywhere and leaving the gate does nothing.
+- **Detection**: every movement step is tested; if the segment from your previous position to the new
+  one crosses the gate plane inside the rectangle, the checkpoint counts. Only the *next* checkpoint
+  in order is checked, so touching a later gate does nothing until the earlier ones are crossed.
+- **Skipping checkpoints**: if you reach the finish without all of them, the lap is rejected with a
+  "you still have N checkpoints" message and you must go back. Crossing every gate in order then
+  counts normally; there is no teleport, penalty or disqualification for leaving the route.
+- **Why they exist**: they define the route (no shortcuts), the sector/lap split times and the
+  practice sector stats. AutoTrace generates them along your recorded line — more gates mean a tighter
+  route; manual gates work exactly the same way.
+- **Finish**: it is a region. Crossing it with every checkpoint collected (and mandatory pit stops
+  done, if configured) completes the lap; after the configured laps you finish.
+- **Pit area**: the only real "area" — entering/exiting it counts pit stops, can apply the pit
+  penalty, and mandatory pit stops can block the finish until completed.
+- Crossing direction is not checked today (the order requirement is what prevents shortcuts):
+  crossing a gate backwards still counts as passing it.
+- Movement is cheap: the check only runs when you change block, only for participants of a running
+  race, only tests the **next** checkpoint plus the finish/pit regions, and a cached broad-phase bound
+  (finish + pits + checkpoints + 32 blocks) skips all crossing math when you are away from the track.
+
 ### Guided Setup Wizard
 Start it with `/boatracing setup wizard`. This is the guided way to build a track; the manual
 command alternative is described in [Track Setup](#track-setup).
@@ -773,9 +798,9 @@ Wizard behavior:
 
 ### AutoTrace quick guide
 1. Stand on the track (a boat works best) and run `/boatracing setup autotrace start`. You get an on-screen `AUTOTRACE` title, the exact start coordinates, a particle marker at the start, an action bar with time/samples/distance and a periodic chat reminder with your points. Clickable `[Help] [Stop] [Preview] [Accept] [Cancel]` buttons are shown in chat.
-2. Drive one clean lap. It stops automatically within `auto-close-distance` blocks of the start, or press `[Stop]` to finish anywhere.
+2. Drive one clean lap. You do **not** need to place checkpoints while recording: they are generated from your line. It stops automatically within `auto-close-distance` blocks of the start, or press `[Stop]` to finish anywhere. If you are holding the gate tools, placing the yellow finish dye also stops the recording and generates the gates.
 3. Review the generated gates with `/boatracing setup autotrace preview`. Hold the selection wand while previewing: **left-click a gate to select it** (it turns green) and **right-click to deselect**. Use `resize selected <width> <height>` or `delete selected` to edit every selected gate at once.
-4. Save with `/boatracing setup autotrace accept` (replaces the track checkpoints) or discard with `/boatracing setup autotrace cancel`. After saving you automatically get the selection wand (if you did not have one) plus clickable `[Setup wizard]`, `[Open registration]`, `[Get wand]`, `[Add start]` and `[Set finish]` helpers.
+4. Save with `/boatracing setup autotrace accept` (replaces the track checkpoints) or discard with `/boatracing setup autotrace cancel`. `accept` replaces the whole checkpoint list, so add any manual gates **after** accepting (the blue dye) instead of mixing them during the recording. After saving you automatically get the selection wand (if you did not have one) plus clickable `[Setup wizard]`, `[Open registration]`, `[Get wand]`, `[Add start]` and `[Set finish]` helpers.
 5. `/boatracing setup autotrace help` prints the full 6-step guide at any time.
 
 AutoTrace settings live under `setup.auto-trace.*` in `config.yml` (sampling, simplification, gate size, auto-stop, ice re-centering and preview).
@@ -783,16 +808,22 @@ AutoTrace settings live under `setup.auto-trace.*` in `config.yml` (sampling, si
 ### Gate tools (manual checkpoints and finish)
 
 If you prefer to place gates by hand (or want to fine-tune an AutoTrace result), run
-`/boatracing setup gates`. Two tools appear in your hotbar:
+`/boatracing setup gates`. Two tools appear in your hotbar (starting AutoTrace also gives them
+automatically):
 
 - **Blue dye** — right-click where you look to add an oriented checkpoint gate facing your view;
   sneak + right-click removes the last checkpoint.
 - **Yellow dye** — right-click to set the finish gate; sneak + right-click clears it.
 
-While holding a tool, every checkpoint renders as a **blue** particle gate and the finish as a
-**yellow** box. Gates and the finish are saved into the track YAML immediately. Sizes, colors,
-preview period and view distance live under `setup.gates.*`; `/boatracing setup gates off` removes
-the tools.
+While holding a tool, every checkpoint renders with its own effect (blue dust by default) and the
+finish with a different one (flame by default) — both configurable via
+`setup.gates.checkpoint-particle` / `finish-particle` (dust particles use
+`checkpoint-color` / `finish-color`). The finish uses the **same width and height as the checkpoint
+gates** (only its thickness, `finish-half-depth`, differs), so all gates match. Gates and the finish
+are saved into the track YAML immediately. Placing the finish while an AutoTrace recording is
+running **stops the recording and generates the gates** from the recorded path (the finish marks the
+end of the lap). Gate size, preview period and view distance live under `setup.gates.*`;
+`/boatracing setup gates off` removes the tools.
 
 A complete race needs starts, a finish, 5 start lights and laps (`/boatracing setup` or the wizard),
 plus checkpoints (manual gates or AutoTrace); then open it with `/boatracing race open <track>`.
