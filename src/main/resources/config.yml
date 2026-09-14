@@ -133,6 +133,8 @@ racing:
   lobby:
     enabled: false
     return-on-leave: true
+    # Return players back to their original position, instead of the lobby at the end of a race
+    return-after-end: false
     # Time window after race finish/cancel to allow /boatracing race back
     back-window-seconds: 180
     world: "world"
