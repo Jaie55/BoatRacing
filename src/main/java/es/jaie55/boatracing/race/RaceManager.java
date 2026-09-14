@@ -2,8 +2,10 @@ package es.jaie55.boatracing.race;
 
 import es.jaie55.boatracing.BoatRacingPlugin;
 import es.jaie55.boatracing.team.Team;
+import es.jaie55.boatracing.track.CheckpointGroup;
 import es.jaie55.boatracing.track.CheckpointShape;
 import es.jaie55.boatracing.track.Geometry;
+import es.jaie55.boatracing.track.PlaneCheckpoint;
 import es.jaie55.boatracing.track.Region;
 import es.jaie55.boatracing.track.TrackConfig;
 import es.jaie55.boatracing.util.PracticeGhostManager;
@@ -25,6 +27,8 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Criteria;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -82,6 +86,10 @@ public class RaceManager {
     private final Map<UUID, Long> preStartPenalties = new HashMap<>();
     // Mandatory pitstops per racer
     private int mandatoryPitstops;
+    // Cached union of every crossing region, used as a cheap broad phase for movement checks
+    private BoundingBox movementBounds;
+    private long movementBoundsSignature = Long.MIN_VALUE;
+    private static final double MOVEMENT_BOUNDS_MARGIN = 32.0;
     // UI toggles
     private boolean sbShowPos;
     private boolean sbShowLap;
@@ -452,6 +460,10 @@ public class RaceManager {
         if (finish == null || finish.world() == null) return;
         if (!to.getWorld().getName().equals(finish.getWorldName())) return;
 
+        // Broad phase: skip all crossing math when the racer is far away from the track bounds.
+        refreshMovementBounds();
+        if (movementBounds != null && !movementBounds.contains(to.toVector())) return;
+
         // Checkpoint progression
         if (st.nextCheckpoint < track.getCheckpoints().size()) {
             CheckpointShape next = track.getCheckpoints().get(st.nextCheckpoint);
@@ -663,6 +675,66 @@ public class RaceManager {
         } else if (!insideFinishOrPit && st.wasInFinish) {
             st.wasInFinish = false;
         }
+    }
+
+    /**
+     * Recomputes the broad-phase bounds (union of finish, pits and every checkpoint, expanded by a
+     * margin) only when the track content changed, so movement checks stay cheap.
+     */
+    private void refreshMovementBounds() {
+        Region finish = track.getFinish();
+        Region pitlane = track.getPitlane();
+        java.util.List<CheckpointShape> checkpoints = track.getCheckpoints();
+        java.util.Map<String, Region> teamPits = track.getTeamPits();
+
+        long signature = 1L;
+        signature = 31L * signature + (finish != null ? finish.getBox().hashCode() : 7);
+        signature = 31L * signature + (pitlane != null ? pitlane.getBox().hashCode() : 11);
+        for (Region teamPit : teamPits.values()) {
+            signature = 31L * signature + (teamPit != null ? teamPit.getBox().hashCode() : 13);
+        }
+        signature = 31L * signature + checkpoints.hashCode();
+        if (movementBounds != null && signature == movementBoundsSignature) return;
+        movementBoundsSignature = signature;
+
+        BoundingBox union = null;
+        if (finish != null) union = finish.getBox();
+        if (pitlane != null) union = union == null ? pitlane.getBox() : union.union(pitlane.getBox());
+        for (Region teamPit : teamPits.values()) {
+            if (teamPit == null) continue;
+            union = union == null ? teamPit.getBox() : union.union(teamPit.getBox());
+        }
+        for (CheckpointShape shape : checkpoints) {
+            BoundingBox box = shapeBounds(shape);
+            if (box == null) continue;
+            union = union == null ? box : union.union(box);
+        }
+        movementBounds = union == null ? null : new BoundingBox(
+                union.getMinX() - MOVEMENT_BOUNDS_MARGIN,
+                union.getMinY() - MOVEMENT_BOUNDS_MARGIN,
+                union.getMinZ() - MOVEMENT_BOUNDS_MARGIN,
+                union.getMaxX() + MOVEMENT_BOUNDS_MARGIN,
+                union.getMaxY() + MOVEMENT_BOUNDS_MARGIN,
+                union.getMaxZ() + MOVEMENT_BOUNDS_MARGIN);
+    }
+
+    /** Approximate bounds of a checkpoint shape, used only for the movement broad phase. */
+    private static BoundingBox shapeBounds(CheckpointShape shape) {
+        if (shape instanceof Region region) return region.getBox();
+        if (shape instanceof PlaneCheckpoint plane) {
+            Vector center = plane.getCenter();
+            double radius = plane.getHalfWidth() + plane.getHalfHeight();
+            return BoundingBox.of(center, radius, radius, radius);
+        }
+        if (shape instanceof CheckpointGroup group) {
+            BoundingBox union = shapeBounds(group.getPrimary());
+            for (CheckpointShape alternate : group.getAlternates()) {
+                BoundingBox box = shapeBounds(alternate);
+                if (box != null) union = union == null ? box : union.union(box);
+            }
+            return union;
+        }
+        return null;
     }
 
     private void checkAllFinished() {
