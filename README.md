@@ -50,7 +50,7 @@ Thanks to all the server owners for using this plugin, I hope it gave you guys a
 An F1‒style ice boat racing plugin for Bukkit/Spigot (compatible with Paper/Purpur) with a clean, vanilla‒like GUI. Manage teams, build tracks in minutes with AutoTrace and oriented checkpoints, run timed races with pit stops, spectate live, collect and buy cosmetic trails, titles, effects and sounds (optional Vault economy), and report issues easily with the built-in diagnostics command.
 
 > Status: Public release (26.3)
-> Authors: [Jaie55](https://github.com/Jaie55) & [MC-MrBirdy](https://github.com/MC-MrBirdy)
+> Author: [Jaie55](https://github.com/Jaie55)
 > Contributors: see the [GitHub contributors](https://github.com/Jaie55/BoatRacing/graphs/contributors) list
 
 <a id="snapshot-261-warning"></a>
