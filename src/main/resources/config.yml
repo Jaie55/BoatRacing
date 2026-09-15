@@ -133,7 +133,9 @@ racing:
   lobby:
     enabled: false
     return-on-leave: true
-    # Return players back to their original position, instead of the lobby at the end of a race
+    # Return players to their saved pre-race location instead of the lobby after a race
+    # finishes, is cancelled, or the player forfeits/finishes. No back-window is needed, and
+    # it works even when the lobby is disabled. Overridable per track. Default: off (lobby flow).
     return-after-end: false
     # Time window after race finish/cancel to allow /boatracing race back
     back-window-seconds: 180

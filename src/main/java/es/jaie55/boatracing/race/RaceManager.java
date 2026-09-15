@@ -1651,6 +1651,13 @@ public class RaceManager {
     private void sendParticipantBackAfterRace(UUID playerId, Player p) {
         if (playerId == null || p == null || !p.isOnline()) return;
 
+        // Automatic return to the saved pre-race location: works even when no lobby is configured.
+        if (this.lobbyReturnAfterEnd) {
+            cleanupRaceVehicleForPlayer(playerId);
+            returnToSavedLocation(p);
+            return;
+        }
+
         Location lobby = getLobbyLocation();
         if (lobby == null) return;
 
@@ -1660,12 +1667,6 @@ public class RaceManager {
         }
 
         cleanupRaceVehicleForPlayer(playerId);
-
-        if (this.lobbyReturnAfterEnd) {
-            returnToSavedLocation(p);
-            return;
-        }
-
         teleportToLobbyIfEnabled(p);
 
         Location saved = preLobbyLocations.get(playerId);
