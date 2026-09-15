@@ -128,6 +128,13 @@ Track onboarding, live viewing, cosmetics, extension system and replay release.
 - CHECKLIST includes the full 26.3 QA block: backward compatibility, PLANE gates, AutoTrace, wizard/GUI, config/i18n, base-managed extensions, docs/discovery, Discord, victory effects, spectator, cosmetics, debug, alternate routes and race replay.
 - All 27 bundled bundles are complete for the 26.3 keys and live in `lang/`; `tools/check_locales.py` reads that folder and reports 26 OK / 0 errors.
 
+## 26.2.2 — 15/09/2026
+### Added
+- **Return to the original position after races**: new `racing.lobby.return-after-end` setting (default `false`, overridable per track). When enabled, participants return to their saved pre-race location when they finish, forfeit, or when the race ends or is cancelled, instead of being sent to the lobby. No `/boatracing race back` window is needed for those returns. Contributed by [@Renaud11232](https://github.com/Renaud11232) in [#9](https://github.com/Jaie55/BoatRacing/pull/9).
+
+### Fixed
+- **`return-after-end` with no lobby**: the automatic return is now checked before the lobby location guard, so the setting also applies when the registration lobby is disabled or its world is unavailable (previously it silently did nothing).
+
 ## 26.2.1 — 11/09/2026
 ### Added
 - **Global race placeholders**: `%boatracing_race_running%`, `%boatracing_race_registering%`, and `%boatracing_race_status%` now resolve across every track session, so a single scoreboard/hologram line can react when any race opens or starts. `%boatracing_race_status%` returns `running`, `registering`, or `idle`, with running taking precedence when multiple tracks are active.

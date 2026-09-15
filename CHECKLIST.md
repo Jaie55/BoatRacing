@@ -227,6 +227,27 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 	- Project version is `26.3` in `pom.xml` and the built jar is `BoatRacing-26.3.jar`.
 - Folia (if available): run an AutoTrace recording and verify no scheduler errors.
 
+## What to verify for 26.2.2
+- Versioning and docs:
+	- Project version is 26.2.2 in `pom.xml`.
+	- `CHANGELOG.md` contains a 26.2.2 section with the `racing.lobby.return-after-end` setting and the no-lobby fix.
+	- `CHECKLIST.md` includes this 26.2.2 validation block.
+	- `README.md` status shows 26.2.2 and the config reference lists `racing.lobby.return-after-end`.
+- Return-after-end disabled (default):
+	- With `racing.lobby.return-after-end: false`, keep the lobby enabled and verify the previous behavior is unchanged: finish/cancel/forfeit teleports to the lobby, the clickable `/boatracing race back` hint appears, and the back window expires after `back-window-seconds`.
+- Return-after-end enabled:
+	- Set `racing.lobby.return-after-end: true` and run a race: confirm participants are teleported to their saved pre-race location when they finish, forfeit, or when the race ends or is cancelled, without passing through the lobby and without receiving the back-window messages.
+	- Verify a finisher is not teleported twice when the race ends after their finish (no first to their location, then to the lobby).
+	- Verify the player is dismounted from the boat correctly on return.
+- Return-after-end without lobby:
+	- Set `racing.lobby.enabled: false` (or point `racing.lobby.world` to a non-existent world) with `return-after-end: true` and verify participants still return to their saved pre-race location.
+	- With both the lobby disabled and `return-after-end: false`, verify the current no-lobby behavior is unchanged.
+- Per-track override:
+	- In `tracks/<name>.yml`, add `racing.lobby.return-after-end: true` for one track while the global value stays `false`; verify each track uses its own mode (note: defining `racing.lobby` in the track replaces the global lobby section for that track).
+- Practice and forfeit:
+	- Solo practice finish and `/boatracing race practice leave <track>` with `return-after-end: true` return to the pre-practice location; with `false` they keep the lobby/back flow.
+	- `/boatracing race forfeit` with `return-after-end: true` returns the forfeiter home and does not stop the race for the others.
+
 ## What to verify for 26.2.1
 - Versioning and docs:
 	- Project version is 26.2.1 in `pom.xml`.

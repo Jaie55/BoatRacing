@@ -50,7 +50,7 @@ Thanks to all the server owners for using this plugin, I hope it gave you guys a
 An F1‒style ice boat racing plugin for Bukkit/Spigot (compatible with Paper/Purpur) with a clean, vanilla‒like GUI. Manage teams, build tracks in minutes with AutoTrace and oriented checkpoints, run timed races with pit stops, spectate live, collect and buy cosmetic trails, titles, effects and sounds (optional Vault economy), and report issues easily with the built-in diagnostics command.
 
 > Status: Public release (26.3)
-> Author: [Jaie55](https://github.com/Jaie55)
+> Authors: [Jaie55](https://github.com/Jaie55) & [MC-MrBirdy](https://github.com/MC-MrBirdy)
 > Contributors: see the [GitHub contributors](https://github.com/Jaie55/BoatRacing/graphs/contributors) list
 
 <a id="snapshot-261-warning"></a>
@@ -163,6 +163,18 @@ Compatibility:
 
 Docs:
 - README, CHANGELOG and CHECKLIST updated with every new command, permission, config key, placeholder and a full 26.3 QA pass.
+
+</details>
+
+<details>
+<summary><strong>What's New (26.2.2)</strong></summary>
+
+Configurable return after races:
+
+- **Added**: `racing.lobby.return-after-end` (default `false`, overridable per track). When enabled, players return to their saved pre-race location after finishing, forfeiting, or when the race ends or is cancelled, instead of being sent to the lobby. Those returns need no `/boatracing race back` window.
+- **Fixed**: the automatic return now works even when the registration lobby is disabled or its world is unavailable (the check runs before the lobby guard).
+- **Docs**: README config reference and CHECKLIST include validation steps for the new setting.
+- **Credits**: contributed by [@Renaud11232](https://github.com/Renaud11232) in [#9](https://github.com/Jaie55/BoatRacing/pull/9).
 
 </details>
 
@@ -880,6 +892,7 @@ Race behavior:
 - If registration lobby is enabled, joining registration teleports players there.
 - Leaving registration or registration cancellation can return players to their previous location (`racing.lobby.return-on-leave`).
 - After a race finish, race cancel, or solo practice finish, participants are returned to the lobby and receive a clickable `/boatracing race back` hint in chat.
+- With `racing.lobby.return-after-end: true`, those returns go straight to the saved pre-race location instead, with no lobby teleport and no back window; this also works when the lobby is disabled.
 - The saved pre-lobby return location is kept in memory for 3 minutes; after that, `/boatracing race back` expires for that race cycle.
 - Results are sorted by elapsed time plus penalties and broadcast to online players.
 - The winner updates persistent player/team stats used by placeholders.
@@ -1447,6 +1460,7 @@ Diagnostics:
 Registration lobby:
 - `racing.lobby.enabled`
 - `racing.lobby.return-on-leave`
+- `racing.lobby.return-after-end`
 - `racing.lobby.back-window-seconds`
 - `racing.lobby.world`
 - `racing.lobby.x`

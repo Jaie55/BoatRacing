@@ -103,6 +103,7 @@ public class RaceManager {
     // Optional registration lobby
     private boolean lobbyEnabled;
     private boolean lobbyReturnOnLeave;
+    private boolean lobbyReturnAfterEnd;
     private long backWindowMillis;
     private String lobbyWorld;
     private double lobbyX;
@@ -225,6 +226,7 @@ public class RaceManager {
         if (trackLobby == null) trackLobby = new org.bukkit.configuration.MemoryConfiguration();
         this.lobbyEnabled = trackLobby.getBoolean("enabled", false);
         this.lobbyReturnOnLeave = trackLobby.getBoolean("return-on-leave", true);
+        this.lobbyReturnAfterEnd = trackLobby.getBoolean("return-after-end", false);
         long configuredBackWindowSeconds = Math.max(1L, trackLobby.getLong("back-window-seconds", 180L));
         this.backWindowMillis = configuredBackWindowSeconds * 1000L;
         this.lobbyWorld = trackLobby.getString("world", "world");
@@ -425,7 +427,7 @@ public class RaceManager {
         stopRaceReplayCapture(true);
         cleanupRaceVehicles();
         clearSpectators(true);
-        sendParticipantsToLobbyAfterRace();
+        sendParticipantsBackAfterRace();
         stopScoreboard();
         clearPracticeSessionState();
     }
@@ -629,7 +631,7 @@ public class RaceManager {
                     if (!practiceMode && shouldSpectateOnFinish()) {
                         startSpectatingAfterFinish(p);
                     } else {
-                        sendParticipantToLobbyAfterRace(p.getUniqueId(), p);
+                        sendParticipantBackAfterRace(p.getUniqueId(), p);
                     }
 
                     checkAllFinished();
@@ -1844,7 +1846,7 @@ public class RaceManager {
         }
 
         cleanupRaceVehicleForPlayer(id);
-        sendParticipantToLobbyAfterRace(id, p);
+        sendParticipantBackAfterRace(id, p);
         if (practiceMode) {
             stopRace(false);
         } else {
@@ -1868,7 +1870,7 @@ public class RaceManager {
         states.remove(playerId);
 
         if (returnToLobby && player.isOnline()) {
-            sendParticipantToLobbyAfterRace(playerId, player);
+            sendParticipantBackAfterRace(playerId, player);
         }
 
         stopScoreboard();
@@ -1977,7 +1979,7 @@ public class RaceManager {
         closeRegistrationWindow();
         clearCountdownLock();
         cleanupRaceVehicles();
-        sendParticipantsToLobbyAfterRace();
+        sendParticipantsBackAfterRace();
         states.clear();
         for (Player p : recips) {
             p.sendMessage(color(plugin.msg().get("race.cancelled-general")));
@@ -2066,16 +2068,23 @@ public class RaceManager {
         p.sendMessage(color(plugin.pref() + plugin.msg().get("race.registration.lobby-teleported")));
     }
 
-    private void sendParticipantsToLobbyAfterRace() {
+    private void sendParticipantsBackAfterRace() {
         for (UUID id : new ArrayList<>(states.keySet())) {
             Player p = Bukkit.getPlayer(id);
             if (p == null || !p.isOnline()) continue;
-            sendParticipantToLobbyAfterRace(id, p);
+            sendParticipantBackAfterRace(id, p);
         }
     }
 
-    private void sendParticipantToLobbyAfterRace(UUID playerId, Player p) {
+    private void sendParticipantBackAfterRace(UUID playerId, Player p) {
         if (playerId == null || p == null || !p.isOnline()) return;
+
+        // Automatic return to the saved pre-race location: works even when no lobby is configured.
+        if (this.lobbyReturnAfterEnd) {
+            cleanupRaceVehicleForPlayer(playerId);
+            returnToSavedLocation(p);
+            return;
+        }
 
         Location lobby = getLobbyLocation();
         if (lobby == null) return;
