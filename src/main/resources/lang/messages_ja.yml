@@ -56,6 +56,14 @@ stats:
   sectors-none: "なし"
 
 race:
+  dnf: "&c{player} が切断しました (DNF)。"
+  recovery:
+    returned: "&7中断されたレースを検出しました。以前の場所に戻されました。"
+  economy:
+    entry-charged: "&7参加費: &e{fee}"
+    entry-denied: "&cこのレースに参加するには &e{fee} &cが必要です。"
+    prize: "&a+{amount} &7フィニッシュ &e#{pos}&7 で獲得!"
+    refund: "&7レース中止: 参加費 &e{amount} &7を返金しました。"
   usage:
     main: "&c使用法: /{label} teams|setup|reload|version"
     open: "&c使用法: /{label} race open <track> [party|normal]"
@@ -266,6 +274,10 @@ setup:
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(選択デバッグ: 現在の BoatRacing 選択範囲)"
     cmd-wand: "&7 - &f/{label} setup wand &7(BoatRacing 選択ツールを付与します)"
     cmd-gates: "&7 - &f/{label} setup gates [off] &7(青い染料でチェックポイントを設置し、黄色い染料でフィニッシュを設定します。スニーク+右クリックで元に戻します)"
+    cmd-undo: "&7 - &f/{label} setup undo &7(最後のチェックポイント/フィニッシュ変更を元に戻します)"
+    cmd-redo: "&7 - &f/{label} setup redo &7(元に戻した変更をやり直します)"
+    cmd-copy: "&7 - &f/{label} setup copy &7(現在のチェックポイントをコピーします)"
+    cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(コピーしたチェックポイントを任意のオフセットで貼り付けます)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(1周走ってチェックポイントを自動生成します)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(ガイド付きセットアップアシスタントを起動します)"
     wand-name: "&6BoatRacing 選択ツール"
@@ -284,9 +296,17 @@ setup:
     addalt: "&c使用法: /{label} setup addalt <checkpoint #>"
     clearalt: "&c使用法: /{label} setup clearalt <checkpoint #>"
     select: "&cトラックが見つかりません: &f{track}&c。/{label} admin tracks または /{label} setup select <track> を使用してください。"
+    paste: "&c使用法: /{label} setup paste [dx dy dz]"
     unknown-subcommand: "&c不明な setup サブコマンドです。/{label} setup help を使用してください。"
   wand-ready: "&aセレクター準備完了。&7左クリックで &fコーナーA&7、右クリックで &fコーナーB&7 を設定します。"
   track-selected: "&aアクティブトラック: &f{track}&a。"
+  undo-done: "&a最後のセットアップ変更を元に戻しました。"
+  redo-done: "&aセットアップ変更を再適用しました。"
+  nothing-undo: "&7元に戻す変更はありません。"
+  nothing-redo: "&7やり直す変更はありません。"
+  copied: "&a&f{count} &a個のチェックポイントをセットアップクリップボードにコピーしました。"
+  nothing-copied: "&7セットアップクリップボードは空です。先に &f/boatracing setup copy&7 を使用してください。"
+  pasted: "&a&f{count} &a個のチェックポイントを貼り付けました。"
   gates:
     given: "&aゲートツールを準備しました: &f青い染料 &7= チェックポイント、&e黄色い染料 &7= フィニッシュ。右クリックで設置、スニーク+右クリックで元に戻します。"
     tools-removed: "&7ゲートツールを削除しました。"
@@ -379,6 +399,26 @@ setup:
     info-configured: "{count} 件設定済み"
     info-players: "{count} 人"
     selection-entry: "&7 - &f{line}"
+    btn-undo: "&b[元に戻す]"
+    btn-redo: "&b[やり直す]"
+    btn-copy: "&b[コピー]"
+    btn-paste: "&b[貼り付け]"
+    btn-gates: "&b[ゲートツール]"
+    btn-validate: "&b[検証]"
+
+  validate:
+    header: "&eトラック検証:"
+    ok: "&a問題は見つかりませんでした。"
+    line: "&7 - &e{problem}"
+    no-starts: "スタート枠が設定されていません (少なくとも2つ追加してください)。"
+    one-start: "スタート枠が1つしかありません。マルチプレイ用に追加してください。"
+    no-finish: "フィニッシュ領域が設定されていません。"
+    finish-world: "フィニッシュ領域のワールド '{world}' が読み込まれていません。"
+    lights: "設定済みスタートライト: {count} (5個が想定)。"
+    no-checkpoints: "チェックポイントが設定されていません。レーサーがショートカットできます。"
+    cp-world: "{count} 個のチェックポイントが読み込まれていないワールドを参照しています。"
+    small-gates: "{count} 個のチェックポイントゲートが 1 ブロックの半分より小さいです。"
+    duplicate-starts: "{count} 個のスタート枠が同じブロックで重複しています。"
 
   wizard:
     header: "&6セットアップウィザード &8\u2022 &fトラック: &e{track}"

@@ -56,6 +56,14 @@ stats:
   sectors-none: "không có"
 
 race:
+  dnf: "&c{player} đã ngắt kết nối (DNF)."
+  recovery:
+    returned: "&7Phát hiện cuộc đua bị gián đoạn: bạn đã được đưa về vị trí trước đó."
+  economy:
+    entry-charged: "&7Phí tham gia: &e{fee}"
+    entry-denied: "&cBạn cần &e{fee} &cđể tham gia cuộc đua này."
+    prize: "&a+{amount} &7vì về đích ở vị trí &e#{pos}&7!"
+    refund: "&7Cuộc đua đã bị hủy: đã hoàn lại phí tham gia &e{amount} &7."
   usage:
     main: "&cCách dùng: /{label} teams|race|stats|setup|admin|reload|version"
     open: "&cCách dùng: /{label} race open <track> [party|normal]"
@@ -266,6 +274,10 @@ setup:
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(Gỡ lỗi vùng chọn: vùng chọn BoatRacing hiện tại)"
     cmd-wand: "&7 - &f/{label} setup wand &7(Đưa công cụ chọn BoatRacing)"
     cmd-gates: "&7 - &f/{label} setup gates [off] &7(Thuốc nhuộm xanh dương đặt trạm kiểm soát, thuốc nhuộm vàng đặt đích; ngồi + nhấp chuột phải để hoàn tác)"
+    cmd-undo: "&7 - &f/{label} setup undo &7(Hoàn tác thay đổi trạm kiểm soát/đích gần nhất)"
+    cmd-redo: "&7 - &f/{label} setup redo &7(Làm lại thay đổi vừa hoàn tác)"
+    cmd-copy: "&7 - &f/{label} setup copy &7(Sao chép các trạm kiểm soát hiện tại)"
+    cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Dán các trạm kiểm soát đã sao chép với độ lệch tùy chọn)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Chạy một vòng để tự động tạo trạm kiểm soát)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Khởi chạy trợ lý thiết lập có hướng dẫn)"
     wand-name: "&6Công cụ chọn BoatRacing"
@@ -284,9 +296,17 @@ setup:
     addalt: "&cCách dùng: /{label} setup addalt <checkpoint #>"
     clearalt: "&cCách dùng: /{label} setup clearalt <checkpoint #>"
     select: "&cKhông tìm thấy đường đua: &f{track}&c. Dùng /{label} admin tracks hoặc /{label} setup select <track>."
+    paste: "&cCách dùng: /{label} setup paste [dx dy dz]"
     unknown-subcommand: "&cLệnh con setup không xác định. Dùng /{label} setup help"
   wand-ready: "&aCông cụ chọn đã sẵn sàng. &7Nhấp chuột trái để đánh dấu &fGóc A&7; nhấp chuột phải để đánh dấu &fGóc B&7."
   track-selected: "&aĐường đua đang hoạt động: &f{track}&a."
+  undo-done: "&aĐã hoàn tác thay đổi thiết lập gần nhất."
+  redo-done: "&aĐã áp dụng lại thay đổi thiết lập."
+  nothing-undo: "&7Không có gì để hoàn tác."
+  nothing-redo: "&7Không có gì để làm lại."
+  copied: "&aĐã sao chép &f{count} &atrạm kiểm soát vào clipboard thiết lập."
+  nothing-copied: "&7Clipboard thiết lập trống. Hãy dùng &f/boatracing setup copy&7 trước."
+  pasted: "&aĐã dán &f{count} &atrạm kiểm soát."
   gates:
     given: "&aBộ công cụ cổng sẵn sàng: &fthuốc nhuộm xanh dương &7= trạm kiểm soát, &ethuốc nhuộm vàng &7= đích. Nhấp chuột phải để đặt; ngồi + nhấp chuột phải để hoàn tác."
     tools-removed: "&7Đã xóa bộ công cụ cổng."
@@ -379,6 +399,26 @@ setup:
     info-configured: "{count} đã cấu hình"
     info-players: "{count} người chơi"
     selection-entry: "&7 - &f{line}"
+    btn-undo: "&b[Hoàn tác]"
+    btn-redo: "&b[Làm lại]"
+    btn-copy: "&b[Sao chép]"
+    btn-paste: "&b[Dán]"
+    btn-gates: "&b[Công cụ cổng]"
+    btn-validate: "&b[Xác thực]"
+
+  validate:
+    header: "&eKiểm tra đường đua:"
+    ok: "&aKhông tìm thấy vấn đề nào."
+    line: "&7 - &e{problem}"
+    no-starts: "Chưa cấu hình vị trí xuất phát (thêm ít nhất hai)."
+    one-start: "Chỉ cấu hình một vị trí xuất phát; thêm nữa cho lưới nhiều người."
+    no-finish: "Chưa cấu hình vùng đích."
+    finish-world: "Thế giới '{world}' của vùng đích chưa được tải."
+    lights: "Đèn xuất phát đã cấu hình: {count} (mong đợi 5)."
+    no-checkpoints: "Chưa cấu hình trạm kiểm soát; người đua có thể đi thẳng đến đích."
+    cp-world: "{count} trạm kiểm soát tham chiếu đến thế giới chưa được tải."
+    small-gates: "{count} cổng trạm kiểm soát nhỏ hơn nửa khối."
+    duplicate-starts: "{count} vị trí xuất phát bị trùng trên cùng một khối."
 
   wizard:
     header: "&6Trợ lý thiết lập &8\u2022 &fĐường đua: &e{track}"

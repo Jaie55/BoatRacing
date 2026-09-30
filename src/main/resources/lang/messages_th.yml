@@ -56,6 +56,14 @@ stats:
   sectors-none: "ไม่มี"
 
 race:
+  dnf: "&c{player} ตัดการเชื่อมต่อ (DNF)"
+  recovery:
+    returned: "&7ตรวจพบการแข่งขันที่ถูกขัดจังหวะ: คุณถูกส่งกลับไปยังตำแหน่งก่อนหน้าแล้ว"
+  economy:
+    entry-charged: "&7ค่าสมัคร: &e{fee}"
+    entry-denied: "&cคุณต้องมี &e{fee} &cเพื่อเข้าร่วมการแข่งขันนี้"
+    prize: "&a+{amount} &7สำหรับการเข้าเส้นชัยอันดับ &e#{pos}&7!"
+    refund: "&7การแข่งขันถูกยกเลิก: คืนค่าสมัคร &e{amount} &7แล้ว"
   usage:
     main: "&cวิธีใช้: /{label} teams|race|stats|setup|admin|reload|version"
     open: "&cวิธีใช้: /{label} race open <track> [party|normal]"
@@ -266,6 +274,10 @@ setup:
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(ดีบักการเลือก: พื้นที่เลือกของ BoatRacing ปัจจุบัน)"
     cmd-wand: "&7 - &f/{label} setup wand &7(มอบเครื่องมือเลือกของ BoatRacing)"
     cmd-gates: "&7 - &f/{label} setup gates [off] &7(สีย้อมสีน้ำเงินวางจุดตรวจ สีย้อมสีเหลืองกำหนดเส้นชัย; ย่อตัว + คลิกขวาเพื่อเลิกทำ)"
+    cmd-undo: "&7 - &f/{label} setup undo &7(เลิกทำการเปลี่ยนแปลงจุดตรวจ/เส้นชัยล่าสุด)"
+    cmd-redo: "&7 - &f/{label} setup redo &7(ทำซ้ำการเปลี่ยนแปลงที่เพิ่งเลิกทำ)"
+    cmd-copy: "&7 - &f/{label} setup copy &7(คัดลอกจุดตรวจปัจจุบัน)"
+    cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(วางจุดตรวจที่คัดลอกไว้พร้อมออฟเซ็ตเสริม)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(ขับหนึ่งรอบเพื่อสร้างจุดตรวจอัตโนมัติ)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(เปิดผู้ช่วยตั้งค่าแบบแนะนำทีละขั้น)"
     wand-name: "&6เครื่องมือเลือกของ BoatRacing"
@@ -284,9 +296,17 @@ setup:
     addalt: "&cวิธีใช้: /{label} setup addalt <checkpoint #>"
     clearalt: "&cวิธีใช้: /{label} setup clearalt <checkpoint #>"
     select: "&cไม่พบสนาม: &f{track}&c ใช้ /{label} admin tracks หรือ /{label} setup select <track>"
+    paste: "&cวิธีใช้: /{label} setup paste [dx dy dz]"
     unknown-subcommand: "&cคำสั่งย่อย setup ไม่รู้จัก ใช้ /{label} setup help"
   wand-ready: "&aเครื่องมือพร้อมแล้ว &7คลิกซ้ายกำหนด &fมุม A&7; คลิกขวากำหนด &fมุม B&7"
   track-selected: "&aสนามที่ใช้งานอยู่: &f{track}&a"
+  undo-done: "&aเลิกทำการเปลี่ยนแปลงการตั้งค่าล่าสุดแล้ว"
+  redo-done: "&aนำการเปลี่ยนแปลงการตั้งค่ากลับมาใช้ใหม่แล้ว"
+  nothing-undo: "&7ไม่มีอะไรให้เลิกทำ"
+  nothing-redo: "&7ไม่มีอะไรให้ทำซ้ำ"
+  copied: "&aคัดลอกจุดตรวจ &f{count} &aจุดไปยังคลิปบอร์ดการตั้งค่าแล้ว"
+  nothing-copied: "&7คลิปบอร์ดการตั้งค่าว่างเปล่า ใช้ &f/boatracing setup copy&7 ก่อน"
+  pasted: "&aวางจุดตรวจ &f{count} &aจุดแล้ว"
   gates:
     given: "&aเครื่องมือประตูพร้อมแล้ว: &fสีย้อมสีน้ำเงิน &7= จุดตรวจ, &eสีย้อมสีเหลือง &7= เส้นชัย คลิกขวาเพื่อวาง; ย่อตัว + คลิกขวาเพื่อเลิกทำ"
     tools-removed: "&7นำเครื่องมือประตูออกแล้ว"
@@ -379,6 +399,26 @@ setup:
     info-configured: "{count} ตั้งค่าแล้ว"
     info-players: "{count} ผู้เล่น"
     selection-entry: "&7 - &f{line}"
+    btn-undo: "&b[เลิกทำ]"
+    btn-redo: "&b[ทำซ้ำ]"
+    btn-copy: "&b[คัดลอก]"
+    btn-paste: "&b[วาง]"
+    btn-gates: "&b[เครื่องมือประตู]"
+    btn-validate: "&b[ตรวจสอบ]"
+
+  validate:
+    header: "&eการตรวจสอบสนาม:"
+    ok: "&aไม่พบปัญหา"
+    line: "&7 - &e{problem}"
+    no-starts: "ยังไม่ได้ตั้งค่าช่องสตาร์ท (เพิ่มอย่างน้อยสองช่อง)"
+    one-start: "ตั้งค่าช่องสตาร์ทเพียงช่องเดียว เพิ่มอีกสำหรับการออกตัวหลายคน"
+    no-finish: "ยังไม่ได้ตั้งค่าโซนเส้นชัย"
+    finish-world: "โลก '{world}' ของโซนเส้นชัยยังไม่ถูกโหลด"
+    lights: "ไฟสตาร์ทที่ตั้งค่าไว้: {count} (คาดหวัง 5)"
+    no-checkpoints: "ยังไม่ได้ตั้งค่าจุดตรวจ ผู้แข่งสามารถตัดตรงไปยังเส้นชัยได้"
+    cp-world: "จุดตรวจ {count} จุดอ้างอิงถึงโลกที่ยังไม่ถูกโหลด"
+    small-gates: "ประตูจุดตรวจ {count} บานเล็กกว่าครึ่งบล็อก"
+    duplicate-starts: "ช่องสตาร์ท {count} ช่องซ้ำกันบนบล็อกเดียวกัน"
 
   wizard:
     header: "&6ตัวช่วยตั้งค่า &8\u2022 &fสนาม: &e{track}"

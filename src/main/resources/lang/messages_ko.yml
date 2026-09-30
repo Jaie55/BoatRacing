@@ -56,6 +56,14 @@ stats:
   sectors-none: "없음"
 
 race:
+  dnf: "&c{player} 님이 접속을 끊었습니다 (DNF)."
+  recovery:
+    returned: "&7중단된 레이스가 감지되었습니다. 이전 위치로 돌아왔습니다."
+  economy:
+    entry-charged: "&7참가비: &e{fee}"
+    entry-denied: "&c이 레이스에 참가하려면 &e{fee} &c가 필요합니다."
+    prize: "&a+{amount} &7&e#{pos}&7위 완주 보상!"
+    refund: "&7레이스가 취소되었습니다: 참가비 &e{amount} &7를 환불했습니다."
   usage:
     main: "&c사용법: /{label} teams|setup|reload|version"
     open: "&c사용법: /{label} race open <track> [party|normal]"
@@ -266,6 +274,10 @@ setup:
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7(선택 디버그: 현재 BoatRacing 선택)"
     cmd-wand: "&7 - &f/{label} setup wand &7(BoatRacing 선택 도구 제공)"
     cmd-gates: "&7 - &f/{label} setup gates [off] &7(파란 염료는 체크포인트를 설치하고 노란 염료는 피니시를 설정합니다; 웅크리기 + 오른쪽 클릭으로 되돌립니다)"
+    cmd-undo: "&7 - &f/{label} setup undo &7(마지막 체크포인트/피니시 변경 취소)"
+    cmd-redo: "&7 - &f/{label} setup redo &7(취소한 변경 다시 적용)"
+    cmd-copy: "&7 - &f/{label} setup copy &7(현재 체크포인트 복사)"
+    cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(복사한 체크포인트를 선택적 오프셋으로 붙여넣기)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(한 바퀴 주행하여 체크포인트 자동 생성)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(안내된 설정 마법사 실행)"
     wand-name: "&6BoatRacing 선택 도구"
@@ -284,9 +296,17 @@ setup:
     addalt: "&c사용법: /{label} setup addalt <checkpoint #>"
     clearalt: "&c사용법: /{label} setup clearalt <checkpoint #>"
     select: "&c트랙을 찾을 수 없습니다: &f{track}&c. /{label} admin tracks 또는 /{label} setup select <track>을 사용하세요."
+    paste: "&c사용법: /{label} setup paste [dx dy dz]"
     unknown-subcommand: "&c알 수 없는 설정 부명령. /{label} setup help를 사용하세요."
   wand-ready: "&a선택기 준비 완료. &7왼쪽 클릭은 &f모서리 A&7를, 오른쪽 클릭은 &f모서리 B&7를 표시합니다."
   track-selected: "&a활성 트랙: &f{track}&a."
+  undo-done: "&a마지막 설정 변경을 취소했습니다."
+  redo-done: "&a설정 변경을 다시 적용했습니다."
+  nothing-undo: "&7취소할 변경이 없습니다."
+  nothing-redo: "&7다시 적용할 변경이 없습니다."
+  copied: "&a체크포인트 &f{count} &a개를 설정 클립보드에 복사했습니다."
+  nothing-copied: "&7설정 클립보드가 비어 있습니다. 먼저 &f/boatracing setup copy&7를 사용하세요."
+  pasted: "&a체크포인트 &f{count} &a개를 붙여넣었습니다."
   gates:
     given: "&a게이트 도구 준비 완료: &f파란 염료 &7= 체크포인트, &e노란 염료 &7= 피니시. 오른쪽 클릭으로 설치; 웅크리기 + 오른쪽 클릭으로 되돌립니다."
     tools-removed: "&7게이트 도구가 제거되었습니다."
@@ -379,6 +399,26 @@ setup:
     info-configured: "{count}개 설정됨"
     info-players: "{count}명"
     selection-entry: "&7 - &f{line}"
+    btn-undo: "&b[취소]"
+    btn-redo: "&b[다시 실행]"
+    btn-copy: "&b[복사]"
+    btn-paste: "&b[붙여넣기]"
+    btn-gates: "&b[게이트 도구]"
+    btn-validate: "&b[검증]"
+
+  validate:
+    header: "&e트랙 검증:"
+    ok: "&a문제가 발견되지 않았습니다."
+    line: "&7 - &e{problem}"
+    no-starts: "스타트 슬롯이 설정되지 않았습니다 (최소 2개 추가)."
+    one-start: "스타트 슬롯이 하나뿐입니다. 멀티플레이 그리드를 위해 더 추가하세요."
+    no-finish: "피니시 영역이 설정되지 않았습니다."
+    finish-world: "피니시 영역의 월드 '{world}'가 로드되지 않았습니다."
+    lights: "설정된 스타트 조명: {count} (5개 예상)."
+    no-checkpoints: "체크포인트가 설정되지 않았습니다. 레이서가 피니시까지 지름길로 갈 수 있습니다."
+    cp-world: "{count}개의 체크포인트가 로드되지 않은 월드를 참조합니다."
+    small-gates: "{count}개의 체크포인트 게이트가 1블록 절반보다 작습니다."
+    duplicate-starts: "{count}개의 스타트 슬롯이 같은 블록에 중복되어 있습니다."
 
   wizard:
     header: "&6설정 마법사 &8\u2022 &f트랙: &e{track}"

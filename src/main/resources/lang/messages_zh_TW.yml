@@ -56,6 +56,14 @@ stats:
   sectors-none: "無"
 
 race:
+  dnf: "&c{player} 已中斷連線 (DNF)。"
+  recovery:
+    returned: "&7偵測到中斷的比賽：你已被送回先前的位置。"
+  economy:
+    entry-charged: "&7報名費：&e{fee}"
+    entry-denied: "&c你需要 &e{fee} &c才能參加此比賽。"
+    prize: "&a+{amount} &7以第 &e#{pos}&7 名完賽！"
+    refund: "&7比賽已取消：報名費 &e{amount} &7已退還。"
   usage:
     main: "&c用法：/{label} teams|race|stats|setup|admin|reload|version"
     open: "&c用法：/{label} race open <賽道> [party|normal]"
@@ -266,6 +274,10 @@ setup:
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7（偵錯選區：目前選區資訊）"
     cmd-wand: "&7 - &f/{label} setup wand &7（取得選區工具）"
     cmd-gates: "&7 - &f/{label} setup gates [off] &7（藍色染料放置檢查點，黃色染料設定終點；潛行+右鍵點擊可復原）"
+    cmd-undo: "&7 - &f/{label} setup undo &7（復原上一次檢查點/終點變更）"
+    cmd-redo: "&7 - &f/{label} setup redo &7（重做上一次復原的變更）"
+    cmd-copy: "&7 - &f/{label} setup copy &7（複製目前的檢查點）"
+    cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7（以可選位移貼上已複製的檢查點）"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7（駕駛一圈以自動生成檢查點）"
     cmd-wizard: "&7 - &f/{label} setup wizard &7（啟動引導式設定精靈）"
     wand-name: "&6BoatRacing 選區工具"
@@ -284,9 +296,17 @@ setup:
     addalt: "&c用法：/{label} setup addalt <檢查點編號>"
     clearalt: "&c用法：/{label} setup clearalt <檢查點編號>"
     select: "&c找不到賽道：&f{track}&c。請使用 /{label} admin tracks 或 /{label} setup select <賽道>。"
+    paste: "&c用法：/{label} setup paste [dx dy dz]"
     unknown-subcommand: "&c未知的設置子指令。使用 /{label} setup help"
   wand-ready: "&a選區工具就緒。&7左鍵點擊標記 &f角落 A&7；右鍵點擊標記 &f角落 B&7。"
   track-selected: "&a目前賽道：&f{track}&a。"
+  undo-done: "&a已復原上一次設定變更。"
+  redo-done: "&a已重新套用設定變更。"
+  nothing-undo: "&7沒有可復原的內容。"
+  nothing-redo: "&7沒有可重做的內容。"
+  copied: "&a已將 &f{count} &a個檢查點複製到設定剪貼簿。"
+  nothing-copied: "&7設定剪貼簿為空。請先使用 &f/boatracing setup copy&7。"
+  pasted: "&a已貼上 &f{count} &a個檢查點。"
   gates:
     given: "&a閘門工具已就緒：&f藍色染料 &7= 檢查點，&e黃色染料 &7= 終點。右鍵點擊放置；潛行+右鍵點擊復原。"
     tools-removed: "&7閘門工具已移除。"
@@ -379,6 +399,26 @@ setup:
     info-configured: "{count} 已設定"
     info-players: "{count} 名玩家"
     selection-entry: "&7 - &f{line}"
+    btn-undo: "&b[復原]"
+    btn-redo: "&b[重做]"
+    btn-copy: "&b[複製]"
+    btn-paste: "&b[貼上]"
+    btn-gates: "&b[閘門工具]"
+    btn-validate: "&b[驗證]"
+
+  validate:
+    header: "&e賽道驗證："
+    ok: "&a未發現問題。"
+    line: "&7 - &e{problem}"
+    no-starts: "未設定出發格位（至少新增兩個）。"
+    one-start: "僅設定了一個出發格位；多人起跑請新增更多。"
+    no-finish: "未設定終點區域。"
+    finish-world: "終點區域所在世界 '{world}' 未載入。"
+    lights: "已設定起跑燈：{count}（應為 5）。"
+    no-checkpoints: "未設定檢查點；車手可直接衝向終點。"
+    cp-world: "有 {count} 個檢查點引用了未載入的世界。"
+    small-gates: "有 {count} 個檢查點閘門小於 1 方塊半尺寸。"
+    duplicate-starts: "有 {count} 個出發格位重複在同一方塊上。"
 
   wizard:
     header: "&6設定精靈 &8\u2022 &f賽道：&e{track}"

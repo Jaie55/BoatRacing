@@ -56,6 +56,14 @@ stats:
   sectors-none: "无"
 
 race:
+  dnf: "&c{player} 已断开连接 (DNF)。"
+  recovery:
+    returned: "&7检测到中断的比赛：你已被送回之前的位置。"
+  economy:
+    entry-charged: "&7报名费：&e{fee}"
+    entry-denied: "&c你需要 &e{fee} &c才能参加此比赛。"
+    prize: "&a+{amount} &7以第 &e#{pos}&7 名完赛！"
+    refund: "&7比赛已取消：报名费 &e{amount} &7已退还。"
   usage:
     main: "&c用法：/{label} teams|setup|reload|version"
     open: "&c用法：/{label} race open <赛道> [party|normal]"
@@ -266,6 +274,10 @@ setup:
     cmd-selinfo: "&7 - &f/{label} setup selinfo &7（侦错选区：目前选区资讯）"
     cmd-wand: "&7 - &f/{label} setup wand &7（取得选区工具）"
     cmd-gates: "&7 - &f/{label} setup gates [off] &7（蓝色染料放置检查点，黄色染料设置终点；潜行+右键点击可撤销）"
+    cmd-undo: "&7 - &f/{label} setup undo &7（撤销上一次检查点/终点更改）"
+    cmd-redo: "&7 - &f/{label} setup redo &7（重做上一次撤销的更改）"
+    cmd-copy: "&7 - &f/{label} setup copy &7（复制当前检查点）"
+    cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7（以可选偏移粘贴已复制的检查点）"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7（驾驶一圈以自动生成检查点）"
     cmd-wizard: "&7 - &f/{label} setup wizard &7（启动引导式设定精灵）"
     wand-name: "&6BoatRacing 选区工具"
@@ -284,9 +296,17 @@ setup:
     addalt: "&c用法：/{label} setup addalt <检查点编号>"
     clearalt: "&c用法：/{label} setup clearalt <检查点编号>"
     select: "&c找不到赛道：&f{track}&c。请使用 /{label} admin tracks 或 /{label} setup select <赛道>。"
+    paste: "&c用法：/{label} setup paste [dx dy dz]"
     unknown-subcommand: "&c未知的设置子指令。使用 /{label} setup help"
   wand-ready: "&a选区工具就绪。&7左键点击标记 &f角落 A&7；右键点击标记 &f角落 B&7。"
   track-selected: "&a当前赛道：&f{track}&a。"
+  undo-done: "&a已撤销上一次设置更改。"
+  redo-done: "&a已重新应用设置更改。"
+  nothing-undo: "&7没有可撤销的内容。"
+  nothing-redo: "&7没有可重做的内容。"
+  copied: "&a已将 &f{count} &a个检查点复制到设置剪贴板。"
+  nothing-copied: "&7设置剪贴板为空。请先使用 &f/boatracing setup copy&7。"
+  pasted: "&a已粘贴 &f{count} &a个检查点。"
   gates:
     given: "&a闸门工具已就绪：&f蓝色染料 &7= 检查点，&e黄色染料 &7= 终点。右键点击放置；潜行+右键点击撤销。"
     tools-removed: "&7闸门工具已移除。"
@@ -379,6 +399,26 @@ setup:
     info-configured: "{count} 已设定"
     info-players: "{count} 名玩家"
     selection-entry: "&7 - &f{line}"
+    btn-undo: "&b[撤销]"
+    btn-redo: "&b[重做]"
+    btn-copy: "&b[复制]"
+    btn-paste: "&b[粘贴]"
+    btn-gates: "&b[闸门工具]"
+    btn-validate: "&b[验证]"
+
+  validate:
+    header: "&e赛道验证："
+    ok: "&a未发现问题。"
+    line: "&7 - &e{problem}"
+    no-starts: "未配置出发格位（至少添加两个）。"
+    one-start: "仅配置了一个出发格位；多人起跑请添加更多。"
+    no-finish: "未配置终点区域。"
+    finish-world: "终点区域所在世界 '{world}' 未加载。"
+    lights: "已配置起跑灯：{count}（应为 5）。"
+    no-checkpoints: "未配置检查点；车手可直接冲向终点。"
+    cp-world: "有 {count} 个检查点引用了未加载的世界。"
+    small-gates: "有 {count} 个检查点闸门小于 1 方块半尺寸。"
+    duplicate-starts: "有 {count} 个出发格位重复在同一方块上。"
 
   wizard:
     header: "&6设定精灵 &8\u2022 &f赛道：&e{track}"
