@@ -124,7 +124,7 @@ public final class PartyExtension implements BoatRacingExtension {
 | `config()`, `reloadConfig()` | `config.yml` from the extension folder, bundled defaults merged. |
 | `language()`, `message(key, ...)`, `messageList(key)`, `reloadMessages()` | `lang/messages_<language>.yml` with English fallback. |
 | `storage()`, `read/write(document)` | BoatRacing-managed persistence (respects `database.mode`). |
-| `scheduler()` | Folia-aware `runNow/runLater/runTimer/runAsync/runAsyncTimer`. |
+| `scheduler()` | Folia-aware `runNow/runLater/runTimer/runAsync/runAsyncTimer/runAtLocation`. |
 | `registerCommand(ExtensionCommand)` | Subcommand under `/boatracing <name> ...` with permissions and tab completion. |
 | `registerSetupCommand(ExtensionCommand)` | Subcommand under `/boatracing setup <name> ...` (listed in `setup help`, tab-completed, requires `boatracing.setup`). |
 | `selectedTrackName()` | Name of the track currently selected in setup, or null. |

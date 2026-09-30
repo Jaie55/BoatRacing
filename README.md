@@ -578,9 +578,9 @@ Available codes and names:
 - Team GUI for players: browse teams, open team view, join/leave, manage your racer number and boat type, and optionally rename/change color/disband from the GUI when enabled in config.
 - Admin tooling: dedicated GUIs for teams, players, race control, and named tracks, plus command equivalents for scripting or console-style workflows.
 - Named tracks: each track lives in its own YAML file and can override core race settings such as laps, mandatory pit stops, registration time, penalties, and player race-start permissions.
-- Built-in setup flow: Blaze Rod selection wand, cuboid region tools, AutoTrace (drive a lap to auto-generate oriented checkpoint gates), clickable setup tips, and a compact guided wizard with auto-advance where possible.
+- Built-in setup flow: Blaze Rod selection wand, cuboid region tools, AutoTrace (drive a lap to auto-generate oriented checkpoint gates), clickable setup tips, and a compact guided wizard with auto-advance where possible. Setup edits support undo/redo, copy/paste and a `validate` report.
 - Grid control: custom per-player start slots, auto placement for the rest, and fallback ordering by best recorded track time.
-- Race systems: ordered checkpoints (axis-aligned or oriented, with optional alternate gates), optional pit area, optional mandatory pit stops, false-start penalties, registration lobby teleport/return, 5-light countdown, live results broadcasting, forfeit command with DNF display, and practice ghost replay.
+- Race systems: ordered checkpoints (axis-aligned or oriented, with optional alternate gates), optional pit area, optional mandatory pit stops, false-start penalties, registration lobby teleport/return, 5-light countdown, live results broadcasting, forfeit command with DNF display, disconnect DNF, crash/restart return, and practice ghost replay.
 - Race replay (v1): the race winner's run is stored as the track ghost (`replay.capture-race`) and can be raced in practice, tagged as a race record.
 - Spectator mode: watch running races manually or automatically after finishing (free/follow camera), with victory effects (title, fireworks, sound) for the podium.
 - Cosmetics and progression: 24 particle trails (admin-extensible and sellable), win-based titles, selectable victory effects, victory sounds and checkpoint effects, a Vault-powered shop with player-selectable particle density, managed from an in-game menu and persisted per player.
@@ -589,7 +589,7 @@ Available codes and names:
 - HUD and scoreboard: in-race sidebar plus ActionBar with per-section config toggles, safe scoreboard restoration after races, and compatibility flow for external scoreboards.
 - Persistent stats: `stats.yml` stores wins, best race and best lap so PlaceholderAPI, holograms, scoreboards, and NPCs can show live and historical data.
 - i18n: bundled message packs for `en`, `es`, `es_419`, `fr`, `pt_BR`, `pt_PT`, `de`, `it`, `pl`, `tr`, `ja`, `ko`, `sv`, `zh_TW`, `zh_CN`, `ru`, `uk`, `id`, `ar`, `nl`, `cs`, `vi`, `th`, `tl`, `da`, `no`, and `fi`; `en`/`es` are official and the rest are community translations. All are hot-reloadable with `/boatracing reload`.
-- Rewards, updates, metrics and integrations: per-position race rewards, Modrinth update checks, optional bStats metrics, and Discord webhook notifications for race start, results and track records.
+- Rewards, updates, metrics and integrations: per-position race rewards, an optional Vault race economy (entry fees, per-position prizes, refunds on cancelled races), Modrinth update checks, optional bStats metrics, and Discord webhook notifications for race start, results and track records.
 - Diagnostics: `/boatracing debug` prints a safe environment report plus the GitHub/Discord bug report links, and the startup console line tells server owners where to report issues.
 - Extension API: separate plugins can subscribe to race events and read live race state (see [API.md](API.md)); the base works unchanged without them.
 
@@ -597,7 +597,7 @@ Available codes and names:
 - Java 17+
 - A Bukkit-compatible server running Minecraft 1.19 to 26.3
 - Optional: [PlaceholderAPI](https://modrinth.com/plugin/placeholderapi) for `%boatracing_*%` placeholders
-- Optional: [Vault](https://github.com/MilkBowl/Vault) + an economy plugin for the cosmetic shop
+- Optional: [Vault](https://github.com/MilkBowl/Vault) + an economy plugin for the cosmetic shop and the optional race economy
 
 ## Supported Servers
 - CraftBukkit
@@ -1269,7 +1269,7 @@ Teams suggestions:
 - `create`, `rename`, `color`, `join`, `leave`, `boat`, `number`, `confirm`, `cancel`
 - `join` suggests team names.
 - `color` suggests all dye colors.
-- `boat` suggests supported boat and chest-boat variants, plus bamboo rafts.
+- `boat` suggests every boat, chest-boat and raft variant available on the server, including new woods like Poplar (Minecraft 26.3).
 
 Race suggestions:
 - Everyone sees `help`, `join`, `leave`, `status`, `vote`, `voteui`, `votestatus`, and (with permission) `spectate`.

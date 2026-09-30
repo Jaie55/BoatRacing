@@ -48,7 +48,9 @@ README — BoatRacing QA checklist (teams, admin, tracks; two-player tests)
 	- On update/reload, every new 26.3 config section is merged into an existing `config.yml` without overwriting user edits: `setup.auto-trace.*`, `setup.gates.*`, `discord.*`, `racing.victory-effects.*`, `racing.spectate-on-finish.*`, `cosmetics.*`, `diagnostics.*` and `replay.capture-race`.
 	- Set `language: es` and verify AutoTrace, alternates, spectator, victory, cosmetics and debug messages are in Spanish. Other bundled languages fall back to English without showing raw keys.
 	- Note: all bundled languages now include the 26.3 keys; `tools/check_locales.py` must report 0 errors across every `lang/messages_*.yml`.
-- Regression checks (26.3 touched existing behavior):
+	- Boat variants: on a server with Minecraft 26.3, open the team boat picker and the admin player → setboat picker and verify **Poplar Boat** and **Poplar Chest Boat** appear next to the other woods; `/boatracing teams boat <tab>` and `/boatracing admin player setboat` suggest them too. Race a lap with a Poplar boat selected and verify the spawned vehicle keeps the variant; on older servers only the variants that exist there are listed (no legacy materials).
+	- Boat variants: on a server with Minecraft 26.3, open the team boat picker and the admin player → setboat picker and verify **Poplar Boat** and **Poplar Chest Boat** appear next to the other woods; `/boatracing teams boat <tab>` and `/boatracing admin player setboat` suggest them too. Race a lap with a Poplar boat selected and verify the spawned vehicle keeps the variant; on older servers only the variants that exist there are listed (no legacy materials).
+	- Regression checks (26.3 touched existing behavior):
 	- Track files: create a track with starts, finish, default pit, team pit, lights, checkpoints, custom start slots and racing overrides; reload and verify `/boatracing setup show` lists everything and the YAML keeps its values.
 	- Legacy track compatibility: open an old track (no `type`, no `alternates`) and save it without editing checkpoints; verify the `checkpoints:` entries are still written in the old AABB shape and the file keeps its data.
 	- Checkpoint crossing: with an AABB track, cross each checkpoint at full speed in order and verify laps, sector gaps, lap broadcasts, best lap/race stats and finish detection behave exactly as before.
@@ -1087,3 +1089,23 @@ Clickable verifications (all should paste the command to chat with hover “Clic
 - With an active selection, run `/boatracing setup selinfo`.
 - It should show min/max and the world of the selection.
 - If there’s no valid selection, it should show a clear English message on how to set Corner A/B with the tool.
+
+## Batch 26.3 (setup editing, economy, reliability, performance)
+
+- Setup editing:
+  - `/boatracing setup undo` and `redo` revert/redo the last checkpoint/finish/pit/box change; both report when there is nothing to undo/redo.
+  - `/boatracing setup copy` then `paste [dx dy dz]` duplicates the selected region checkpoints/finish with the offset; `paste` without a copy warns.
+  - `/boatracing setup validate` lists missing start/finish, gates smaller than a block, duplicates and item-box problems; reported entries are actionable.
+  - `/boatracing setup show` entries are clickable and do not break with long track names.
+- Race economy (Vault required):
+  - With `race.economy.enabled: true` and an entry fee, starting a race charges each participant and shows the fee; a player without funds is sent back and skipped.
+  - Finishing positions pay the configured `prizes.*` once; practice never charges or pays.
+  - `/boatracing race stop` (cancelled, no results) refunds entry fees when `refund-on-cancel: true`.
+  - With Vault absent the feature is silently inactive (no errors).
+- Reliability:
+  - Disconnect mid-race: the racer is broadcast as DNF, the race continues, and results list the player as forfeited.
+  - Kill the server mid-race and restart: on next join each affected player is teleported to their pre-race location and sees the recovery message; `race-recovery.yml` is cleared after everyone returns.
+- Performance:
+  - `performance.profile: low` doubles periodic intervals; `balanced`/`high` keep the configured timings.
+  - Sidebar lines update immediately on lap/checkpoint/position changes; practice sidebars still update live.
+  - With `database.mode: MYSQL`, stats/preferences writes happen off the main thread; `/boatracing reload` and shutdown still flush synchronously.

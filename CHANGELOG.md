@@ -4,6 +4,12 @@
 Track onboarding, live viewing, cosmetics, extension system and replay release.
 
 ### Added
+- **Setup editing suite**: `/boatracing setup undo|redo|copy|paste [dx dy dz]|validate` with a shared history for checkpoints, finish, pit and extension data such as item boxes; `setup show` entries are clickable and `setup validate` reports problems (missing start/finish, tiny gates, duplicated boxes...) with actionable hints.
+- **Race economy (optional Vault)**: `race.economy.enabled/entry-fee/refund-on-cancel/prizes` charges participants when the race starts, pays per-position prizes, refunds cancelled races and sends back players who cannot pay.
+- **Race reliability**: disconnecting racers are marked DNF so the race keeps going and results stay accurate; an interrupted race after a crash/restart returns affected players to their previous location on their next join (`race-recovery.yml`).
+- **Performance**: `performance.profile: low|balanced|high` scales periodic work, race sidebars are cached per race state (practice sidebars rebuild live), and stats/practice/preferences save in the background with a dirty flag plus a periodic flush (still synchronous on shutdown/reload).
+- **Extension API**: `ExtensionScheduler.runAtLocation(...)` for Folia-safe entity spawning and `BoatRacingAPI.performanceProfile()`.
+- **Boat variants**: the boat picker, admin editor and commands now discover supported boat types dynamically, including the boats added in 26.3.
 - **Oriented checkpoint gates (PLANE)**: checkpoints can be oriented rectangles, so diagonal and curved track sections no longer need oversized axis-aligned boxes.
 	- New `CheckpointShape` abstraction: `Region` (AABB) and `PlaneCheckpoint` (oriented rectangle) both implement it, so legacy and new gates coexist in the same ordered list.
 	- Crossing detection by signed-distance sign change plus a rectangle containment check on the hit point; movement parallel to the gate plane and hits outside the rectangle are ignored.
@@ -84,6 +90,7 @@ Track onboarding, live viewing, cosmetics, extension system and replay release.
 - **Config sections**: `setup.auto-trace.*`, `setup.gates.*`, `replay.*`, `discord.*`, `cosmetics.*` (master switch, `unsupported`, density, trails/custom/disabled, effects, victory-sounds, checkpoints, titles and shop with prices/gating), `racing.victory-effects.*` and `racing.spectate-on-finish.*`.
 
 ### Changed
+- **Boat variants are discovered dynamically**: the team/admin boat pickers and the `boat`/`setboat` tab-completion now list every boat, chest-boat and raft material the server provides (new woods such as Poplar boats in Minecraft 26.3 are picked up automatically), filtering out legacy `LEGACY_*` materials. Boat spawning already resolved materials by name, so POPLAR_BOAT/POPLAR_CHEST_BOAT work without extra configuration.
 - **Movement checks stay cheap**: crossing detection only runs on block changes for participants of a running race, tests just the next checkpoint plus finish/pit, and uses a cached broad-phase bound (finish + pits + checkpoints + 32 blocks) to skip all math when a racer is away from the track.
 - **Checkpoint abstraction**: crossing now goes through `CheckpointShape`; the AABB slab algorithm moved unchanged from `RaceManager` to `Geometry.segmentIntersectsBox`; `TrackConfig` stores shapes (with `CheckpointGroup` support) instead of regions only; `RaceManager`, `AdminRaceGUI`, `SetupWizard` and `BoatRacingPlugin` were migrated.
 - **Setup help and tab-completion**: the `setup` root now suggests `select`, `gates`, `autotrace`, `addalt`, `clearalt` and `setcosmetics`; `select` suggests track names; `gates` suggests `off`; `autotrace` suggests its subcommands; `addalt`/`clearalt` suggest valid checkpoint indexes; `setcosmetics` suggests `true`/`false`.
