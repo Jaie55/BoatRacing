@@ -35,6 +35,7 @@ public class TrailManager {
             return;
         }
         int period = Math.max(2, plugin.getConfig().getInt("cosmetics.trails.period-ticks", 2));
+        period = plugin.getPerformanceProfile().scaleTicks(period);
         task = SchedulerCompat.runTimer(plugin, this::tick, period, period);
         plugin.getLogger().fine("Trail rendering started (period=" + period + " ticks).");
     }

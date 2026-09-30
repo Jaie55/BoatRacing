@@ -25,4 +25,10 @@ public interface ExtensionScheduler {
 
     /** Runs the task repeatedly off the main thread. */
     TaskHandle runAsyncTimer(Runnable task, long delayTicks, long periodTicks);
+
+    /**
+     * Runs the task on the thread/region that owns the given location (Folia) or on the main thread
+     * (Bukkit). Use it before spawning entities in world locations.
+     */
+    TaskHandle runAtLocation(Runnable task, org.bukkit.Location location);
 }

@@ -12,6 +12,7 @@ import java.util.Locale;
 public class StatsManager {
     private final es.jaie55.boatracing.BoatRacingPlugin plugin;
     private final DocumentStore store;
+    private final AsyncDocumentSaver saver;
     private final String documentName = "stats.yml";
     private YamlConfiguration cfg;
 
@@ -28,6 +29,7 @@ public class StatsManager {
     public StatsManager(es.jaie55.boatracing.BoatRacingPlugin plugin) {
         this.plugin = plugin;
         this.store = plugin.getDocumentStore();
+        this.saver = new AsyncDocumentSaver(plugin, this.store, documentName, "stats data");
         reload();
     }
 
@@ -79,6 +81,10 @@ public class StatsManager {
     }
 
     public synchronized void save() {
+        saver.write(serialize());
+    }
+
+    private synchronized String serialize() {
         if (cfg == null) cfg = new YamlConfiguration();
         writeIntMap("playerWins", playerWins);
         writeIntMap("teamWins", teamWins);
@@ -89,13 +95,15 @@ public class StatsManager {
         writeTrackLongMap("playerBestLapByTrack", playerBestLapByTrack);
         writeTrackLapLongMap("playerBestRaceByTrackLaps", playerBestRaceByTrackLaps);
         writeTrackLapLongMap("playerBestLapByTrackLaps", playerBestLapByTrackLaps);
-        try {
-            if (store != null) {
-                store.write(documentName, cfg.saveToString());
-            }
-        } catch (Exception e) {
-            plugin.getLogger().warning("Failed to save stats data: " + e.getMessage());
-        }
+        return cfg.saveToString();
+    }
+
+    public boolean isDirty() {
+        return saver.isDirty();
+    }
+
+    public void setSyncSaves(boolean sync) {
+        saver.setSync(sync);
     }
 
     public int getPlayerWins(UUID playerId) {

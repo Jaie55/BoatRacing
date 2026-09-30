@@ -25,6 +25,11 @@ public class Region implements CheckpointShape {
     }
 
     @Override
+    public CheckpointShape translate(double dx, double dy, double dz) {
+        return new Region(worldName, box.clone().shift(dx, dy, dz));
+    }
+
+    @Override
     public boolean crossed(Location from, Location to) {
         if (to == null) return false;
         if (!to.getWorld().getName().equals(worldName)) return false;

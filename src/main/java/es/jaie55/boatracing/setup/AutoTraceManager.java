@@ -222,6 +222,7 @@ public class AutoTraceManager {
             send(player, "setup.autotrace.none", "label", "boatracing");
             return;
         }
+        plugin.pushSetupHistory();
         track.setCheckpoints(s.gates);
         plugin.getLogger().fine("AutoTrace accepted by " + player.getName() + ": " + s.gates.size()
                 + " gate(s) saved to the active track.");
@@ -654,6 +655,7 @@ public class AutoTraceManager {
     private void ensureRenderTask() {
         if (renderTask != null) return;
         int period = Math.max(2, plugin.getConfig().getInt("setup.auto-trace.preview-period-ticks", 10));
+        period = plugin.getPerformanceProfile().scaleTicks(period);
         renderTask = SchedulerCompat.runTimer(plugin, this::renderTick, period, period);
     }
 

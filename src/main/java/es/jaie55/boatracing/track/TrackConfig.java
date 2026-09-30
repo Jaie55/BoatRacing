@@ -190,6 +190,30 @@ public class TrackConfig {
         save();
     }
 
+    /** @return a serializable snapshot of the current checkpoint list (used by setup undo/redo). */
+    public List<Map<String, Object>> snapshotCheckpoints() {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (CheckpointShape shape : checkpoints) {
+            out.add(checkpointToMap(shape));
+        }
+        return out;
+    }
+
+    /** Replaces the checkpoint list from a snapshot created by {@link #snapshotCheckpoints()}. */
+    public void restoreCheckpoints(List<Map<String, Object>> raw) {
+        List<CheckpointShape> restored = new ArrayList<>();
+        if (raw != null) {
+            for (Map<String, Object> map : raw) {
+                if (map == null) continue;
+                CheckpointShape parsed = readCheckpointShape(map);
+                if (parsed == null) continue;
+                List<CheckpointShape> alternates = readAlternates(map.get("alternates"));
+                restored.add(alternates.isEmpty() ? parsed : new CheckpointGroup(parsed, alternates));
+            }
+        }
+        setCheckpoints(restored);
+    }
+
     /**
      * Attaches an alternate gate to the checkpoint at the given index (wrapping it in a
      * CheckpointGroup when needed). Crossing either gate advances the checkpoint.

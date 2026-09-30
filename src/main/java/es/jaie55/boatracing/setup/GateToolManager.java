@@ -54,6 +54,7 @@ public final class GateToolManager implements Listener {
         stop();
         if (!plugin.getConfig().getBoolean("setup.gates.preview", true)) return;
         int period = Math.max(2, plugin.getConfig().getInt("setup.gates.preview-period-ticks", 8));
+        period = plugin.getPerformanceProfile().scaleTicks(period);
         renderTask = SchedulerCompat.runTimer(plugin, this::renderTick, period, period);
     }
 
@@ -167,6 +168,7 @@ public final class GateToolManager implements Listener {
 
     private void addCheckpoint(Player player, Location anchor) {
         TrackConfig track = plugin.getTrackConfig();
+        plugin.pushSetupHistory();
         Vector center = new Vector(anchor.getBlockX() + 0.5, anchor.getBlockY() + 1.0, anchor.getBlockZ() + 0.5);
         PlaneCheckpoint gate = PlaneCheckpoint.facing(anchor.getWorld().getName(), center,
                 player.getLocation().getDirection(), gateHalfWidth(), gateHalfHeight());
@@ -185,6 +187,7 @@ public final class GateToolManager implements Listener {
             player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.checkpoint-none")));
             return;
         }
+        plugin.pushSetupHistory();
         track.removeCheckpointAt(size - 1);
         player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.checkpoint-removed",
                 "index", size, "total", track.getCheckpoints().size())));
@@ -202,6 +205,7 @@ public final class GateToolManager implements Listener {
         BoundingBox box = Math.abs(direction.getX()) >= Math.abs(direction.getZ())
                 ? BoundingBox.of(center, halfDepth, halfHeight, halfWidth)
                 : BoundingBox.of(center, halfWidth, halfHeight, halfDepth);
+        plugin.pushSetupHistory();
         track.setFinish(new Region(anchor.getWorld().getName(), box));
         player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.finish-set")));
         player.playSound(player.getLocation(), org.bukkit.Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1.3f);
@@ -218,6 +222,7 @@ public final class GateToolManager implements Listener {
             player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.finish-none")));
             return;
         }
+        plugin.pushSetupHistory();
         track.setFinish(null);
         player.sendMessage(Text.colorize(plugin.pref() + plugin.msg().get("setup.gates.finish-cleared")));
         player.playSound(player.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.8f, 0.9f);

@@ -125,6 +125,9 @@ public class RaceManager {
     // Scoreboard handling
     private SchedulerCompat.TaskHandle scoreboardTask;
     private final Map<UUID, Scoreboard> scoreboards = new HashMap<>();
+    // Cached sidebar lines per viewer, rebuilt only when the race state changes (see sidebarSignature)
+    private final Map<UUID, java.util.List<Component>> cachedSidebarLines = new HashMap<>();
+    private final Map<UUID, String> cachedSidebarSignatures = new HashMap<>();
     private final Map<UUID, Scoreboard> previousScoreboards = new HashMap<>();
     private final Set<UUID> sidebarDisabledPlayers = new HashSet<>();
     private final Set<UUID> overlayPlayers = new HashSet<>();
@@ -138,6 +141,11 @@ public class RaceManager {
     };
     // Per-player pitstop count for current lap
     private final Map<UUID, Integer> pitCount = new HashMap<>();
+    // Race economy (Vault): entry fees paid per race and payout settings.
+    private final Map<UUID, Double> raceEntryPaid = new HashMap<>();
+    private boolean raceEconomyEnabled;
+    private double raceEntryFee;
+    private boolean raceRefundOnCancel = true;
     // Sector leader times per lap: lap -> (checkpointIndex -> first time/ms)
     private final Map<Integer, Map<Integer, Long>> sectorLeaderTimes = new HashMap<>();
     // Spectators (players watching an active race, manually or after finishing)
@@ -367,6 +375,16 @@ public class RaceManager {
         // Starting a race must always close any registration window/timer first.
         closeRegistrationWindow();
         clearCountdownLock();
+        List<Player> denied = chargeEntryFees(participants, practice);
+        if (!denied.isEmpty()) {
+            List<Player> allowed = new ArrayList<>();
+            for (Player participant : participants) {
+                if (participant != null && !denied.contains(participant)) allowed.add(participant);
+            }
+            for (Player participant : denied) sendParticipantBackAfterRace(participant.getUniqueId(), participant);
+            participants = allowed;
+        }
+        persistRecoveryLocations(participants);
         practiceMode = practice;
         practicePlayerId = (practice && participants != null && !participants.isEmpty())
                 ? participants.iterator().next().getUniqueId()
@@ -421,7 +439,15 @@ public class RaceManager {
     public void stopRace(boolean announce) {
         running = false;
         clearCountdownLock();
-        if (announce) announceResults();
+        if (announce) {
+            announceResults();
+            raceEntryPaid.clear();
+        } else if (raceRefundOnCancel) {
+            refundEntryFees();
+        } else {
+            raceEntryPaid.clear();
+        }
+        if (plugin.getCrashRecoveryStore() != null) plugin.getCrashRecoveryStore().clear();
         fireApiEvent(new es.jaie55.boatracing.api.event.RaceStopEvent(apiView(), apiResults(), announce));
         partyMode = false;
         stopRaceReplayCapture(true);
@@ -793,6 +819,19 @@ public class RaceManager {
     public void onPlayerQuit(UUID playerId) {
         SpectatorState s = spectators.remove(playerId);
         if (s != null && s.followTask != null) s.followTask.cancel();
+        // Disconnecting racers count as DNF so the race can keep going and results stay accurate.
+        if (running && playerId != null) {
+            RaceState state = states.get(playerId);
+            if (state != null && !state.finished) {
+                state.forfeited = true;
+                state.finished = true;
+                cleanupRaceVehicleForPlayer(playerId);
+                if (!practiceMode) {
+                    broadcast(color(plugin.msg().get("race.dnf", "player", resolveResultName(playerId))));
+                }
+                checkAllFinished();
+            }
+        }
     }
 
     private void clearSpectators(boolean teleportBack) {
@@ -866,6 +905,85 @@ public class RaceManager {
         return null;
     }
 
+    /** Stores pre-race locations so a crash mid-race can return players on their next join. */
+    private void persistRecoveryLocations(Collection<Player> participants) {
+        if (plugin.getCrashRecoveryStore() == null) return;
+        Map<UUID, Location> homes = new HashMap<>();
+        for (Player participant : participants) {
+            if (participant == null) continue;
+            Location home = preLobbyLocations.get(participant.getUniqueId());
+            homes.put(participant.getUniqueId(), home != null ? home : participant.getLocation());
+        }
+        plugin.getCrashRecoveryStore().persist(homes, getTrackName());
+    }
+
+    /** Reloads the race economy settings from config. */
+    private void refreshRaceEconomySettings() {
+        es.jaie55.boatracing.integrations.VaultEconomy economy = plugin.getVaultEconomy();
+        raceEconomyEnabled = plugin.getConfig().getBoolean("race.economy.enabled", false)
+                && economy != null && economy.isEnabled();
+        raceEntryFee = Math.max(0.0, plugin.getConfig().getDouble("race.economy.entry-fee", 0.0));
+        raceRefundOnCancel = plugin.getConfig().getBoolean("race.economy.refund-on-cancel", true);
+    }
+
+    /** Charges the entry fee once per race; returns the participants that could not pay. */
+    private List<Player> chargeEntryFees(Collection<Player> participants, boolean practice) {
+        refreshRaceEconomySettings();
+        List<Player> denied = new ArrayList<>();
+        if (practice || participants == null || !raceEconomyEnabled || raceEntryFee <= 0) return denied;
+        es.jaie55.boatracing.integrations.VaultEconomy economy = plugin.getVaultEconomy();
+        for (Player participant : participants) {
+            if (participant == null) continue;
+            UUID id = participant.getUniqueId();
+            if (raceEntryPaid.containsKey(id)) continue;
+            if (economy.withdraw(participant, raceEntryFee)) {
+                raceEntryPaid.put(id, raceEntryFee);
+                participant.sendMessage(color(plugin.msg().get("race.economy.entry-charged", "fee", economy.format(raceEntryFee))));
+            } else {
+                denied.add(participant);
+                participant.sendMessage(color(plugin.msg().get("race.economy.entry-denied", "fee", economy.format(raceEntryFee))));
+            }
+        }
+        return denied;
+    }
+
+    /** Pays the configured prize for each finishing position. */
+    private void awardRacePrizes(List<Map.Entry<UUID, RaceState>> finishers) {
+        if (practiceMode || finishers == null || finishers.isEmpty() || !raceEconomyEnabled) return;
+        es.jaie55.boatracing.integrations.VaultEconomy economy = plugin.getVaultEconomy();
+        if (economy == null || !economy.isEnabled()) return;
+        int pos = 1;
+        for (Map.Entry<UUID, RaceState> entry : finishers) {
+            double prize = plugin.getConfig().getDouble("race.economy.prizes." + pos, 0.0);
+            if (prize > 0 && economy.deposit(Bukkit.getOfflinePlayer(entry.getKey()), prize)) {
+                Player online = Bukkit.getPlayer(entry.getKey());
+                if (online != null) {
+                    online.sendMessage(color(plugin.msg().get("race.economy.prize",
+                            "amount", economy.format(prize), "pos", String.valueOf(pos))));
+                }
+            }
+            pos++;
+        }
+    }
+
+    /** Refunds all entry fees paid for the cancelled race. */
+    private void refundEntryFees() {
+        if (raceEntryPaid.isEmpty()) return;
+        es.jaie55.boatracing.integrations.VaultEconomy economy = plugin.getVaultEconomy();
+        if (economy != null && economy.isEnabled()) {
+            for (Map.Entry<UUID, Double> entry : raceEntryPaid.entrySet()) {
+                Double amount = entry.getValue();
+                if (amount == null || amount <= 0) continue;
+                if (!economy.deposit(Bukkit.getOfflinePlayer(entry.getKey()), amount)) continue;
+                Player online = Bukkit.getPlayer(entry.getKey());
+                if (online != null) {
+                    online.sendMessage(color(plugin.msg().get("race.economy.refund", "amount", economy.format(amount))));
+                }
+            }
+        }
+        raceEntryPaid.clear();
+    }
+
     public void announceResults() {
         if (states.isEmpty()) return;
         List<Map.Entry<UUID, RaceState>> list = new ArrayList<>(states.entrySet());
@@ -901,6 +1019,7 @@ public class RaceManager {
             plugin.getTeamManager().getTeamByMember(winner).ifPresent(t -> plugin.getStatsManager().addTeamWin(t.getId()));
             storeRaceReplayWinner(finishers.get(0).getValue(), winner);
         }
+        awardRacePrizes(finishers);
 
         for (Player p : recipients) p.sendMessage(color(plugin.msg().get("race.results.header")));
 
@@ -2445,6 +2564,14 @@ public class RaceManager {
         practicePlayerId = (practice && participants != null && !participants.isEmpty())
                 ? participants.get(0).getUniqueId()
                 : null;
+        if (!practice && participants != null && !participants.isEmpty()) {
+            List<Player> denied = chargeEntryFees(participants, false);
+            if (!denied.isEmpty()) {
+                for (Player participant : denied) sendParticipantBackAfterRace(participant.getUniqueId(), participant);
+                // Mutate in place: countdown lambdas below capture this same list.
+                participants.removeAll(denied);
+            }
+        }
         List<TrackConfig.LightPos> ls = track.getLights();
         if (ls.size() != 5) {
             clearCountdownLock();
@@ -2627,6 +2754,26 @@ public class RaceManager {
 
     private int simpleScoreRefixTickCounter = 39;
 
+    /** Cheap signature of everything that changes the sidebar lines for one viewer. */
+    private String sidebarSignature(UUID viewerId,
+                                    java.util.List<java.util.Map.Entry<UUID, RaceState>> ordered,
+                                    RaceState viewerState) {
+        StringBuilder builder = new StringBuilder(Math.max(16, ordered.size() * 24));
+        builder.append(viewerId).append(':');
+        for (java.util.Map.Entry<UUID, RaceState> entry : ordered) {
+            RaceState state = entry.getValue();
+            builder.append(entry.getKey()).append(',').append(state.lap).append(',')
+                    .append(state.nextCheckpoint).append(',').append(state.finished).append(',')
+                    .append(state.forfeited).append(';');
+        }
+        if (viewerState != null) {
+            builder.append('|').append(viewerState.lap).append(',').append(viewerState.nextCheckpoint);
+        }
+        builder.append('|').append(sbShowPos).append(sbShowLap).append(sbShowCP)
+                .append(sbShowPit).append(sbShowName);
+        return builder.toString();
+    }
+
     private void startScoreboard() {
         if (scoreboardTask != null) return;
         scoreboardTask = SchedulerCompat.runTimer(plugin, () -> {
@@ -2660,7 +2807,17 @@ public class RaceManager {
 
                 if (sb != null) {
                     // Build lines for this viewer
-                    java.util.List<Component> lines = new java.util.ArrayList<>();
+                    // Reuse the built sidebar lines unless the race state changed for this viewer.
+                    // Practice sidebars show live times, so they always rebuild.
+                    java.util.List<Component> lines;
+                    String sidebarSignature = practiceMode ? null
+                            : sidebarSignature(viewerId, ordered, viewerState);
+                    if (sidebarSignature != null
+                            && sidebarSignature.equals(cachedSidebarSignatures.get(viewerId))
+                            && cachedSidebarLines.containsKey(viewerId)) {
+                        lines = cachedSidebarLines.get(viewerId);
+                    } else {
+                        lines = new java.util.ArrayList<>();
                     if (!practiceMode) {
                         // Spacer line to create space between title and first row
                         lines.add(Component.text(" "));
@@ -2770,6 +2927,11 @@ public class RaceManager {
                             }
                         }
                     }
+                        if (sidebarSignature != null) {
+                            cachedSidebarLines.put(viewerId, lines);
+                            cachedSidebarSignatures.put(viewerId, sidebarSignature);
+                        }
+                    }
 
                     Objective obj = sb.getObjective(SCOREBOARD_OBJECTIVE_NAME);
                     if (obj == null) continue;
@@ -2838,7 +3000,7 @@ public class RaceManager {
                 }
                 try { viewer.sendActionBar(ab); } catch (Exception ignored) { plugin.getLogger().finer("sendActionBar failed for " + viewer.getName() + ": " + ignored.getMessage()); }
             }
-        }, 0L, 2L);
+        }, 0L, plugin.getPerformanceProfile().scaleTicks(2));
     }
 
     // Produce a readable player name. Prefer displayName but strip rank prefixes
@@ -2887,6 +3049,8 @@ public class RaceManager {
 
     private void stopScoreboard() {
         simpleScoreRefixTickCounter = 0;
+        cachedSidebarLines.clear();
+        cachedSidebarSignatures.clear();
         if (scoreboardTask != null) {
             try { scoreboardTask.cancel(); } catch (Exception ignored) { plugin.getLogger().finer("Failed to cancel scoreboard task: " + ignored.getMessage()); }
             scoreboardTask = null;

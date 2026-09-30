@@ -22,6 +22,9 @@ public interface CheckpointShape {
     /** @return true when the given location is inside (or touching) this gate. */
     boolean contains(Location loc);
 
+    /** @return a copy of this shape translated by the given offset. */
+    CheckpointShape translate(double dx, double dy, double dz);
+
     /** Stable identifier used for serialization: "aabb" or "plane". */
     String type();
 

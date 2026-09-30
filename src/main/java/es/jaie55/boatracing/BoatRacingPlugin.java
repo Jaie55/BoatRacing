@@ -67,13 +67,27 @@ public class BoatRacingPlugin extends JavaPlugin {
             new java.util.concurrent.CopyOnWriteArrayList<>();
     private boolean apiEnabled = true;
     private boolean apiLogExtensions = false;
+    private es.jaie55.boatracing.util.PerformanceProfile performanceProfile =
+            es.jaie55.boatracing.util.PerformanceProfile.BALANCED;
     private es.jaie55.boatracing.extension.ExtensionManager extensionManager;
+
+    // Setup undo/redo history and checkpoint clipboard
+    private record SetupSnapshot(java.util.List<java.util.Map<String, Object>> checkpoints,
+                                 es.jaie55.boatracing.track.Region finish) {
+    }
+
+    private static final int SETUP_HISTORY_LIMIT = 20;
+    private final java.util.Deque<SetupSnapshot> setupUndo = new java.util.ArrayDeque<>();
+    private final java.util.Deque<SetupSnapshot> setupRedo = new java.util.ArrayDeque<>();
+    private final java.util.List<es.jaie55.boatracing.track.CheckpointShape> setupClipboard =
+            new java.util.ArrayList<>();
     private es.jaie55.boatracing.cosmetics.TitleManager titleManager;
     private es.jaie55.boatracing.cosmetics.TrailManager trailManager;
     private es.jaie55.boatracing.ui.CosmeticsGUI cosmeticsGUI;
     private es.jaie55.boatracing.ui.StatsGUI statsGUI;
     private MessageManager messageManager;
     private DocumentStore documentStore;
+    private es.jaie55.boatracing.util.CrashRecoveryStore crashRecoveryStore;
     private StatsManager statsManager;
     private PracticeStatsManager practiceStatsManager;
     private PracticeGhostManager practiceGhostManager;
@@ -113,6 +127,7 @@ public class BoatRacingPlugin extends JavaPlugin {
     public es.jaie55.boatracing.integrations.VaultEconomy getVaultEconomy() { return vaultEconomy; }
     public boolean isApiEnabled() { return apiEnabled; }
     public java.util.List<es.jaie55.boatracing.api.HudProvider> getHudProviders() { return hudProviders; }
+    public es.jaie55.boatracing.util.PerformanceProfile getPerformanceProfile() { return performanceProfile; }
     public es.jaie55.boatracing.extension.ExtensionManager getExtensionManager() { return extensionManager; }
     public es.jaie55.boatracing.setup.GateToolManager getGateToolManager() { return gateToolManager; }
 
@@ -132,6 +147,8 @@ public class BoatRacingPlugin extends JavaPlugin {
     public PracticeStatsManager getPracticeStatsManager() { return practiceStatsManager; }
     public PracticeGhostManager getPracticeGhostManager() { return practiceGhostManager; }
     public DocumentStore getDocumentStore() { return documentStore; }
+
+    public es.jaie55.boatracing.util.CrashRecoveryStore getCrashRecoveryStore() { return crashRecoveryStore; }
     public java.util.Collection<RaceManager> getAllRaceManagers() {
         java.util.List<RaceManager> out = new java.util.ArrayList<>();
         out.addAll(raceSessions.values());
@@ -757,6 +774,7 @@ public class BoatRacingPlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+        migrateConfigIfNeeded();
         // Ensure new default keys are merged into existing config.yml on updates
         try {
             mergeConfigDefaults();
@@ -766,10 +784,13 @@ public class BoatRacingPlugin extends JavaPlugin {
             getLogger().warning("Failed to merge default config values: " + t.getMessage());
         }
         this.prefix = Text.colorize(getConfig().getString("prefix", "&6[BoatRacing] "));
+        this.performanceProfile = es.jaie55.boatracing.util.PerformanceProfile.from(
+                getConfig().getString("performance.profile", "balanced"));
         // Configure debug logging
         applyDebugLevel();
         this.messageManager = new MessageManager(this);
         this.documentStore = DocumentStoreFactory.create(this);
+        this.crashRecoveryStore = new es.jaie55.boatracing.util.CrashRecoveryStore(this);
         this.teamManager = new TeamManager(this);
         this.statsManager = new StatsManager(this);
         this.practiceStatsManager = new PracticeStatsManager(this);
@@ -832,6 +853,19 @@ public class BoatRacingPlugin extends JavaPlugin {
                         && from.getBlockY() == to.getBlockY()
                         && from.getBlockZ() == to.getBlockZ()) return;
                 tickPlayerAcrossRaceSessions(e.getPlayer(), e.getFrom(), to);
+            }
+
+            @org.bukkit.event.EventHandler
+            public void onJoin(org.bukkit.event.player.PlayerJoinEvent e) {
+                if (crashRecoveryStore == null) return;
+                org.bukkit.Location back = crashRecoveryStore.take(e.getPlayer().getUniqueId());
+                if (back == null || back.getWorld() == null) return;
+                org.bukkit.entity.Player player = e.getPlayer();
+                SchedulerCompat.runLater(BoatRacingPlugin.this, () -> {
+                    if (!player.isOnline()) return;
+                    player.teleport(back);
+                    player.sendMessage(Text.colorize(prefix + msg().get("race.recovery.returned")));
+                }, 5L);
             }
 
             @org.bukkit.event.EventHandler
@@ -969,6 +1003,14 @@ public class BoatRacingPlugin extends JavaPlugin {
     } catch (Throwable extensionError) {
         getLogger().warning("Failed to initialise the extension manager: " + extensionError.getMessage());
     }
+
+        // Periodic safety flush for data managers written asynchronously
+        SchedulerCompat.runTimer(this, () -> {
+            if (statsManager != null && statsManager.isDirty()) statsManager.save();
+            if (practiceStatsManager != null && practiceStatsManager.isDirty()) practiceStatsManager.save();
+            if (practiceGhostManager != null && practiceGhostManager.isDirty()) practiceGhostManager.save();
+            if (playerPrefsManager != null && playerPrefsManager.isDirty()) playerPrefsManager.save();
+        }, 6000L, 6000L);
 
     getLogger().info("BoatRacing " + getDescription().getVersion() + " enabled. Admins can use /boatracing debug and report bugs at " + BUG_REPORT_URL + " (include logs/latest.log).");
     }
@@ -1320,6 +1362,142 @@ public class BoatRacingPlugin extends JavaPlugin {
         }
     }
 
+    /** Pushes the current checkpoints and finish so setup actions can be undone. */
+    public void pushSetupHistory() {
+        setupUndo.push(new SetupSnapshot(trackConfig.snapshotCheckpoints(), trackConfig.getFinish()));
+        while (setupUndo.size() > SETUP_HISTORY_LIMIT) setupUndo.removeLast();
+        setupRedo.clear();
+    }
+
+    private void undoSetup(Player player) {
+        if (setupUndo.isEmpty()) {
+            player.sendMessage(Text.colorize(prefix + msg().get("setup.nothing-undo")));
+            return;
+        }
+        setupRedo.push(new SetupSnapshot(trackConfig.snapshotCheckpoints(), trackConfig.getFinish()));
+        SetupSnapshot snapshot = setupUndo.pop();
+        trackConfig.restoreCheckpoints(snapshot.checkpoints());
+        trackConfig.setFinish(snapshot.finish());
+        player.sendMessage(Text.colorize(prefix + msg().get("setup.undo-done")));
+        player.playSound(player.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.8f, 0.9f);
+    }
+
+    private void redoSetup(Player player) {
+        if (setupRedo.isEmpty()) {
+            player.sendMessage(Text.colorize(prefix + msg().get("setup.nothing-redo")));
+            return;
+        }
+        setupUndo.push(new SetupSnapshot(trackConfig.snapshotCheckpoints(), trackConfig.getFinish()));
+        SetupSnapshot snapshot = setupRedo.pop();
+        trackConfig.restoreCheckpoints(snapshot.checkpoints());
+        trackConfig.setFinish(snapshot.finish());
+        player.sendMessage(Text.colorize(prefix + msg().get("setup.redo-done")));
+        player.playSound(player.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.8f, 1.1f);
+    }
+
+    private void copySetup(Player player) {
+        setupClipboard.clear();
+        setupClipboard.addAll(trackConfig.getCheckpoints());
+        if (setupClipboard.isEmpty()) {
+            player.sendMessage(Text.colorize(prefix + msg().get("setup.nothing-copied")));
+            return;
+        }
+        player.sendMessage(Text.colorize(prefix + msg().get("setup.copied", "count", setupClipboard.size())));
+        player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_ITEM_PICKUP, 0.8f, 1.3f);
+    }
+
+    private void pasteSetup(Player player, String[] args) {
+        if (setupClipboard.isEmpty()) {
+            player.sendMessage(Text.colorize(prefix + msg().get("setup.nothing-copied")));
+            return;
+        }
+        double dx = 0.0;
+        double dy = 0.0;
+        double dz = 0.0;
+        if (args.length >= 5) {
+            try {
+                dx = Double.parseDouble(args[2]);
+                dy = Double.parseDouble(args[3]);
+                dz = Double.parseDouble(args[4]);
+            } catch (NumberFormatException exception) {
+                player.sendMessage(Text.colorize(prefix + msg().get("setup.error.paste", "label", "boatracing")));
+                return;
+            }
+        } else if (args.length != 2) {
+            player.sendMessage(Text.colorize(prefix + msg().get("setup.error.paste", "label", "boatracing")));
+            return;
+        }
+        pushSetupHistory();
+        java.util.List<es.jaie55.boatracing.track.CheckpointShape> combined =
+                new java.util.ArrayList<>(trackConfig.getCheckpoints());
+        for (es.jaie55.boatracing.track.CheckpointShape shape : setupClipboard) {
+            combined.add(shape.translate(dx, dy, dz));
+        }
+        trackConfig.setCheckpoints(combined);
+        player.sendMessage(Text.colorize(prefix + msg().get("setup.pasted", "count", setupClipboard.size())));
+        player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING, 0.9f, 1.3f);
+    }
+
+    /** Clickable quick-action line shown by {@code /boatracing setup show}. */
+    private net.kyori.adventure.text.Component quickActionsLine(String label) {
+        java.util.List<net.kyori.adventure.text.Component> buttons = new java.util.ArrayList<>();
+        buttons.add(Text.cmd(msg().get("setup.show.btn-undo"), "/" + label + " setup undo"));
+        buttons.add(Text.cmd(msg().get("setup.show.btn-redo"), "/" + label + " setup redo"));
+        buttons.add(Text.cmd(msg().get("setup.show.btn-copy"), "/" + label + " setup copy"));
+        buttons.add(Text.cmd(msg().get("setup.show.btn-paste"), "/" + label + " setup paste"));
+        buttons.add(Text.cmd(msg().get("setup.show.btn-gates"), "/" + label + " setup gates"));
+        buttons.add(Text.cmd(msg().get("setup.show.btn-validate"), "/" + label + " setup validate"));
+        net.kyori.adventure.text.Component line = net.kyori.adventure.text.Component.empty();
+        for (int i = 0; i < buttons.size(); i++) {
+            if (i > 0) line = line.append(net.kyori.adventure.text.Component.text(" "));
+            line = line.append(buttons.get(i));
+        }
+        return line;
+    }
+
+    /** Reports the most common track configuration problems. */
+    private void validateTrack(Player p) {
+        java.util.List<String> problems = new java.util.ArrayList<>();
+        if (trackConfig.getStarts().isEmpty()) problems.add(msg().get("setup.validate.no-starts"));
+        else if (trackConfig.getStarts().size() == 1) problems.add(msg().get("setup.validate.one-start"));
+        if (trackConfig.getFinish() == null) {
+            problems.add(msg().get("setup.validate.no-finish"));
+        } else if (trackConfig.getFinish().world() == null) {
+            problems.add(msg().get("setup.validate.finish-world",
+                    "world", trackConfig.getFinish().getWorldName()));
+        }
+        int lights = trackConfig.getLights().size();
+        if (lights != 5) problems.add(msg().get("setup.validate.lights", "count", lights));
+        if (trackConfig.getCheckpoints().isEmpty()) {
+            problems.add(msg().get("setup.validate.no-checkpoints"));
+        }
+        int missingWorld = 0;
+        int tinyGates = 0;
+        for (es.jaie55.boatracing.track.CheckpointShape shape : trackConfig.getCheckpoints()) {
+            if (org.bukkit.Bukkit.getWorld(shape.worldName()) == null) missingWorld++;
+            if (shape instanceof es.jaie55.boatracing.track.PlaneCheckpoint plane
+                    && (plane.getHalfWidth() < 1.0 || plane.getHalfHeight() < 1.0)) tinyGates++;
+        }
+        if (missingWorld > 0) problems.add(msg().get("setup.validate.cp-world", "count", missingWorld));
+        if (tinyGates > 0) problems.add(msg().get("setup.validate.small-gates", "count", tinyGates));
+        java.util.Set<String> seenStarts = new java.util.HashSet<>();
+        int duplicates = 0;
+        for (es.jaie55.boatracing.track.TrackConfig.StartSlot start : trackConfig.getStarts()) {
+            String key = start.world + ":" + Math.round(start.x) + ":" + Math.round(start.y) + ":" + Math.round(start.z);
+            if (!seenStarts.add(key)) duplicates++;
+        }
+        if (duplicates > 0) problems.add(msg().get("setup.validate.duplicate-starts", "count", duplicates));
+
+        p.sendMessage(Text.colorize(prefix + msg().get("setup.validate.header")));
+        if (problems.isEmpty()) {
+            p.sendMessage(Text.colorize(msg().get("setup.validate.ok")));
+        } else {
+            for (String problem : problems) {
+                p.sendMessage(Text.colorize(msg().get("setup.validate.line", "problem", problem)));
+            }
+        }
+    }
+
     private void handleExtensionsCommand(CommandSender sender, String label, String[] args) {
         if (!sender.hasPermission("boatracing.extensions")) {
             sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
@@ -1330,7 +1508,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 sender.sendMessage(Text.colorize(prefix + msg().get("general.no-permission")));
                 return;
             }
-            if (extensionManager != null) extensionManager.reloadAll();
+            if (extensionManager != null) extensionManager.hotReload();
             sender.sendMessage(Text.colorize(prefix + msg().get("plugin.extensions-reloaded",
                     "count", extensionManager == null ? 0 : extensionManager.loadedExtensions().size())));
             return;
@@ -1376,6 +1554,59 @@ public class BoatRacingPlugin extends JavaPlugin {
         }
     }
 
+    /** Bumps when config.yml/track formats change in a way that needs a migration note. */
+    private static final int CONFIG_VERSION = 1;
+
+    /** Backs up config.yml (and tracks/) the first time a new config version is loaded. */
+    private void migrateConfigIfNeeded() {
+        int storedVersion = getConfig().getInt("config-version", 0);
+        if (storedVersion >= CONFIG_VERSION) return;
+        getLogger().info("Migrating config.yml from version " + storedVersion + " to " + CONFIG_VERSION + "...");
+        backupFile(new java.io.File(getDataFolder(), "config.yml"));
+        backupTracksFolder();
+        getConfig().set("config-version", CONFIG_VERSION);
+        saveConfig();
+    }
+
+    private void backupFile(java.io.File source) {
+        if (source == null || !source.isFile()) return;
+        java.io.File backup = new java.io.File(source.getParentFile(), source.getName() + ".bak-" + backupStamp());
+        try {
+            java.nio.file.Files.copy(source.toPath(), backup.toPath(),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            getLogger().info("Backed up " + source.getName() + " to " + backup.getName() + " before migration.");
+        } catch (Exception exception) {
+            getLogger().warning("Could not back up " + source.getName() + ": " + exception.getMessage());
+        }
+    }
+
+    private void backupTracksFolder() {
+        java.io.File tracks = new java.io.File(getDataFolder(), "tracks");
+        java.io.File[] files = tracks.listFiles((dir, name) -> name != null && name.endsWith(".yml"));
+        if (files == null || files.length == 0) return;
+        java.io.File backupDir = new java.io.File(tracks, "backup-" + backupStamp());
+        if (!backupDir.exists() && !backupDir.mkdirs()) {
+            getLogger().warning("Could not create track backup folder: " + backupDir.getAbsolutePath());
+            return;
+        }
+        int copied = 0;
+        for (java.io.File file : files) {
+            try {
+                java.nio.file.Files.copy(file.toPath(), new java.io.File(backupDir, file.getName()).toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                copied++;
+            } catch (Exception exception) {
+                getLogger().warning("Could not back up track " + file.getName() + ": " + exception.getMessage());
+            }
+        }
+        getLogger().info("Backed up " + copied + " track file(s) to tracks/" + backupDir.getName() + " before migration.");
+    }
+
+    private static String backupStamp() {
+        return java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+    }
+
     // Merge default config.yml values into the existing config without overwriting user changes
     private void mergeConfigDefaults() {
         InputStream is = getResource("config.yml");
@@ -1407,10 +1638,19 @@ public class BoatRacingPlugin extends JavaPlugin {
         return null;
     }
 
+    /** Forces synchronous document writes (shutdown/reload) or restores background writes. */
+    public void setSyncSaves(boolean sync) {
+        if (statsManager != null) statsManager.setSyncSaves(sync);
+        if (practiceStatsManager != null) practiceStatsManager.setSyncSaves(sync);
+        if (practiceGhostManager != null) practiceGhostManager.setSyncSaves(sync);
+        if (playerPrefsManager != null) playerPrefsManager.setSyncSaves(sync);
+    }
+
     @Override
     public void onDisable() {
         if (extensionManager != null) extensionManager.disableAll();
         unregisterApiService();
+        setSyncSaves(true);
         if (teamManager != null) teamManager.save();
         if (statsManager != null) statsManager.save();
         if (practiceStatsManager != null) practiceStatsManager.save();
@@ -1527,16 +1767,23 @@ public class BoatRacingPlugin extends JavaPlugin {
                     return true;
                 }
                 // Persist current state, reload config and data
+                setSyncSaves(true);
                 if (teamManager != null) teamManager.save();
+                if (statsManager != null) statsManager.save();
+                if (practiceStatsManager != null) practiceStatsManager.save();
+                if (practiceGhostManager != null) practiceGhostManager.save();
+                if (playerPrefsManager != null) playerPrefsManager.save();
                 reloadConfig();
                 // After reload, also merge any new defaults into config.yml
                 try { mergeConfigDefaults(); } catch (Exception ignored) { getLogger().finer("mergeConfigDefaults() during reload failed: " + ignored.getMessage()); }
-                this.prefix = Text.colorize(getConfig().getString("prefix", "&6[BoatRacing] "));
+        this.prefix = Text.colorize(getConfig().getString("prefix", "&6[BoatRacing] "));
+        this.performanceProfile = es.jaie55.boatracing.util.PerformanceProfile.from(
+                getConfig().getString("performance.profile", "balanced"));
                 // Reconfigure debug logging on reload
                 applyDebugLevel();
                 applyApiSettings();
                 this.messageManager.reload();
-                if (extensionManager != null) extensionManager.reloadAll();
+                if (extensionManager != null) extensionManager.reloadConfigs();
                 // Recreate team manager to re-read data and settings
                 this.teamManager = new TeamManager(this);
                 if (this.statsManager == null) this.statsManager = new StatsManager(this);
@@ -1549,6 +1796,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 else this.playerPrefsManager.reload();
                 if (this.purchaseManager == null) this.purchaseManager = new es.jaie55.boatracing.cosmetics.CosmeticPurchaseManager(this);
                 else this.purchaseManager.reload();
+                setSyncSaves(false);
                 this.vaultEconomy = null;
                 if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
                     try {
@@ -2227,6 +2475,10 @@ public class BoatRacingPlugin extends JavaPlugin {
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-selinfo", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-wand", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-gates", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-undo", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-redo", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-copy", "label", label)));
+                    p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-paste", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-autotrace", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-wizard", "label", label)));
                     if (extensionManager != null) {
@@ -2271,6 +2523,25 @@ public class BoatRacingPlugin extends JavaPlugin {
                         } else {
                             gateToolManager.giveTools(p);
                         }
+                        if (setupWizard != null) setupWizard.afterAction(p);
+                        return true;
+                    }
+                    case "undo" -> {
+                        undoSetup(p);
+                        if (setupWizard != null) setupWizard.afterAction(p);
+                        return true;
+                    }
+                    case "redo" -> {
+                        redoSetup(p);
+                        if (setupWizard != null) setupWizard.afterAction(p);
+                        return true;
+                    }
+                    case "copy" -> {
+                        copySetup(p);
+                        return true;
+                    }
+                    case "paste" -> {
+                        pasteSetup(p, args);
                         if (setupWizard != null) setupWizard.afterAction(p);
                         return true;
                     }
@@ -2343,14 +2614,16 @@ public class BoatRacingPlugin extends JavaPlugin {
                             p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                             return true;
                         }
-                        Region r = new Region(sel.worldName, sel.box);
-                        trackConfig.setFinish(r);
+                            Region r = new Region(sel.worldName, sel.box);
+                            pushSetupHistory();
+                            trackConfig.setFinish(r);
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.finish-set", "box", fmtBox(sel.box))));
                         p.playSound(p.getLocation(), org.bukkit.Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1.3f);
                         if (setupWizard != null) setupWizard.afterAction(p);
                     }
-                    case "clearfinish" -> {
-                        trackConfig.setFinish(null);
+                        case "clearfinish" -> {
+                            pushSetupHistory();
+                            trackConfig.setFinish(null);
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.finish-cleared")));
                         p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.1f);
                         if (setupWizard != null) setupWizard.afterAction(p);
@@ -2397,8 +2670,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                             p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                             return true;
                         }
-                        Region r = new Region(sel.worldName, sel.box);
-                        trackConfig.addCheckpoint(r);
+                            Region r = new Region(sel.worldName, sel.box);
+                            pushSetupHistory();
+                            trackConfig.addCheckpoint(r);
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.checkpoint-added", "num", trackConfig.getCheckpoints().size(), "box", fmtBox(sel.box))));
                         p.sendMessage(Text.colorize(msg().get("setup.checkpoint-added-tip")));
                         p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.2f);
@@ -2472,8 +2746,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                             return true;
                         }
                         int altIndex = Integer.parseInt(args[2]) - 1;
-                        Region altRegion = new Region(altSel.worldName, altSel.box);
-                        if (!trackConfig.addAlternate(altIndex, altRegion)) {
+                            Region altRegion = new Region(altSel.worldName, altSel.box);
+                            pushSetupHistory();
+                            if (!trackConfig.addAlternate(altIndex, altRegion)) {
                             p.sendMessage(Text.colorize(prefix + msg().get("setup.alternate-invalid", "max", trackConfig.getCheckpoints().size())));
                             p.playSound(p.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
                             return true;
@@ -2487,8 +2762,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                             p.sendMessage(Text.colorize(prefix + msg().get("setup.error.clearalt", "label", label)));
                             return true;
                         }
-                        int altIndex = Integer.parseInt(args[2]) - 1;
-                        if (!trackConfig.clearAlternates(altIndex)) {
+                            int altIndex = Integer.parseInt(args[2]) - 1;
+                            pushSetupHistory();
+                            if (!trackConfig.clearAlternates(altIndex)) {
                             p.sendMessage(Text.colorize(prefix + msg().get("setup.alternate-none")));
                         } else {
                             p.sendMessage(Text.colorize(prefix + msg().get("setup.alternate-cleared", "num", args[2])));
@@ -2681,8 +2957,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.setpos-removed", "player", displayName(off))));
                         return true;
                     }
-                    case "clearcheckpoints" -> {
-                        trackConfig.clearCheckpoints();
+                        case "clearcheckpoints" -> {
+                            pushSetupHistory();
+                            trackConfig.clearCheckpoints();
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.checkpoints-cleared")));
                         p.playSound(p.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.9f, 1.1f);
                         if (setupWizard != null) setupWizard.afterAction(p);
@@ -2717,7 +2994,9 @@ public class BoatRacingPlugin extends JavaPlugin {
                                 p.sendMessage(Text.colorize(msg().get("setup.show.override-entry", "key", oe.getKey(), "value", oe.getValue())));
                             }
                         }
+                        p.sendMessage(quickActionsLine(label));
                     }
+                    case "validate" -> validateTrack(p);
                     case "selinfo" -> {
                         java.util.List<String> dump = SelectionUtils.debugSelection(p);
                         p.sendMessage(Text.colorize(prefix + msg().get("setup.selection-info")));
@@ -3348,11 +3627,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 if (args.length == 3 && args[1].equalsIgnoreCase("team")) return java.util.Arrays.asList("create","delete","rename","color","add","remove");
                 if (args.length == 3 && args[1].equalsIgnoreCase("player")) return java.util.Arrays.asList("setteam","setnumber","setboat");
                 if (args.length == 5 && args[2].equalsIgnoreCase("setboat")) {
-                    return java.util.Arrays.asList(
-                        "oak_boat","spruce_boat","birch_boat","jungle_boat","acacia_boat","dark_oak_boat","mangrove_boat","cherry_boat","pale_oak_boat",
-                        "oak_chest_boat","spruce_chest_boat","birch_chest_boat","jungle_chest_boat","acacia_chest_boat","dark_oak_chest_boat","mangrove_chest_boat","cherry_chest_boat","pale_oak_chest_boat",
-                        "bamboo_raft","bamboo_chest_raft"
-                    );
+                    return es.jaie55.boatracing.util.BoatTypes.names();
                 }
                 return java.util.Collections.emptyList();
             }
@@ -3448,7 +3723,7 @@ public class BoatRacingPlugin extends JavaPlugin {
             if (args.length >= 2 && args[0].equalsIgnoreCase("setup")) {
                 if (!sender.hasPermission("boatracing.setup")) return Collections.emptyList();
                 if (args.length == 2) {
-                    java.util.List<String> opts = new java.util.ArrayList<>(Arrays.asList("help","select","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","addalt","clearalt","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setregtime","setcosmetics","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","gates","autotrace","wizard"));
+                    java.util.List<String> opts = new java.util.ArrayList<>(Arrays.asList("help","select","addstart","clearstarts","removestart","setfinish","clearfinish","setpit","clearpit","addcheckpoint","addalt","clearalt","clearcheckpoints","addlight","removelight","clearlights","setlaps","setpitstops","setregtime","setcosmetics","setlobby","clearlobby","setpos","clearpos","show","selinfo","wand","gates","undo","redo","copy","paste","validate","autotrace","wizard"));
                     if (extensionManager != null) opts.addAll(extensionManager.setupCommandNames(sender));
                     return opts;
                 }
@@ -3565,14 +3840,7 @@ public class BoatRacingPlugin extends JavaPlugin {
                 }
                 if (args.length >= 3 && args[1].equalsIgnoreCase("create")) return Collections.emptyList();
                 if (args.length >= 3 && args[1].equalsIgnoreCase("color")) return java.util.Arrays.stream(org.bukkit.DyeColor.values()).map(Enum::name).map(String::toLowerCase).toList();
-                if (args.length >= 3 && args[1].equalsIgnoreCase("boat")) return Arrays.asList(
-                    // Normal boats first
-                    "oak_boat","spruce_boat","birch_boat","jungle_boat","acacia_boat","dark_oak_boat","mangrove_boat","cherry_boat","pale_oak_boat",
-                    // Then chest-boat variants
-                    "oak_chest_boat","spruce_chest_boat","birch_chest_boat","jungle_chest_boat","acacia_chest_boat","dark_oak_chest_boat","mangrove_chest_boat","cherry_chest_boat","pale_oak_chest_boat",
-                    // Rafts (bamboo)
-                    "bamboo_raft","bamboo_chest_raft"
-                );
+                if (args.length >= 3 && args[1].equalsIgnoreCase("boat")) return es.jaie55.boatracing.util.BoatTypes.names();
             }
             return Collections.emptyList();
         }

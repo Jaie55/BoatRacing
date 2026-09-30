@@ -28,6 +28,7 @@ public final class SelectionVisualizer {
         if (!plugin.getConfig().getBoolean("setup.selection-visualizer.enabled", true)) return;
 
         long periodTicks = Math.max(1L, plugin.getConfig().getLong("setup.selection-visualizer.period-ticks", 10L));
+        periodTicks = plugin.getPerformanceProfile().scaleTicks((int) periodTicks);
         task = SchedulerCompat.runTimer(plugin, this::renderTick, periodTicks, periodTicks);
     }
 

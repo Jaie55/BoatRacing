@@ -50,7 +50,7 @@ public final class ExtensionManager {
             "help", "addstart", "clearstarts", "removestart", "setfinish", "clearfinish", "setpit", "clearpit",
             "addcheckpoint", "addalt", "clearalt", "clearcheckpoints", "addlight", "removelight", "clearlights",
             "setlaps", "setpitstops", "setregtime", "setcosmetics", "setlobby", "clearlobby", "setpos", "clearpos",
-            "show", "selinfo", "wand", "gates", "autotrace", "wizard", "select");
+            "show", "selinfo", "wand", "gates", "undo", "redo", "copy", "paste", "validate", "autotrace", "wizard", "select");
 
     private final BoatRacingPlugin plugin;
     private final File extensionsDir;
@@ -179,6 +179,13 @@ public final class ExtensionManager {
 
     private void registerPermissions(LoadedExtension loaded) {
         for (ExtensionDescriptor.PermissionEntry entry : loaded.descriptor().permissions()) {
+            if (entry.name() == null
+                    || !entry.name().toLowerCase(Locale.ROOT).startsWith("boatracing.")) {
+                plugin.getLogger().warning("Extension " + loaded.descriptor().name()
+                        + " declared permission '" + entry.name()
+                        + "' outside the boatracing.* namespace; ignoring it.");
+                continue;
+            }
             try {
                 if (Bukkit.getPluginManager().getPermission(entry.name()) != null) continue;
                 Bukkit.getPluginManager().addPermission(new Permission(
@@ -268,7 +275,8 @@ public final class ExtensionManager {
         placeholders.clear();
     }
 
-    public void reloadAll() {
+    /** Reloads config, messages and calls {@code onReload()} without touching extension code. */
+    public void reloadConfigs() {
         for (LoadedExtension loaded : extensions.values()) {
             try {
                 loaded.context().reloadConfig();
@@ -279,6 +287,15 @@ public final class ExtensionManager {
                         + " failed to reload: " + throwable.getMessage());
             }
         }
+    }
+
+    /** Unloads every extension (dispose + classloader close) and scans the folder again. */
+    public void hotReload() {
+        int before = extensions.size();
+        disableAll();
+        loadAll();
+        plugin.getLogger().info("Hot-reloaded BoatRacing extensions (" + before + " before, "
+                + extensions.size() + " now).");
     }
 
     public void reloadMessages() {

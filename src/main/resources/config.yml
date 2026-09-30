@@ -1,6 +1,9 @@
 # ------------------------------------------------------------
 # General
 # ------------------------------------------------------------
+# Managed by the plugin: when this number increases, config.yml and the
+# tracks folder are backed up before new defaults are merged.
+config-version: 1
 # Prefix shown in chat, titles, and command feedback.
 prefix: "&6[BoatRacing] "
 debug: "off" # Accepted values: "off", "severe", "warning", "info", "fine", "finer", "finest"
@@ -9,6 +12,33 @@ debug: "off" # Accepted values: "off", "severe", "warning", "info", "fine", "fin
 language: "en"
 # Maximum players per team.
 max-members-per-team: 2
+
+# ------------------------------------------------------------
+# Race Economy (requires Vault + an economy provider)
+# ------------------------------------------------------------
+race:
+  economy:
+    enabled: false
+    # Charged to every participant right before the race/countdown starts.
+    # Players who cannot pay are sent back and do not take part.
+    entry-fee: 0.0
+    # Refund the entry fee when a race is cancelled/stopped without results.
+    refund-on-cancel: true
+    # Prize per finishing position (1 = winner); missing positions pay nothing.
+    prizes:
+      1: 100.0
+      2: 50.0
+      3: 25.0
+
+# ------------------------------------------------------------
+# Performance
+# ------------------------------------------------------------
+performance:
+  # Global performance profile:
+  #   low      - doubles periodic intervals (scoreboard, trails, previews) to protect TPS
+  #   balanced - keeps the configured intervals (default)
+  #   high     - no extra throttling (maximum smoothness on strong hardware)
+  profile: balanced
 
 # ------------------------------------------------------------
 # Team Permissions

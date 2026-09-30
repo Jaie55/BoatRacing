@@ -62,6 +62,11 @@ public final class BoatRacingAPIImpl implements BoatRacingAPI {
     }
 
     @Override
+    public String performanceProfile() {
+        return plugin.getPerformanceProfile().name().toLowerCase(java.util.Locale.ROOT);
+    }
+
+    @Override
     public void registerHudProvider(org.bukkit.plugin.Plugin owner, es.jaie55.boatracing.api.HudProvider provider) {
         if (provider == null) return;
         if (!plugin.getHudProviders().contains(provider)) {

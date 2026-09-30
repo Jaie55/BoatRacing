@@ -36,6 +36,9 @@ public interface BoatRacingAPI {
     /** @return true when the player is registered or racing in any session. */
     boolean isRacing(java.util.UUID playerId);
 
+    /** @return the active performance profile: {@code low}, {@code balanced} or {@code high}. */
+    String performanceProfile();
+
     /**
      * Registers a HUD provider so the extension can append its own sidebar lines and action bar
      * suffix while the base plugin owns the race HUD. Call {@link #unregisterHudProvider} on

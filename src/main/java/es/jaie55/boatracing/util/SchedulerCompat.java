@@ -60,6 +60,32 @@ public final class SchedulerCompat {
         }
     }
 
+    /**
+     * Runs the task on the region that owns the location (Folia) or on the main thread (Bukkit).
+     * Use this before spawning entities in world locations when Folia support matters.
+     */
+    public static TaskHandle runAtLocation(Plugin plugin, org.bukkit.Location location, Runnable runnable) {
+        if (location == null || !isFolia()) {
+            return new BukkitHandle(Bukkit.getScheduler().runTask(plugin, runnable));
+        }
+        try {
+            Object scheduler = Bukkit.getServer().getClass().getMethod("getRegionScheduler").invoke(Bukkit.getServer());
+            try {
+                Method execute = scheduler.getClass().getMethod("execute", Plugin.class, org.bukkit.Location.class, Runnable.class);
+                execute.invoke(scheduler, plugin, location, runnable);
+            } catch (NoSuchMethodException older) {
+                int chunkX = location.getBlockX() >> 4;
+                int chunkZ = location.getBlockZ() >> 4;
+                Method execute = scheduler.getClass().getMethod("execute", Plugin.class, org.bukkit.World.class, int.class, int.class, Runnable.class);
+                execute.invoke(scheduler, plugin, location.getWorld(), chunkX, chunkZ, runnable);
+            }
+            return () -> {
+            };
+        } catch (Exception exception) {
+            return new BukkitHandle(Bukkit.getScheduler().runTask(plugin, runnable));
+        }
+    }
+
     public static TaskHandle runNow(Plugin plugin, Runnable runnable) {
         if (!isFolia()) {
             return new BukkitHandle(Bukkit.getScheduler().runTask(plugin, runnable));

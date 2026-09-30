@@ -117,6 +117,12 @@ public class PlaneCheckpoint implements CheckpointShape {
     }
 
     @Override
+    public CheckpointShape translate(double dx, double dy, double dz) {
+        return new PlaneCheckpoint(worldName, center.clone().add(new Vector(dx, dy, dz)),
+                normal, right, up, halfWidth, halfHeight);
+    }
+
+    @Override
     public String type() { return "plane"; }
 
     @Override

@@ -81,6 +81,7 @@ public final class PracticeGhostManager {
 
     private final es.jaie55.boatracing.BoatRacingPlugin plugin;
     private final DocumentStore store;
+    private final AsyncDocumentSaver saver;
     private final String documentName = "practice-ghosts.yml";
     private YamlConfiguration cfg;
 
@@ -89,6 +90,7 @@ public final class PracticeGhostManager {
     public PracticeGhostManager(es.jaie55.boatracing.BoatRacingPlugin plugin) {
         this.plugin = plugin;
         this.store = plugin.getDocumentStore();
+        this.saver = new AsyncDocumentSaver(plugin, this.store, documentName, "practice ghost data");
         reload();
     }
 
@@ -148,6 +150,10 @@ public final class PracticeGhostManager {
     }
 
     public synchronized void save() {
+        saver.write(serialize());
+    }
+
+    private synchronized String serialize() {
         if (cfg == null) cfg = new YamlConfiguration();
 
         cfg.set("tracks", null);
@@ -172,13 +178,15 @@ public final class PracticeGhostManager {
             }
         }
 
-        try {
-            if (store != null) {
-                store.write(documentName, cfg.saveToString());
-            }
-        } catch (Exception e) {
-            plugin.getLogger().warning("Failed to save practice ghost data: " + e.getMessage());
-        }
+        return cfg.saveToString();
+    }
+
+    public boolean isDirty() {
+        return saver.isDirty();
+    }
+
+    public void setSyncSaves(boolean sync) {
+        saver.setSync(sync);
     }
 
     public synchronized GhostPath getBestGhost(String trackToken, int laps) {

@@ -60,11 +60,20 @@ public class CheckpointGroup implements CheckpointShape {
 
     @Override
     public boolean contains(Location loc) {
-        if (primary.contains(loc)) return true;
+        if (primary != null && primary.contains(loc)) return true;
         for (CheckpointShape alternate : alternates) {
             if (alternate.contains(loc)) return true;
         }
         return false;
+    }
+
+    @Override
+    public CheckpointShape translate(double dx, double dy, double dz) {
+        List<CheckpointShape> translatedAlternates = new java.util.ArrayList<>();
+        for (CheckpointShape alternate : alternates) {
+            translatedAlternates.add(alternate.translate(dx, dy, dz));
+        }
+        return new CheckpointGroup(primary.translate(dx, dy, dz), translatedAlternates);
     }
 
     @Override

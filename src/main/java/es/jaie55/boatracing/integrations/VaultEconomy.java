@@ -57,6 +57,16 @@ public class VaultEconomy {
         }
     }
 
+    public boolean deposit(OfflinePlayer player, double amount) {
+        if (economy == null || player == null || amount <= 0) return false;
+        try {
+            return economy.depositPlayer(player, amount).transactionSuccess();
+        } catch (Throwable throwable) {
+            plugin.getLogger().warning("Vault deposit failed for " + player.getName() + ": " + throwable.getMessage());
+            return false;
+        }
+    }
+
     public String format(double amount) {
         if (economy == null) return String.valueOf(amount);
         try {

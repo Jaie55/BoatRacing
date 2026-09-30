@@ -42,6 +42,11 @@ public final class ExtensionSchedulerImpl implements ExtensionScheduler {
         return track(wrap(SchedulerCompat.runAsyncTimer(plugin, task, delayTicks, periodTicks)));
     }
 
+    @Override
+    public TaskHandle runAtLocation(Runnable task, org.bukkit.Location location) {
+        return track(wrap(SchedulerCompat.runAtLocation(plugin, location, task)));
+    }
+
     /** Cancels every task the extension scheduled. Called when the extension is disabled. */
     public void cancelAll() {
         for (TaskHandle handle : handles) {

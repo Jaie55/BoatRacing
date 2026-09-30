@@ -22,6 +22,7 @@ public class PlayerPrefsManager {
 
     private final BoatRacingPlugin plugin;
     private final DocumentStore store;
+    private final AsyncDocumentSaver saver;
     private final String documentName = "player-prefs.yml";
     private YamlConfiguration cfg;
 
@@ -35,6 +36,7 @@ public class PlayerPrefsManager {
     public PlayerPrefsManager(BoatRacingPlugin plugin) {
         this.plugin = plugin;
         this.store = plugin.getDocumentStore();
+        this.saver = new AsyncDocumentSaver(plugin, this.store, documentName, "player preferences");
         reload();
     }
 
@@ -72,6 +74,10 @@ public class PlayerPrefsManager {
     }
 
     public synchronized void save() {
+        saver.write(serialize());
+    }
+
+    private synchronized String serialize() {
         if (cfg == null) cfg = new YamlConfiguration();
         writeMap("trails", trails);
         writeMap("titles", titles);
@@ -79,13 +85,15 @@ public class PlayerPrefsManager {
         writeMap("victory-sounds", victorySounds);
         writeMap("checkpoint-effects", checkpointEffects);
         writeMap("particle-density", densities);
-        try {
-            if (store != null) {
-                store.write(documentName, cfg.saveToString());
-            }
-        } catch (Exception e) {
-            plugin.getLogger().warning("Failed to save player preferences (" + documentName + "): " + e.getMessage());
-        }
+        return cfg.saveToString();
+    }
+
+    public boolean isDirty() {
+        return saver.isDirty();
+    }
+
+    public void setSyncSaves(boolean sync) {
+        saver.setSync(sync);
     }
 
     public synchronized String getTrail(UUID playerId) {
