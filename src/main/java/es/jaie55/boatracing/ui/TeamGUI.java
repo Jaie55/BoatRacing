@@ -46,34 +46,7 @@ public class TeamGUI implements Listener {
     private static final Material[] ALLOWED_BOATS = resolveAllowedBoats();
     
     private static Material[] resolveAllowedBoats() {
-        java.util.List<Material> list = new java.util.ArrayList<>();
-        addIfPresent(list, "OAK_BOAT");
-        addIfPresent(list, "SPRUCE_BOAT");
-        addIfPresent(list, "BIRCH_BOAT");
-        addIfPresent(list, "JUNGLE_BOAT");
-        addIfPresent(list, "ACACIA_BOAT");
-        addIfPresent(list, "DARK_OAK_BOAT");
-        addIfPresent(list, "MANGROVE_BOAT");
-        addIfPresent(list, "CHERRY_BOAT");
-        addIfPresent(list, "PALE_OAK_BOAT");
-        addIfPresent(list, "BAMBOO_RAFT");
-        addIfPresent(list, "OAK_CHEST_BOAT");
-        addIfPresent(list, "SPRUCE_CHEST_BOAT");
-        addIfPresent(list, "BIRCH_CHEST_BOAT");
-        addIfPresent(list, "JUNGLE_CHEST_BOAT");
-        addIfPresent(list, "ACACIA_CHEST_BOAT");
-        addIfPresent(list, "DARK_OAK_CHEST_BOAT");
-        addIfPresent(list, "MANGROVE_CHEST_BOAT");
-        addIfPresent(list, "CHERRY_CHEST_BOAT");
-        addIfPresent(list, "PALE_OAK_CHEST_BOAT");
-        addIfPresent(list, "BAMBOO_CHEST_RAFT");
-        return list.toArray(new Material[0]);
-    }
-    
-    private static void addIfPresent(java.util.List<Material> out, String name) {
-        // Resolve strictly by modern enum name; avoids triggering legacy material support
-        Material m = org.bukkit.Material.matchMaterial(name);
-        if (m != null) out.add(m);
+        return es.jaie55.boatracing.util.BoatTypes.all().toArray(new Material[0]);
     }
     private final BoatRacingPlugin plugin;
     private final NamespacedKey KEY_TEAM_ID;

@@ -823,15 +823,7 @@ public class AdminGUI implements Listener {
     private static DyeColor dyeFromBanner(Material m) { if (m == null || !m.name().endsWith("_BANNER")) return null; String prefix = m.name().substring(0, m.name().length()-"_BANNER".length()); try { return DyeColor.valueOf(prefix); } catch (Exception ex) { return null; } }
     private static String sanitizeName(String raw) { String s = raw.replace("§", "").replace("&", "").trim(); if (s.length()>20) s = s.substring(0,20); return s; }
 
-    private static boolean isBoat(Material m) { return m != null && (m.name().endsWith("_BOAT") || m.name().endsWith("_CHEST_BOAT") || m.name().endsWith("_RAFT")); }
+    private static boolean isBoat(Material m) { return es.jaie55.boatracing.util.BoatTypes.isBoat(m); }
     private static boolean isDye(Material m) { return m != null && m.name().endsWith("_DYE"); }
-    private static List<Material> allowedBoats() {
-        List<Material> list = new ArrayList<>();
-        // Normal boats first, then chest variants
-        for (Material m : Material.values()) if (m.name().endsWith("_BOAT") && !m.name().endsWith("_CHEST_BOAT")) list.add(m);
-        for (Material m : Material.values()) if (m.name().endsWith("_CHEST_BOAT")) list.add(m);
-    // Then any RAFT materials (e.g., BAMBOO_RAFT, BAMBOO_CHEST_RAFT)
-    for (Material m : Material.values()) if (m.name().endsWith("_RAFT")) list.add(m);
-        return list;
-    }
+    private static List<Material> allowedBoats() { return es.jaie55.boatracing.util.BoatTypes.all(); }
 }
