@@ -16,8 +16,10 @@ public final class AsyncDocumentSaver {
     private final String label;
     private final AtomicLong scheduled = new AtomicLong();
     private final AtomicLong written = new AtomicLong();
+    private final java.util.concurrent.atomic.AtomicInteger executing = new java.util.concurrent.atomic.AtomicInteger();
     private volatile boolean dirty;
     private volatile boolean sync;
+    private volatile boolean closed;
 
     public AsyncDocumentSaver(Plugin plugin, DocumentStore store, String documentName, String label) {
         this.plugin = plugin;
@@ -40,6 +42,10 @@ public final class AsyncDocumentSaver {
             dirty = false;
             return;
         }
+        if (closed) {
+            dirty = false;
+            return;
+        }
         if (sync) {
             writeNow(content);
             return;
@@ -47,15 +53,36 @@ public final class AsyncDocumentSaver {
         dirty = true;
         long sequence = scheduled.incrementAndGet();
         SchedulerCompat.runAsync(plugin, () -> {
-            if (sequence < written.get()) return; // a newer snapshot is already on disk or queued
+            if (closed) return; // shutdown already finished: the synchronous save wrote the latest state
+            executing.incrementAndGet();
             try {
+                if (sequence < written.get()) return; // a newer snapshot is already on disk or queued
                 store.write(documentName, content);
                 written.set(sequence);
                 if (sequence >= scheduled.get()) dirty = false;
             } catch (Exception exception) {
-                plugin.getLogger().warning("Failed to save " + label + ": " + exception.getMessage());
+                if (!closed) plugin.getLogger().warning("Failed to save " + label + ": " + exception.getMessage());
+            } finally {
+                executing.decrementAndGet();
             }
         });
+    }
+
+    /**
+     * Stops accepting writes and waits (briefly) for the write that may be executing right now,
+     * so the document store can be closed safely during shutdown.
+     */
+    public void close() {
+        closed = true;
+        long deadline = System.currentTimeMillis() + 2000L;
+        while (executing.get() > 0 && System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(10L);
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
     }
 
     private void writeNow(String content) {

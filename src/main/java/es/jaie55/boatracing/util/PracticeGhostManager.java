@@ -189,6 +189,10 @@ public final class PracticeGhostManager {
         saver.setSync(sync);
     }
 
+    public void closeSaver() {
+        saver.close();
+    }
+
     public synchronized GhostPath getBestGhost(String trackToken, int laps) {
         Map<Integer, GhostPath> perLaps = bestGhosts.get(normalizeTrackToken(trackToken));
         if (perLaps == null) return null;

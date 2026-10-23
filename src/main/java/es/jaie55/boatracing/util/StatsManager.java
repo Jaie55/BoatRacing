@@ -106,6 +106,10 @@ public class StatsManager {
         saver.setSync(sync);
     }
 
+    public void closeSaver() {
+        saver.close();
+    }
+
     public int getPlayerWins(UUID playerId) {
         return playerWins.getOrDefault(playerId, 0);
     }

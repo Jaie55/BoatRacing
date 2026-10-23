@@ -212,6 +212,10 @@ public class PracticeStatsManager {
         saver.setSync(sync);
     }
 
+    public void closeSaver() {
+        saver.close();
+    }
+
     public synchronized PracticeUpdate recordLap(UUID playerId, String trackToken, long lapMillis) {
         if (playerId == null || lapMillis < 0L) {
             return new PracticeUpdate(Math.max(0L, lapMillis), null, Math.max(0L, lapMillis));

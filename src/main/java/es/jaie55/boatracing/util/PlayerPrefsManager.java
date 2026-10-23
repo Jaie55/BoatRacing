@@ -96,6 +96,10 @@ public class PlayerPrefsManager {
         saver.setSync(sync);
     }
 
+    public void closeSaver() {
+        saver.close();
+    }
+
     public synchronized String getTrail(UUID playerId) {
         return playerId == null ? null : trails.get(playerId);
     }
