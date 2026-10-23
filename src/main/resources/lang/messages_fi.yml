@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Tee viimeisin peruttu muutos uudelleen)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Kopioi nykyiset tarkistuspisteet)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Liitä kopioidut tarkistuspisteet valinnaisella siirtymällä)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Ilmoita puuttuvista tai virheellisistä asetuselementeistä)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Aja kierros luodaksesi tarkistuspisteet automaattisesti)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Käynnistä ohjattu asetusavustaja)"
     wand-name: "&6BoatRacing-valintatyökalu"

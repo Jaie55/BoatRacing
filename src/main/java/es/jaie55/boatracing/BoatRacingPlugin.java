@@ -1555,7 +1555,7 @@ public class BoatRacingPlugin extends JavaPlugin {
     }
 
     /** Bumps when config.yml/track formats change in a way that needs a migration note. */
-    private static final int CONFIG_VERSION = 1;
+    private static final int CONFIG_VERSION = 2;
 
     /** Backs up config.yml (and tracks/) the first time a new config version is loaded. */
     private void migrateConfigIfNeeded() {
@@ -1657,6 +1657,11 @@ public class BoatRacingPlugin extends JavaPlugin {
         if (practiceGhostManager != null) practiceGhostManager.save();
         if (playerPrefsManager != null) playerPrefsManager.save();
         if (purchaseManager != null) purchaseManager.save();
+        // Wait for background writes before closing the store (no-op when there are none).
+        if (statsManager != null) statsManager.closeSaver();
+        if (practiceStatsManager != null) practiceStatsManager.closeSaver();
+        if (practiceGhostManager != null) practiceGhostManager.closeSaver();
+        if (playerPrefsManager != null) playerPrefsManager.closeSaver();
         if (trailManager != null) trailManager.stop();
         if (selectionVisualizer != null) selectionVisualizer.stop();
         if (autoTraceManager != null) autoTraceManager.shutdown();
@@ -2472,6 +2477,11 @@ public class BoatRacingPlugin extends JavaPlugin {
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-clearpos", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-clearcheckpoints", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-show", "label", label)));
+        p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-undo", "label", label)));
+        p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-redo", "label", label)));
+        p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-copy", "label", label)));
+        p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-paste", "label", label)));
+        p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-validate", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-selinfo", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-wand", "label", label)));
                     p.sendMessage(Text.colorize(msg().get("setup.usage.cmd-gates", "label", label)));

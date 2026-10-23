@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Ulangi perubahan terakhir yang dibatalkan)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Salin checkpoint saat ini)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Tempel checkpoint yang disalin dengan offset opsional)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Laporkan elemen setup yang hilang atau tidak valid)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kemudikan satu putaran untuk membuat checkpoint secara otomatis)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Jalankan asisten setup terpandu)"
     wand-name: "&6Alat Seleksi BoatRacing"

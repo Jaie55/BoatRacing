@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Geri alınan son değişikliği yeniden uygula)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Mevcut kontrol noktalarını kopyala)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Kopyalanan kontrol noktalarını isteğe bağlı kaydırmayla yapıştır)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Eksik veya geçersiz kurulum öğelerini bildir)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kontrol noktalarını otomatik oluşturmak için bir tur sür)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Rehberli kurulum yardımcısını başlatır)"
     wand-name: "&6BoatRacing Seçim Aracı"

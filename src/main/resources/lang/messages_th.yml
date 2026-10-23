@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(ทำซ้ำการเปลี่ยนแปลงที่เพิ่งเลิกทำ)"
     cmd-copy: "&7 - &f/{label} setup copy &7(คัดลอกจุดตรวจปัจจุบัน)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(วางจุดตรวจที่คัดลอกไว้พร้อมออฟเซ็ตเสริม)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(รายงานองค์ประกอบการตั้งค่าที่หายไปหรือไม่ถูกต้อง)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(ขับหนึ่งรอบเพื่อสร้างจุดตรวจอัตโนมัติ)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(เปิดผู้ช่วยตั้งค่าแบบแนะนำทีละขั้น)"
     wand-name: "&6เครื่องมือเลือกของ BoatRacing"

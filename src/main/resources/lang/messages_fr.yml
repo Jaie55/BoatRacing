@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Rétablit la dernière modification annulée)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Copie les checkpoints actuels)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Colle les checkpoints copiés avec un décalage facultatif)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Signale les éléments de configuration manquants ou invalides)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Pilotez un tour pour générer automatiquement les checkpoints)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Lancer l'assistant de configuration guidée)"
     wand-name: "&6Outil de sélection BoatRacing"

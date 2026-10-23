@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Gentag den senest fortrydte ændring)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Kopiér de aktuelle kontrolpunkter)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Indsæt de kopierede kontrolpunkter med en valgfri forskydning)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Rapportér manglende eller ugyldige opsætningselementer)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kør en omgang for automatisk at generere kontrolpunkter)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Start guidet opsætningsassistent)"
     wand-name: "&6BoatRacing-markeringsværktøj"

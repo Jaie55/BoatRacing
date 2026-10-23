@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Refaz a última alteração desfeita)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Copia os pontos de controlo atuais)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Cola os pontos de controlo copiados com um deslocamento opcional)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Reporta elementos de configuração em falta ou inválidos)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Conduz uma volta para gerar pontos de controlo automaticamente)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Inicia o assistente guiado de configuracao)"
     wand-name: "&6Ferramenta de Selecao BoatRacing"

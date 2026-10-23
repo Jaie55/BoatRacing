@@ -3,7 +3,8 @@
 # ------------------------------------------------------------
 # Managed by the plugin: when this number increases, config.yml and the
 # tracks folder are backed up before new defaults are merged.
-config-version: 1
+# Version 2 adds race.economy.* and performance.profile.
+config-version: 2
 # Prefix shown in chat, titles, and command feedback.
 prefix: "&6[BoatRacing] "
 debug: "off" # Accepted values: "off", "severe", "warning", "info", "fine", "finer", "finest"

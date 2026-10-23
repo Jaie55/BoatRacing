@@ -267,6 +267,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Повторить последнее отменённое изменение)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Скопировать текущие контрольные точки)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Вставить скопированные контрольные точки с необязательным смещением)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Сообщить об отсутствующих или недействительных элементах настройки)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Проехать круг для автоматической генерации контрольных точек)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Запустить мастер настройки)"
     wand-name: "&6Инструмент выделения BoatRacing"

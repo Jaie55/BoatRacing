@@ -279,6 +279,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Gjør om den sist angrede endringen)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Kopier de gjeldende sjekkpunktene)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Lim inn de kopierte sjekkpunktene med en valgfri forskyvning)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Rapporter manglende eller ugyldige oppsettelementer)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Kjør en runde for å automatisk generere sjekkpunkter)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Start veiledet oppsettassistent)"
     wand-name: "&6BoatRacing-utvalgsverktøy"

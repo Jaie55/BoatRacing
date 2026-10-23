@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Ulitin ang huling na-undo na pagbabago)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Kopyahin ang mga kasalukuyang checkpoint)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(I-paste ang mga nakopyang checkpoint na may opsyonal na offset)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Iulat ang nawawala o di-wastong mga elemento ng setup)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Magmaneho ng isang lap para awtomatikong makagawa ng mga checkpoint)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Simulan ang gabay na setup wizard)"
     wand-name: "&6Kagamitan sa Pagpili ng BoatRacing"

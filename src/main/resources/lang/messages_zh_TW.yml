@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7（重做上一次復原的變更）"
     cmd-copy: "&7 - &f/{label} setup copy &7（複製目前的檢查點）"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7（以可選位移貼上已複製的檢查點）"
+    cmd-validate: "&7 - &f/{label} setup validate &7（回報缺少或無效的賽道設定元素）"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7（駕駛一圈以自動生成檢查點）"
     cmd-wizard: "&7 - &f/{label} setup wizard &7（啟動引導式設定精靈）"
     wand-name: "&6BoatRacing 選區工具"

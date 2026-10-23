@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(취소한 변경 다시 적용)"
     cmd-copy: "&7 - &f/{label} setup copy &7(현재 체크포인트 복사)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(복사한 체크포인트를 선택적 오프셋으로 붙여넣기)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(누락되었거나 잘못된 설정 요소를 보고합니다)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(한 바퀴 주행하여 체크포인트 자동 생성)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(안내된 설정 마법사 실행)"
     wand-name: "&6BoatRacing 선택 도구"

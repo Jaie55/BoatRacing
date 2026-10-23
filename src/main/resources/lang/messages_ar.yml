@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(أعد آخر تغيير تم التراجع عنه)"
     cmd-copy: "&7 - &f/{label} setup copy &7(انسخ نقاط التفتيش الحالية)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(الصق نقاط التفتيش المنسوخة مع إزاحة اختيارية)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(الإبلاغ عن عناصر الإعداد المفقودة أو غير الصالحة)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(قد لفّة واحدة لإنشاء نقاط التفتيش تلقائيًا)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(تشغيل مساعد الإعداد الموجّه)"
     wand-name: "&6أداة تحديد BoatRacing"

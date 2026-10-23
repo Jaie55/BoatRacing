@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Znovu provést poslední vrácenou změnu)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Zkopírovat aktuální kontrolní body)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Vložit zkopírované kontrolní body s volitelným posunem)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Nahlásit chybějící nebo neplatné prvky nastavení)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Projeďte kolo pro automatické vygenerování kontrolních bodů)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Spustit průvodce nastavením)"
     wand-name: "&6Nástroj pro výběr BoatRacing"

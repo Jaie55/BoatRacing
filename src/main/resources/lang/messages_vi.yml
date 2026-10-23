@@ -278,6 +278,7 @@ setup:
     cmd-redo: "&7 - &f/{label} setup redo &7(Làm lại thay đổi vừa hoàn tác)"
     cmd-copy: "&7 - &f/{label} setup copy &7(Sao chép các trạm kiểm soát hiện tại)"
     cmd-paste: "&7 - &f/{label} setup paste [dx dy dz] &7(Dán các trạm kiểm soát đã sao chép với độ lệch tùy chọn)"
+    cmd-validate: "&7 - &f/{label} setup validate &7(Báo cáo các thành phần thiết lập bị thiếu hoặc không hợp lệ)"
     cmd-autotrace: "&7 - &f/{label} setup autotrace start &7(Chạy một vòng để tự động tạo trạm kiểm soát)"
     cmd-wizard: "&7 - &f/{label} setup wizard &7(Khởi chạy trợ lý thiết lập có hướng dẫn)"
     wand-name: "&6Công cụ chọn BoatRacing"
