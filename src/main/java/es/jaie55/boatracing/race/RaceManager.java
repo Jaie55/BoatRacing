@@ -2809,21 +2809,21 @@ public class RaceManager {
                     // Build lines for this viewer
                     // Reuse the built sidebar lines unless the race state changed for this viewer.
                     // Practice sidebars show live times, so they always rebuild.
-                    java.util.List<Component> lines;
+                    java.util.List<Component> baseLines;
                     String sidebarSignature = practiceMode ? null
                             : sidebarSignature(viewerId, ordered, viewerState);
                     if (sidebarSignature != null
                             && sidebarSignature.equals(cachedSidebarSignatures.get(viewerId))
                             && cachedSidebarLines.containsKey(viewerId)) {
-                        lines = cachedSidebarLines.get(viewerId);
+                        baseLines = cachedSidebarLines.get(viewerId);
                     } else {
-                        lines = new java.util.ArrayList<>();
+                        baseLines = new java.util.ArrayList<>();
                     if (!practiceMode) {
                         // Spacer line to create space between title and first row
-                        lines.add(Component.text(" "));
+                        baseLines.add(Component.text(" "));
                     } else {
-                        lines.add(Component.text(resolvePracticeStatusLine(), NamedTextColor.AQUA, TextDecoration.BOLD));
-                        appendPracticeSidebarTimes(lines, viewerId, viewerState);
+                        baseLines.add(Component.text(resolvePracticeStatusLine(), NamedTextColor.AQUA, TextDecoration.BOLD));
+                        appendPracticeSidebarTimes(baseLines, viewerId, viewerState);
                     }
 
                     int maxRows = 10;
@@ -2908,11 +2908,20 @@ public class RaceManager {
                             if (sbShowName) line = line.append(Component.text(" - ", NamedTextColor.DARK_GRAY))
                                                     .append(Component.text(shown, isViewer ? NamedTextColor.GREEN : NamedTextColor.WHITE));
                         }
-                        lines.add(line);
+                        baseLines.add(line);
                     }
 
-                    // Extension HUD lines (appended after the race content, capped below).
+                        if (sidebarSignature != null) {
+                            cachedSidebarLines.put(viewerId, baseLines);
+                            cachedSidebarSignatures.put(viewerId, sidebarSignature);
+                        }
+                    }
+
+                    // Extension HUD lines are rebuilt every tick: they can change without any
+                    // race-state change (party points, carried item...), so they are never cached.
+                    java.util.List<Component> lines = baseLines;
                     if (!plugin.getHudProviders().isEmpty()) {
+                        lines = new java.util.ArrayList<>(baseLines);
                         for (es.jaie55.boatracing.api.HudProvider provider : plugin.getHudProviders()) {
                             try {
                                 java.util.List<String> extra = provider.sidebarLines(viewer);
@@ -2925,11 +2934,6 @@ public class RaceManager {
                                 plugin.getLogger().log(java.util.logging.Level.FINE,
                                         "Extension HUD provider failed: " + throwable.getMessage(), throwable);
                             }
-                        }
-                    }
-                        if (sidebarSignature != null) {
-                            cachedSidebarLines.put(viewerId, lines);
-                            cachedSidebarSignatures.put(viewerId, sidebarSignature);
                         }
                     }
 
